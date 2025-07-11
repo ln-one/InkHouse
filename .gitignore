@@ -1,0 +1,17 @@
+# .NET
+bin/
+obj/
+*.user
+*.suo
+*.userosscache
+*.sln.docstates
+.vs/
+.idea/
+*.db
+*.DS_Store
+*.swp
+*.sln.ide
+*.log
+# Rider
+.idea/
+*.sln.iml

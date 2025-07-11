@@ -1,0 +1,13 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="InkHouse.Views.LoginView"
+    xmlns:vm="clr-namespace:InkHouse.ViewModels"
+    x:DataType="vm:LoginViewModel">
+    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center" Width="300" Spacing="16">
+        <TextBlock Text="InkHouse 登录" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,24"/>
+        <TextBox Watermark="用户名" Text="{Binding UserName, Mode=TwoWay}" CornerRadius="8" FontSize="16"/>
+        <TextBox Watermark="密码" Text="{Binding Password, Mode=TwoWay}" CornerRadius="8" FontSize="16" PasswordChar="*"/>
+        <Button Content="登录" Command="{Binding LoginCommand}" Height="40" CornerRadius="8" FontSize="16" Background="#007AFF" Foreground="White"/>
+    </StackPanel>
+</UserControl> 
