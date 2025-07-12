@@ -1,75 +1,89 @@
 using System;
-using System.ComponentModel;
-using System.Runtime.CompilerServices;
+using System.Threading.Tasks;
 using System.Windows.Input;
 using InkHouse.Models;
 using InkHouse.Services;
+using CommunityToolkit.Mvvm.Input;
 
 namespace InkHouse.ViewModels
 {
-    // 登录界面的ViewModel，负责数据绑定和登录逻辑
-    public class LoginViewModel : INotifyPropertyChanged
+    /// <summary>
+    /// 登录界面的ViewModel
+    /// 负责数据绑定和登录逻辑，使用新的架构简化开发
+    /// </summary>
+    public class LoginViewModel : ViewModelBase
     {
-        // 用户名字段
         private string _userName;
-        // 密码字段
         private string _password;
-        // 用户服务，用于登录验证
-        private readonly UserService _userService;
-        // 属性变更事件，支持数据绑定
-        public event PropertyChangedEventHandler PropertyChanged;
 
-        // 用户名属性，支持双向绑定
+        /// <summary>
+        /// 用户名
+        /// </summary>
         public string UserName
         {
             get => _userName;
-            set { _userName = value; OnPropertyChanged(); }
+            set => SetProperty(ref _userName, value);
         }
-        // 密码属性，支持双向绑定
+
+        /// <summary>
+        /// 密码
+        /// </summary>
         public string Password
         {
             get => _password;
-            set { _password = value; OnPropertyChanged(); }
+            set => SetProperty(ref _password, value);
         }
 
-        // 登录命令，绑定到登录按钮
+        /// <summary>
+        /// 登录命令
+        /// </summary>
         public ICommand LoginCommand { get; }
 
-        // 构造函数，传入UserService
-        public LoginViewModel(UserService userService)
+        /// <summary>
+        /// 构造函数
+        /// 使用ServiceManager获取服务，无需手动创建
+        /// </summary>
+        public LoginViewModel()
         {
-            _userService = userService;
-            LoginCommand = new RelayCommand(Login);
+            LoginCommand = new AsyncRelayCommand(LoginAsync);
         }
 
-        // 登录方法，执行登录逻辑
-        private void Login()
+        /// <summary>
+        /// 异步登录方法
+        /// 使用新的架构，自动处理错误和加载状态
+        /// </summary>
+        private async Task LoginAsync()
         {
-            var user = _userService.Login(UserName, Password);
-            if (user != null)
+            await ExecuteAsync(async () =>
             {
-                // 登录成功，后续可导航到主界面
-            }
-            else
-            {
-                // 登录失败，提示用户
-            }
-        }
+                // 输入验证
+                if (string.IsNullOrWhiteSpace(UserName))
+                {
+                    ShowError("请输入用户名");
+                    return;
+                }
 
-        // 属性变更通知方法
-        protected void OnPropertyChanged([CallerMemberName] string propertyName = null)
-        {
-            PropertyChanged?.Invoke(this, new PropertyChangedEventArgs(propertyName));
-        }
-    }
+                if (string.IsNullOrWhiteSpace(Password))
+                {
+                    ShowError("请输入密码");
+                    return;
+                }
 
-    // 命令实现类，用于绑定按钮点击事件
-    public class RelayCommand : ICommand
-    {
-        private readonly Action _execute;
-        public RelayCommand(Action execute) => _execute = execute;
-        public event EventHandler CanExecuteChanged;
-        public bool CanExecute(object parameter) => true;
-        public void Execute(object parameter) => _execute();
+                // 使用ServiceManager获取用户服务
+                var userService = ServiceManager.Instance.UserService;
+                var user = userService.Login(UserName, Password);
+
+                if (user != null)
+                {
+                    ShowSuccess($"欢迎回来，{user.UserName}！");
+                    // TODO: 导航到主界面
+                    // 这里可以添加导航逻辑
+                }
+                else
+                {
+                    ShowError("用户名或密码错误，请重试");
+                }
+            });
+        }
     }
 } 

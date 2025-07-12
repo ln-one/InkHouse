@@ -42,174 +42,287 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 
 ---
 
-## 🛠️ 完整开发流程指南
+## 🛠️ 开发架构与工作流程
 
-### 1. 🚀 项目设置与克隆
-```bash
-# 克隆仓库
-git clone <你的仓库地址>
-cd InkHouse
+### 🎯 架构优势
+- ✅ **统一配置管理**：所有配置都在 `AppConfig.cs` 中
+- ✅ **服务管理器**：通过 `ServiceManager` 统一获取服务
+- ✅ **自动错误处理**：`ViewModelBase` 提供统一的错误处理
+- ✅ **简化开发**：无需手动创建数据库连接和服务
+- ✅ **框架化设计**：只提供架构框架，具体业务逻辑由团队成员实现
 
-# 创建并切换到新功能分支
-git checkout -b feature/add-book-management
+### 🏗️ 架构概览
+
+#### 1. 配置管理 (`AppConfig.cs`)
+```csharp
+// 修改数据库连接信息
+AppConfig.SetDatabaseConnection("服务器", 3306, "数据库", "用户名", "密码");
+
+// 或者直接修改连接字符串
+AppConfig.DatabaseConnectionString = "你的连接字符串";
 ```
 
-### 2. 📚 理解 Entity Framework Core
-Entity Framework Core (EF Core) 是一个 ORM（对象关系映射）框架，让你可以用 C# 对象操作数据库，而不需要直接写 SQL。
-
-**核心概念：**
-- **DbContext**：代表与数据库的会话（如 `InkHouseContext.cs`）
-- **Entities**：映射到数据库表的 C# 类（如 `Book.cs`、`User.cs`）
-- **Migrations**：跟踪数据库架构随时间的变化
-
-**示例：添加新的 Book 实体**
+#### 2. 服务管理器 (`ServiceManager.cs`)
 ```csharp
-// 在 Models/Book.cs 中
-public class Book
+// 获取各种服务（无需手动创建）
+var userService = ServiceManager.Instance.UserService;
+var bookService = ServiceManager.Instance.BookService;
+var borrowService = ServiceManager.Instance.BorrowRecordService;
+```
+
+#### 3. 基础ViewModel (`ViewModelBase.cs`)
+```csharp
+public class YourViewModel : ViewModelBase
 {
-    public int Id { get; set; }           // 主键
-    public string Title { get; set; }     // 书名
-    public string Author { get; set; }    // 作者
-    public bool IsAvailable { get; set; } // 是否可借
+    // 自动获得以下功能：
+    // - IsLoading: 加载状态
+    // - ErrorMessage: 错误消息
+    // - SuccessMessage: 成功消息
+    // - ShowError(): 显示错误
+    // - ShowSuccess(): 显示成功
+    // - ExecuteAsync(): 安全执行异步操作
 }
 ```
 
-### 3. 🏗️ 开发流程示例：添加图书搜索功能
+### 🚀 快速开始指南
 
-#### 第一步：创建/更新模型
+#### 步骤1：配置数据库
+在 `Services/AppConfig.cs` 中修改数据库连接信息：
 ```csharp
-// 在 Models/Book.cs 中（如果不存在）
-public class Book
-{
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Author { get; set; }
-    public bool IsAvailable { get; set; }
-}
+public static string DatabaseConnectionString { get; set; } = 
+    "server=你的服务器;port=3306;database=InternShip;user=你的用户名;password=你的密码;";
 ```
 
-#### 第二步：添加到 DbContext
+#### 步骤2：创建新的ViewModel
 ```csharp
-// 在 Models/InkHouseContext.cs 中
-public class InkHouseContext : DbContext
+public class MyFeatureViewModel : ViewModelBase
 {
-    public DbSet<Book> Books { get; set; }  // 这会创建 Books 表
+    private string _myProperty;
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public string MyProperty
     {
-        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-    }
-}
-```
-
-#### 第三步：创建服务
-```csharp
-// 在 Services/BookService.cs 中
-public class BookService
-{
-    private readonly InkHouseContext _context;
-    
-    public BookService(InkHouseContext context)
-    {
-        _context = context;
+        get => _myProperty;
+        set => SetProperty(ref _myProperty, value);
     }
     
-    public List<Book> SearchBooks(string searchTerm)
-    {
-        return _context.Books
-            .Where(b => b.Title.Contains(searchTerm) || b.Author.Contains(searchTerm))
-            .ToList();
-    }
-}
-```
-
-#### 第四步：创建视图模型
-```csharp
-// 在 ViewModels/BookSearchViewModel.cs 中
-public class BookSearchViewModel : ViewModelBase
-{
-    private readonly BookService _bookService;
-    private string _searchTerm;
-    private List<Book> _searchResults;
+    public ICommand MyCommand { get; }
     
-    public string SearchTerm
+    public MyFeatureViewModel()
     {
-        get => _searchTerm;
-        set => SetProperty(ref _searchTerm, value);
+        MyCommand = new AsyncRelayCommand(MyMethodAsync);
     }
     
-    public List<Book> SearchResults
+    private async Task MyMethodAsync()
     {
-        get => _searchResults;
-        set => SetProperty(ref _searchResults, value);
-    }
-    
-    public void Search()
-    {
-        SearchResults = _bookService.SearchBooks(SearchTerm);
+        await ExecuteAsync(async () =>
+        {
+            // 获取服务
+            var service = ServiceManager.Instance.UserService;
+            
+            // 执行业务逻辑
+            var result = service.SomeMethod();
+            
+            // 显示结果
+            ShowSuccess("操作成功！");
+        });
     }
 }
 ```
 
-#### 第五步：创建视图
+#### 步骤3：创建View
+```csharp
+public partial class MyFeatureView : UserControl
+{
+    public MyFeatureView()
+    {
+        InitializeComponent();
+        DataContext = new MyFeatureViewModel(); // 无需传入服务
+    }
+}
+```
+
+### 📚 服务使用示例
+
+#### 用户服务 (UserService)
+```csharp
+var userService = ServiceManager.Instance.UserService;
+
+// 用户登录（已实现）
+var user = userService.Login("用户名", "密码");
+
+// TODO: 团队成员可以在这里添加其他用户相关的方法
+// 例如：GetAllUsers(), AddUser(), UpdateUser(), DeleteUser() 等
+```
+
+#### 图书服务 (BookService)
+```csharp
+var bookService = ServiceManager.Instance.BookService;
+
+// TODO: 团队成员可以在这里添加图书相关的方法
+// 例如：GetAllBooks(), AddBook(), UpdateBook(), DeleteBook() 等
+```
+
+#### 借阅记录服务 (BorrowRecordService)
+```csharp
+var borrowService = ServiceManager.Instance.BorrowRecordService;
+
+// TODO: 团队成员可以在这里添加借阅记录相关的方法
+// 例如：GetAllBorrowRecords(), BorrowBook(), ReturnBook() 等
+```
+
+### 🎨 UI开发技巧
+
+#### 1. 数据绑定
 ```xml
-<!-- 在 Views/BookSearchView.axaml 中 -->
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Margin="20">
-        <TextBox Text="{Binding SearchTerm}" 
-                 Watermark="输入书名或作者"/>
-        <Button Content="搜索" 
-                Command="{Binding SearchCommand}"/>
-        <ListBox ItemsSource="{Binding SearchResults}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
-</Window>
+<!-- 绑定到ViewModel的属性 -->
+<TextBox Text="{Binding UserName}" />
+<Button Command="{Binding LoginCommand}" Content="登录" />
+
+<!-- 绑定到列表 -->
+<ListBox ItemsSource="{Binding Books}">
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding Title}"/>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>
 ```
 
-### 4. 📝 代码规范与最佳实践
+#### 2. 显示加载状态
+```xml
+<StackPanel>
+    <!-- 加载指示器 -->
+    <ProgressBar IsIndeterminate="{Binding IsLoading}" 
+                 IsVisible="{Binding IsLoading}" />
+    
+    <!-- 错误消息 -->
+    <TextBlock Text="{Binding ErrorMessage}" 
+               Foreground="Red" 
+               IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    
+    <!-- 成功消息 -->
+    <TextBlock Text="{Binding SuccessMessage}" 
+               Foreground="Green" 
+               IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+</StackPanel>
+```
 
-#### 命名规范
+#### 3. 命令绑定
+```xml
+<Button Command="{Binding AddBookCommand}" Content="添加图书" />
+<Button Command="{Binding UpdateBookCommand}" Content="更新图书" />
+<Button Command="{Binding DeleteBookCommand}" Content="删除图书" />
+```
+
+### 🔧 调试技巧
+
+#### 1. 查看错误信息
+所有服务方法都有异常处理，错误信息会输出到控制台：
+```csharp
+Console.WriteLine($"操作失败: {ex.Message}");
+```
+
+#### 2. 使用ViewModel的调试功能
+```csharp
+// 在ViewModel中显示调试信息
+ShowError("调试信息");
+ShowSuccess("操作成功");
+```
+
+#### 3. 检查数据库连接
+```csharp
+// 在AppConfig.cs中设置调试模式
+AppConfig.IsDebugMode = true;
+```
+
+### 📝 开发规范
+
+#### 1. 命名规范
 - **类名**：PascalCase（如 `BookService`、`LoginViewModel`）
-- **方法名**：PascalCase（如 `SearchBooks()`、`ValidateUser()`）
-- **属性名**：PascalCase（如 `SearchTerm`、`IsAvailable`）
-- **私有字段**：camelCase 加下划线（如 `_bookService`、`_searchTerm`）
+- **方法名**：PascalCase（如 `GetAllBooks()`、`ValidateUser()`）
+- **属性名**：PascalCase（如 `BookTitle`、`IsAvailable`）
+- **私有字段**：camelCase + 下划线（如 `_bookService`、`_searchTerm`）
 
-#### 文件组织
+#### 2. 文件组织
 ```
 Models/
 ├── Book.cs              # 图书实体
 ├── User.cs              # 用户实体
-└── InkHouseContext.cs   # 数据库上下文
+└── BorrowRecord.cs      # 借阅记录实体
 
 Services/
-├── BookService.cs       # 图书相关操作
-└── UserService.cs       # 用户相关操作
+├── AppConfig.cs         # 配置管理
+├── ServiceManager.cs    # 服务管理器
+├── UserService.cs       # 用户服务
+├── BookService.cs       # 图书服务
+└── BorrowRecordService.cs # 借阅记录服务
 
 ViewModels/
-├── BookSearchViewModel.cs
-└── LoginViewModel.cs
+├── ViewModelBase.cs     # 基础ViewModel
+├── LoginViewModel.cs    # 登录ViewModel
+└── YourFeatureViewModel.cs # 你的功能ViewModel
 
 Views/
-├── BookSearchView.axaml
-└── LoginView.axaml
+├── LoginView.axaml      # 登录界面
+└── YourFeatureView.axaml # 你的功能界面
 ```
 
-#### 数据库操作模式
+#### 3. 代码注释
+所有公共方法和属性都应该有中文注释：
 ```csharp
-// 始终使用 using 语句进行数据库操作
-using (var context = new InkHouseContext())
+/// <summary>
+/// 获取所有图书
+/// </summary>
+/// <returns>图书列表</returns>
+public List<Book> GetAllBooks()
 {
-    var books = context.Books
-        .Where(b => b.IsAvailable)
-        .ToList();
+    // 实现代码
 }
 ```
+
+### 🚨 常见问题
+
+#### Q1: 数据库连接失败怎么办？
+A1: 检查 `AppConfig.cs` 中的连接字符串是否正确，确保数据库服务器可访问。
+
+#### Q2: 为什么我的ViewModel没有响应？
+A2: 确保ViewModel继承自 `ViewModelBase`，并且属性使用了 `SetProperty` 方法。
+
+#### Q3: 如何添加新的服务？
+A3: 创建新的服务类，继承相同的模式，然后在 `ServiceManager` 中添加对应的属性。
+
+#### Q4: 如何处理复杂的业务逻辑？
+A4: 在服务层实现复杂的业务逻辑，ViewModel只负责UI交互和数据绑定。
+
+### 🎉 总结
+
+新的架构让开发变得更加简单和统一：
+
+1. **配置集中管理**：所有配置都在一个地方
+2. **服务统一获取**：通过ServiceManager获取所有服务
+3. **错误自动处理**：ViewModelBase提供统一的错误处理
+4. **代码更简洁**：无需重复创建数据库连接和服务
+5. **中文注释完整**：所有代码都有详细的中文说明
+6. **框架化设计**：只提供架构框架，具体业务逻辑由团队成员实现
+
+现在你可以专注于业务逻辑的实现，而不是重复的数据库连接代码！
+
+### 📝 给团队成员的话
+
+这个架构已经为您搭建好了基础框架，包括：
+- ✅ 数据库连接管理
+- ✅ 服务管理器
+- ✅ 统一的错误处理
+- ✅ 基础的登录功能
+
+您只需要：
+1. 在服务类中添加具体的业务逻辑方法
+2. 在ViewModel中调用这些方法
+3. 在View中展示结果
+
+所有的数据库连接、错误处理、配置管理都已经为您处理好了！
+
+
 
 ### 5. 🔄 Git 工作流程
 
@@ -254,7 +367,7 @@ git push origin feature/你的功能名称
 
 #### Entity Framework 问题
 - **"表不存在"**：运行数据库迁移
-- **"连接失败"**：检查 `LoginView.axaml.cs` 中的连接字符串
+- **"连接失败"**：检查 `AppConfig.cs` 中的连接字符串
 - **"实体未找到"**：确保 DbSet 已添加到 DbContext
 
 #### Avalonia UI 问题
@@ -279,10 +392,11 @@ git push origin feature/你的功能名称
 - 如未自动还原，可在解决方案资源管理器中右键解决方案，选择“还原 NuGet 包”。
 
 ### 3. ⚙️ 配置数据库连接
-- 在解决方案资源管理器中，定位到 `InkHouse/Views/LoginView.axaml.cs`。
+- 在解决方案资源管理器中，定位到 `InkHouse/Services/AppConfig.cs`。
 - 找到如下代码：
   ```csharp
-  string connectionString = "server=你的服务器;port=3306;database=InternShip;user=你的用户名;password=你的密码;";
+  public static string DatabaseConnectionString { get; set; } = 
+      "server=你的服务器;port=3306;database=InternShip;user=你的用户名;password=你的密码;";
   ```
 - 将 `你的服务器`、`你的用户名`、`你的密码` 替换为实际的 MySQL 信息。
 

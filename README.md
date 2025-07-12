@@ -44,174 +44,287 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 
 ---
 
-## 🛠️ Complete Development Workflow
+## 🛠️ Development Architecture & Workflow
 
-### 1. 🚀 Project Setup & Cloning
-```bash
-# Clone the repository
-git clone <your-repo-url>
-cd InkHouse
+### 🎯 Architecture Advantages
+- ✅ **Unified Configuration Management**: All configurations are centralized in `AppConfig.cs`
+- ✅ **Service Manager**: Get services through `ServiceManager` without manual creation
+- ✅ **Automatic Error Handling**: `ViewModelBase` provides unified error handling
+- ✅ **Simplified Development**: No need to manually create database connections and services
+- ✅ **Framework Design**: Only provides architecture framework, specific business logic is implemented by team members
 
-# Create and switch to a new feature branch
-git checkout -b feature/add-book-management
+### 🏗️ Architecture Overview
+
+#### 1. Configuration Management (`AppConfig.cs`)
+```csharp
+// Modify database connection information
+AppConfig.SetDatabaseConnection("server", 3306, "database", "username", "password");
+
+// Or directly modify the connection string
+AppConfig.DatabaseConnectionString = "your connection string";
 ```
 
-### 2. 📚 Understanding Entity Framework Core
-Entity Framework Core (EF Core) is an ORM (Object-Relational Mapping) that lets you work with databases using C# objects instead of writing SQL directly.
-
-**Key Concepts:**
-- **DbContext**: Represents a session with the database (like `InkHouseContext.cs`)
-- **Entities**: C# classes that map to database tables (like `Book.cs`, `User.cs`)
-- **Migrations**: Track database schema changes over time
-
-**Example: Adding a new Book entity**
+#### 2. Service Manager (`ServiceManager.cs`)
 ```csharp
-// In Models/Book.cs
-public class Book
+// Get various services (no manual creation needed)
+var userService = ServiceManager.Instance.UserService;
+var bookService = ServiceManager.Instance.BookService;
+var borrowService = ServiceManager.Instance.BorrowRecordService;
+```
+
+#### 3. Base ViewModel (`ViewModelBase.cs`)
+```csharp
+public class YourViewModel : ViewModelBase
 {
-    public int Id { get; set; }           // Primary key
-    public string Title { get; set; }     // Book title
-    public string Author { get; set; }    // Author name
-    public bool IsAvailable { get; set; } // Availability status
+    // Automatically get the following features:
+    // - IsLoading: Loading state
+    // - ErrorMessage: Error message
+    // - SuccessMessage: Success message
+    // - ShowError(): Display error
+    // - ShowSuccess(): Display success
+    // - ExecuteAsync(): Safely execute async operations
 }
 ```
 
-### 3. 🏗️ Development Process Example: Adding Book Search Feature
+### 🚀 Quick Start Guide
 
-#### Step 1: Create/Update Model
+#### Step 1: Configure Database
+Modify database connection information in `Services/AppConfig.cs`:
 ```csharp
-// In Models/Book.cs (if not exists)
-public class Book
-{
-    public int Id { get; set; }
-    public string Title { get; set; }
-    public string Author { get; set; }
-    public bool IsAvailable { get; set; }
-}
+public static string DatabaseConnectionString { get; set; } = 
+    "server=your_server;port=3306;database=InternShip;user=your_username;password=your_password;";
 ```
 
-#### Step 2: Add to DbContext
+#### Step 2: Create New ViewModel
 ```csharp
-// In Models/InkHouseContext.cs
-public class InkHouseContext : DbContext
+public class MyFeatureViewModel : ViewModelBase
 {
-    public DbSet<Book> Books { get; set; }  // This creates the Books table
+    private string _myProperty;
     
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    public string MyProperty
     {
-        optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
-    }
-}
-```
-
-#### Step 3: Create Service
-```csharp
-// In Services/BookService.cs
-public class BookService
-{
-    private readonly InkHouseContext _context;
-    
-    public BookService(InkHouseContext context)
-    {
-        _context = context;
+        get => _myProperty;
+        set => SetProperty(ref _myProperty, value);
     }
     
-    public List<Book> SearchBooks(string searchTerm)
-    {
-        return _context.Books
-            .Where(b => b.Title.Contains(searchTerm) || b.Author.Contains(searchTerm))
-            .ToList();
-    }
-}
-```
-
-#### Step 4: Create ViewModel
-```csharp
-// In ViewModels/BookSearchViewModel.cs
-public class BookSearchViewModel : ViewModelBase
-{
-    private readonly BookService _bookService;
-    private string _searchTerm;
-    private List<Book> _searchResults;
+    public ICommand MyCommand { get; }
     
-    public string SearchTerm
+    public MyFeatureViewModel()
     {
-        get => _searchTerm;
-        set => SetProperty(ref _searchTerm, value);
+        MyCommand = new AsyncRelayCommand(MyMethodAsync);
     }
     
-    public List<Book> SearchResults
+    private async Task MyMethodAsync()
     {
-        get => _searchResults;
-        set => SetProperty(ref _searchResults, value);
-    }
-    
-    public void Search()
-    {
-        SearchResults = _bookService.SearchBooks(SearchTerm);
+        await ExecuteAsync(async () =>
+        {
+            // Get service
+            var service = ServiceManager.Instance.UserService;
+            
+            // Execute business logic
+            var result = service.SomeMethod();
+            
+            // Show result
+            ShowSuccess("Operation successful!");
+        });
     }
 }
 ```
 
-#### Step 5: Create View
+#### Step 3: Create View
+```csharp
+public partial class MyFeatureView : UserControl
+{
+    public MyFeatureView()
+    {
+        InitializeComponent();
+        DataContext = new MyFeatureViewModel(); // No need to pass services
+    }
+}
+```
+
+### 📚 Service Usage Examples
+
+#### User Service (UserService)
+```csharp
+var userService = ServiceManager.Instance.UserService;
+
+// User login (already implemented)
+var user = userService.Login("username", "password");
+
+// TODO: Team members can add other user-related methods here
+// For example: GetAllUsers(), AddUser(), UpdateUser(), DeleteUser(), etc.
+```
+
+#### Book Service (BookService)
+```csharp
+var bookService = ServiceManager.Instance.BookService;
+
+// TODO: Team members can add book-related methods here
+// For example: GetAllBooks(), AddBook(), UpdateBook(), DeleteBook(), etc.
+```
+
+#### Borrow Record Service (BorrowRecordService)
+```csharp
+var borrowService = ServiceManager.Instance.BorrowRecordService;
+
+// TODO: Team members can add borrow record-related methods here
+// For example: GetAllBorrowRecords(), BorrowBook(), ReturnBook(), etc.
+```
+
+### 🎨 UI Development Tips
+
+#### 1. Data Binding
 ```xml
-<!-- In Views/BookSearchView.axaml -->
-<Window xmlns="https://github.com/avaloniaui"
-        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
-    <StackPanel Margin="20">
-        <TextBox Text="{Binding SearchTerm}" 
-                 Watermark="Enter book title or author"/>
-        <Button Content="Search" 
-                Command="{Binding SearchCommand}"/>
-        <ListBox ItemsSource="{Binding SearchResults}">
-            <ListBox.ItemTemplate>
-                <DataTemplate>
-                    <TextBlock Text="{Binding Title}"/>
-                </DataTemplate>
-            </ListBox.ItemTemplate>
-        </ListBox>
-    </StackPanel>
-</Window>
+<!-- Bind to ViewModel properties -->
+<TextBox Text="{Binding UserName}" />
+<Button Command="{Binding LoginCommand}" Content="Login" />
+
+<!-- Bind to lists -->
+<ListBox ItemsSource="{Binding Books}">
+    <ListBox.ItemTemplate>
+        <DataTemplate>
+            <TextBlock Text="{Binding Title}"/>
+        </DataTemplate>
+    </ListBox.ItemTemplate>
+</ListBox>
 ```
 
-### 4. 📝 Code Standards & Best Practices
+#### 2. Display Loading State
+```xml
+<StackPanel>
+    <!-- Loading indicator -->
+    <ProgressBar IsIndeterminate="{Binding IsLoading}" 
+                 IsVisible="{Binding IsLoading}" />
+    
+    <!-- Error message -->
+    <TextBlock Text="{Binding ErrorMessage}" 
+               Foreground="Red" 
+               IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+    
+    <!-- Success message -->
+    <TextBlock Text="{Binding SuccessMessage}" 
+               Foreground="Green" 
+               IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}" />
+</StackPanel>
+```
 
-#### Naming Conventions
-- **Classes**: PascalCase (e.g., `BookService`, `LoginViewModel`)
-- **Methods**: PascalCase (e.g., `SearchBooks()`, `ValidateUser()`)
-- **Properties**: PascalCase (e.g., `SearchTerm`, `IsAvailable`)
+#### 3. Command Binding
+```xml
+<Button Command="{Binding AddBookCommand}" Content="Add Book" />
+<Button Command="{Binding UpdateBookCommand}" Content="Update Book" />
+<Button Command="{Binding DeleteBookCommand}" Content="Delete Book" />
+```
+
+### 🔧 Debugging Tips
+
+#### 1. View Error Information
+All service methods have exception handling, error messages will be output to console:
+```csharp
+Console.WriteLine($"Operation failed: {ex.Message}");
+```
+
+#### 2. Use ViewModel's Debug Features
+```csharp
+// Display debug information in ViewModel
+ShowError("Debug information");
+ShowSuccess("Operation successful");
+```
+
+#### 3. Check Database Connection
+```csharp
+// Set debug mode in AppConfig.cs
+AppConfig.IsDebugMode = true;
+```
+
+### 📝 Development Standards
+
+#### 1. Naming Conventions
+- **Class names**: PascalCase (e.g., `BookService`, `LoginViewModel`)
+- **Method names**: PascalCase (e.g., `GetAllBooks()`, `ValidateUser()`)
+- **Property names**: PascalCase (e.g., `BookTitle`, `IsAvailable`)
 - **Private fields**: camelCase with underscore (e.g., `_bookService`, `_searchTerm`)
 
-#### File Organization
+#### 2. File Organization
 ```
 Models/
 ├── Book.cs              # Book entity
 ├── User.cs              # User entity
-└── InkHouseContext.cs   # Database context
+└── BorrowRecord.cs      # Borrow record entity
 
 Services/
-├── BookService.cs       # Book-related operations
-└── UserService.cs       # User-related operations
+├── AppConfig.cs         # Configuration management
+├── ServiceManager.cs    # Service manager
+├── UserService.cs       # User service
+├── BookService.cs       # Book service
+└── BorrowRecordService.cs # Borrow record service
 
 ViewModels/
-├── BookSearchViewModel.cs
-└── LoginViewModel.cs
+├── ViewModelBase.cs     # Base ViewModel
+├── LoginViewModel.cs    # Login ViewModel
+└── YourFeatureViewModel.cs # Your feature ViewModel
 
 Views/
-├── BookSearchView.axaml
-└── LoginView.axaml
+├── LoginView.axaml      # Login interface
+└── YourFeatureView.axaml # Your feature interface
 ```
 
-#### Database Operations Pattern
+#### 3. Code Comments
+All public methods and properties should have comments:
 ```csharp
-// Always use using statement for database operations
-using (var context = new InkHouseContext())
+/// <summary>
+/// Get all books
+/// </summary>
+/// <returns>List of books</returns>
+public List<Book> GetAllBooks()
 {
-    var books = context.Books
-        .Where(b => b.IsAvailable)
-        .ToList();
+    // Implementation code
 }
 ```
+
+### 🚨 Common Issues
+
+#### Q1: Database connection failed?
+A1: Check the connection string in `AppConfig.cs` is correct, ensure the database server is accessible.
+
+#### Q2: Why is my ViewModel not responding?
+A2: Make sure the ViewModel inherits from `ViewModelBase` and properties use the `SetProperty` method.
+
+#### Q3: How to add new services?
+A3: Create new service classes following the same pattern, then add corresponding properties in `ServiceManager`.
+
+#### Q4: How to handle complex business logic?
+A4: Implement complex business logic in the service layer, ViewModel only handles UI interaction and data binding.
+
+### 🎉 Summary
+
+The new architecture makes development simpler and more unified:
+
+1. **Centralized Configuration Management**: All configurations in one place
+2. **Unified Service Access**: Get all services through ServiceManager
+3. **Automatic Error Handling**: ViewModelBase provides unified error handling
+4. **Cleaner Code**: No need to repeat database connection and service creation
+5. **Complete Comments**: All code has detailed comments
+6. **Framework Design**: Only provides architecture framework, specific business logic implemented by team members
+
+Now you can focus on implementing business logic instead of repeating database connection code!
+
+### 📝 Message to Team Members
+
+This architecture has already set up the basic framework for you, including:
+- ✅ Database connection management
+- ✅ Service manager
+- ✅ Unified error handling
+- ✅ Basic login functionality
+
+You only need to:
+1. Add specific business logic methods in service classes
+2. Call these methods in ViewModels
+3. Display results in Views
+
+All database connections, error handling, and configuration management have been handled for you!
+
+
 
 ### 5. 🔄 Git Workflow
 
@@ -256,7 +369,7 @@ git push origin feature/your-feature-name
 
 #### Entity Framework Issues
 - **"Table doesn't exist"**: Run database migrations
-- **"Connection failed"**: Check connection string in `LoginView.axaml.cs`
+- **"Connection failed"**: Check connection string in `AppConfig.cs`
 - **"Entity not found"**: Ensure DbSet is added to DbContext
 
 #### Avalonia UI Issues
@@ -281,10 +394,11 @@ git push origin feature/your-feature-name
 - If not, right-click the solution in the Solution Explorer and select `Restore NuGet Packages`.
 
 ### 3. ⚙️ Configure Database Connection
-- In the Solution Explorer, navigate to `InkHouse/Views/LoginView.axaml.cs`.
+- In the Solution Explorer, navigate to `InkHouse/Services/AppConfig.cs`.
 - Find the line:
   ```csharp
-  string connectionString = "server=YOUR_SERVER;port=3306;database=InternShip;user=YOUR_USER;password=YOUR_PASSWORD;";
+  public static string DatabaseConnectionString { get; set; } = 
+      "server=YOUR_SERVER;port=3306;database=InternShip;user=YOUR_USER;password=YOUR_PASSWORD;";
   ```
 - Replace `YOUR_SERVER`, `YOUR_USER`, `YOUR_PASSWORD` with your actual MySQL information.
 
