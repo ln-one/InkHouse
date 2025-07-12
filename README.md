@@ -4,6 +4,48 @@
 
 InkHouse is a cross-platform library management system built with C#, Avalonia, and MySQL. It supports both Windows and Linux environments, providing a modern, elegant, and easy-to-use interface.
 
+## ✨ Features
+
+### 🔐 Authentication & Authorization
+- **Role-based Access Control**: Only Admin users can access the system
+- **Secure Login**: Username/password authentication with role validation
+- **Session Management**: Automatic logout functionality with window switching
+
+### 📊 Dashboard & Statistics
+- **System Overview**: Total books, available books, borrowed books, registered users
+- **Real-time Statistics**: Dynamic dashboard with key metrics
+- **Visual Indicators**: Status indicators for book availability
+
+### 📚 Book Management
+- **Book CRUD Operations**: Add, edit, delete, and view books
+- **Book Status Tracking**: Available, borrowed, overdue, maintenance status
+- **Search & Filter**: Advanced search and filtering capabilities
+
+### 👥 User Management
+- **User CRUD Operations**: Add, edit, delete, and view users
+- **Role Management**: Admin and User role support
+- **User Authentication**: Secure login with role-based access
+
+### 📖 Borrow Management
+- **Borrow Records**: Track all book borrowing activities
+- **Borrow/Return Operations**: Complete borrow and return workflow
+- **Overdue Tracking**: Monitor overdue books and notifications
+
+### 📈 Reports & Analytics
+- **Statistical Reports**: Comprehensive library statistics
+- **Data Export**: Export reports in various formats
+- **Analytics Dashboard**: Visual data representation
+
+### ⚙️ System Settings
+- **Configuration Management**: Centralized system configuration
+- **Database Settings**: Easy database connection management
+- **System Preferences**: Customizable system settings
+
+### 🔍 Search & Navigation
+- **Global Search**: Search across books, users, and records
+- **Advanced Filters**: Multi-criteria filtering
+- **Navigation Menu**: Intuitive sidebar navigation
+
 ---
 
 ## 🤝 Team Collaboration & Project Structure
@@ -42,6 +84,26 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Use breakpoints for debugging, and leverage Rider's XAML preview and DB tools.**
 - **Communicate frequently; ask questions when in doubt.**
 
+### 🚀 Current Implementation Status
+
+#### ✅ Completed Features
+- **Authentication System**: Role-based login with admin-only access
+- **Window Management**: Login window ↔ Main window switching
+- **Logout Functionality**: Secure logout with proper window management
+- **UI Framework**: Complete modern UI with dashboard, navigation, and responsive design
+- **Database Integration**: MySQL database with Entity Framework Core
+- **Service Architecture**: Centralized service management with dependency injection
+- **Error Handling**: Unified error handling across all layers
+- **Event System**: Login success/failure events with proper window switching
+
+#### 🔄 Ready for Implementation
+- **Book Management**: UI interface ready, service methods need implementation
+- **User Management**: UI interface ready, service methods need implementation  
+- **Borrow Management**: UI interface ready, service methods need implementation
+- **Dashboard Statistics**: UI ready, data binding needs implementation
+- **Search Functionality**: UI ready, search logic needs implementation
+- **System Settings**: UI ready, configuration logic needs implementation
+
 ---
 
 ## 🛠️ Development Architecture & Workflow
@@ -74,7 +136,7 @@ var borrowService = ServiceManager.Instance.BorrowRecordService;
 
 #### 3. Base ViewModel (`ViewModelBase.cs`)
 ```csharp
-public class YourViewModel : ViewModelBase
+public class MyFeatureViewModel : ViewModelBase
 {
     // Automatically get the following features:
     // - IsLoading: Loading state
@@ -89,11 +151,25 @@ public class YourViewModel : ViewModelBase
 ### 🚀 Quick Start Guide
 
 #### Step 1: Configure Database
-Modify database connection information in `Services/AppConfig.cs`:
-```csharp
-public static string DatabaseConnectionString { get; set; } = 
-    "server=your_server;port=3306;database=InternShip;user=your_username;password=your_password;";
-```
+**⚠️ Important**: For security reasons, the actual `AppConfig.cs` file is not included in the repository.
+
+1. **Copy the template file**:
+   ```bash
+   cp InkHouse/Services/AppConfig.template.cs InkHouse/Services/AppConfig.cs
+   ```
+
+2. **Modify database connection information** in `Services/AppConfig.cs`:
+   ```csharp
+   public static string DatabaseConnectionString { get; set; } = 
+       "server=your_server;port=3306;database=InternShip;user=your_username;password=your_password;";
+   ```
+
+3. **Replace the placeholders** with your actual database information:
+   - `your_server`: Database server address
+   - `your_username`: Database username  
+   - `your_password`: Database password
+
+📖 **See detailed setup instructions**: `InkHouse/Services/README.md`
 
 #### Step 2: Create New ViewModel
 ```csharp
@@ -141,6 +217,16 @@ public partial class MyFeatureView : UserControl
         DataContext = new MyFeatureViewModel(); // No need to pass services
     }
 }
+
+// Or create a Window
+public partial class MyFeatureWindow : Window
+{
+    public MyFeatureWindow()
+    {
+        InitializeComponent();
+        DataContext = new MyFeatureViewModel();
+    }
+}
 ```
 
 ### 📚 Service Usage Examples
@@ -154,6 +240,50 @@ var user = userService.Login("username", "password");
 
 // TODO: Team members can add other user-related methods here
 // For example: GetAllUsers(), AddUser(), UpdateUser(), DeleteUser(), etc.
+```
+
+### 🏗️ Main Window Features Interface
+
+The main window (`MainWindowViewModel`) provides a complete interface for all library management features:
+
+#### Dashboard Statistics
+```csharp
+public int TotalBooks { get; set; }
+public int AvailableBooks { get; set; }
+public int BorrowedBooks { get; set; }
+public int RegisteredUsers { get; set; }
+```
+
+#### Book Management Interface
+```csharp
+public ObservableCollection<Book> Books { get; set; }
+public Task LoadBooksAsync();
+public Task AddBookAsync(Book book);
+public Task EditBookAsync(Book book);
+public Task DeleteBookAsync(Book book);
+```
+
+#### User Management Interface
+```csharp
+public ObservableCollection<User> Users { get; set; }
+public Task LoadUsersAsync();
+public Task AddUserAsync(User user);
+public Task EditUserAsync(User user);
+public Task DeleteUserAsync(User user);
+```
+
+#### Borrow Management Interface
+```csharp
+public ObservableCollection<BorrowRecord> BorrowRecords { get; set; }
+public Task LoadBorrowRecordsAsync();
+public Task BorrowBookAsync(BorrowRecord record);
+public Task ReturnBookAsync(BorrowRecord record);
+```
+
+#### Authentication & Session Management
+```csharp
+public ICommand LogoutCommand { get; }
+public void Logout(); // Handles window switching and logout
 ```
 
 #### Book Service (BookService)
@@ -178,6 +308,7 @@ var borrowService = ServiceManager.Instance.BorrowRecordService;
 ```xml
 <!-- Bind to ViewModel properties -->
 <TextBox Text="{Binding UserName}" />
+<TextBox Classes="password" Text="{Binding Password}" />
 <Button Command="{Binding LoginCommand}" Content="Login" />
 
 <!-- Bind to lists -->
@@ -188,6 +319,11 @@ var borrowService = ServiceManager.Instance.BorrowRecordService;
         </DataTemplate>
     </ListBox.ItemTemplate>
 </ListBox>
+
+<!-- Bind to window events -->
+<Window x:Class="InkHouse.Views.LoginWindow">
+    <!-- Window content -->
+</Window>
 ```
 
 #### 2. Display Loading State
@@ -211,9 +347,9 @@ var borrowService = ServiceManager.Instance.BorrowRecordService;
 
 #### 3. Command Binding
 ```xml
-<Button Command="{Binding AddBookCommand}" Content="Add Book" />
-<Button Command="{Binding UpdateBookCommand}" Content="Update Book" />
-<Button Command="{Binding DeleteBookCommand}" Content="Delete Book" />
+<Button Command="{Binding LoginCommand}" Content="Login" />
+<Button Command="{Binding LogoutCommand}" Content="Logout" />
+<Button Command="{Binding SearchCommand}" Content="Search" />
 ```
 
 ### 🔧 Debugging Tips
@@ -250,11 +386,14 @@ AppConfig.IsDebugMode = true;
 Models/
 ├── Book.cs              # Book entity
 ├── User.cs              # User entity
-└── BorrowRecord.cs      # Borrow record entity
+├── BorrowRecord.cs      # Borrow record entity
+├── UserRoles.cs         # User role constants
+└── InkHouseContext.cs   # Entity Framework context
 
 Services/
 ├── AppConfig.cs         # Configuration management
 ├── ServiceManager.cs    # Service manager
+├── DbContextFactory.cs  # Database context factory
 ├── UserService.cs       # User service
 ├── BookService.cs       # Book service
 └── BorrowRecordService.cs # Borrow record service
@@ -262,11 +401,15 @@ Services/
 ViewModels/
 ├── ViewModelBase.cs     # Base ViewModel
 ├── LoginViewModel.cs    # Login ViewModel
-└── YourFeatureViewModel.cs # Your feature ViewModel
+└── MainWindowViewModel.cs # Main window ViewModel
 
 Views/
-├── LoginView.axaml      # Login interface
-└── YourFeatureView.axaml # Your feature interface
+├── LoginView.axaml      # Login user control
+├── LoginView.axaml.cs   # Login user control code-behind
+├── LoginWindow.axaml    # Login window
+├── LoginWindow.axaml.cs # Login window code-behind
+├── MainWindow.axaml     # Main window
+└── MainWindow.axaml.cs  # Main window code-behind
 ```
 
 #### 3. Code Comments
@@ -315,14 +458,17 @@ This architecture has already set up the basic framework for you, including:
 - ✅ Database connection management
 - ✅ Service manager
 - ✅ Unified error handling
-- ✅ Basic login functionality
+- ✅ Role-based authentication system
+- ✅ Window management (Login ↔ Main)
+- ✅ Logout functionality
+- ✅ Complete UI framework with modern design
 
 You only need to:
 1. Add specific business logic methods in service classes
 2. Call these methods in ViewModels
 3. Display results in Views
 
-All database connections, error handling, and configuration management have been handled for you!
+All database connections, error handling, configuration management, and authentication have been handled for you!
 
 
 
@@ -427,15 +573,23 @@ git push origin feature/your-feature-name
 ---
 
 ## 🧩 Features
-- 👤 User login (Admin & Normal User)
-- 📚 Book management (CRUD)
-- 🔄 Borrow and return records
-- 🛡️ Role-based access control
+- 👤 Role-based authentication (Admin only access)
+- 🔐 Secure login with role validation
+- 🚪 Logout functionality with window switching
+- 📊 Dashboard with system statistics
+- 📚 Book management interface (ready for implementation)
+- 👥 User management interface (ready for implementation)
+- 📖 Borrow management interface (ready for implementation)
+- 🔍 Search functionality (ready for implementation)
+- ⚙️ System settings (ready for implementation)
 
 ## 🛠️ Tech Stack
-- Avalonia UI (cross-platform desktop)
-- Entity Framework Core (ORM)
-- MySQL (cloud database)
+- **Avalonia UI** (cross-platform desktop framework)
+- **Entity Framework Core** (ORM with MySQL provider)
+- **MySQL** (database)
+- **.NET 8.0** (runtime)
+- **MVVM Pattern** (architecture)
+- **Dependency Injection** (service management)
 
 ## 👥 Contributors
 - Member A
