@@ -32,9 +32,13 @@ namespace InkHouse.Services
         {
             try
             {
+                Console.WriteLine("开始登录验证...");
                 using var db = _dbContextFactory.CreateDbContext();
                 // 注意：在实际项目中，密码应该加密存储和验证
-                return db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
+                var user = db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
+                Console.WriteLine($"查询结果: {(user != null ? "找到用户" : "未找到用户")}");
+        
+        return user;
             }
             catch (Exception ex)
             {

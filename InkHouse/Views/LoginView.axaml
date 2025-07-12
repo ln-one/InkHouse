@@ -8,6 +8,12 @@
         <TextBlock Text="InkHouse 登录" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,24"/>
         <TextBox Watermark="用户名" Text="{Binding UserName, Mode=TwoWay}" CornerRadius="8" FontSize="16"/>
         <TextBox Watermark="密码" Text="{Binding Password, Mode=TwoWay}" CornerRadius="8" FontSize="16" PasswordChar="*"/>
+
+        <!-- 添加调试信息 -->
+        <TextBlock Text="{Binding ErrorMessage}" Foreground="Red" IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        <TextBlock Text="{Binding SuccessMessage}" Foreground="Green" IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+        <ProgressBar IsIndeterminate="{Binding IsLoading}" IsVisible="{Binding IsLoading}"/>
+        
         <Button Content="登录" Command="{Binding LoginCommand}" Height="40" CornerRadius="8" FontSize="16" Background="#007AFF" Foreground="White"/>
     </StackPanel>
 </UserControl> 

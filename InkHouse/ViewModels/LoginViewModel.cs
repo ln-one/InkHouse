@@ -53,9 +53,14 @@ namespace InkHouse.ViewModels
         /// 使用新的架构，自动处理错误和加载状态
         /// </summary>
         private async Task LoginAsync()
-        {
+        {   
+
+            Console.WriteLine("登录按钮被点击了！");
+
             await ExecuteAsync(async () =>
             {
+                Console.WriteLine($"用户名: {UserName}, 密码: {Password}");
+                
                 // 输入验证
                 if (string.IsNullOrWhiteSpace(UserName))
                 {
