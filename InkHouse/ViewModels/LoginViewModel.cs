@@ -13,8 +13,8 @@ namespace InkHouse.ViewModels
     /// </summary>
     public class LoginViewModel : ViewModelBase
     {
-        private string _userName;
-        private string _password;
+        private string _userName = string.Empty;
+        private string _password = string.Empty;
 
         /// <summary>
         /// 用户名
@@ -33,6 +33,16 @@ namespace InkHouse.ViewModels
             get => _password;
             set => SetProperty(ref _password, value);
         }
+
+        /// <summary>
+        /// 登录成功事件
+        /// </summary>
+        public event Action? LoginSuccess;
+        
+        /// <summary>
+        /// 登录失败事件（权限不足）
+        /// </summary>
+        public event Action<string>? LoginFailed;
 
         /// <summary>
         /// 登录命令
@@ -54,7 +64,6 @@ namespace InkHouse.ViewModels
         /// </summary>
         private async Task LoginAsync()
         {   
-
             Console.WriteLine("登录按钮被点击了！");
 
             await ExecuteAsync(async () =>
@@ -76,17 +85,32 @@ namespace InkHouse.ViewModels
 
                 // 使用ServiceManager获取用户服务
                 var userService = ServiceManager.Instance.UserService;
-                var user = userService.Login(UserName, Password);
+                var user = await Task.Run(() => userService.Login(UserName, Password));
 
                 if (user != null)
                 {
-                    ShowSuccess($"欢迎回来，{user.UserName}！");
-                    // TODO: 导航到主界面
-                    // 这里可以添加导航逻辑
+                    // 检查用户角色，只有管理员才能登录系统
+                    if (UserRoles.IsAdmin(user.Role))
+                    {
+                        ShowSuccess($"欢迎回来，管理员 {user.UserName}！");
+                        
+                        // 触发登录成功事件
+                        LoginSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        ShowError("权限不足，只有管理员才能登录系统");
+                        
+                        // 触发登录失败事件（权限不足）
+                        LoginFailed?.Invoke("权限不足，只有管理员才能登录系统");
+                    }
                 }
                 else
                 {
                     ShowError("用户名或密码错误，请重试");
+                    
+                    // 触发登录失败事件（凭据错误）
+                    LoginFailed?.Invoke("用户名或密码错误，请重试");
                 }
             });
         }

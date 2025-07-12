@@ -10,7 +10,7 @@ namespace InkHouse.Services
     public class ServiceManager
     {
         // 单例实例
-        private static ServiceManager _instance;
+        private static ServiceManager? _instance;
         private static readonly object _lock = new object();
 
         // 数据库上下文工厂

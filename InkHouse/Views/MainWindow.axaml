@@ -1,9 +1,249 @@
-<Window
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:views="clr-namespace:InkHouse.Views"
-    x:Class="InkHouse.Views.MainWindow"
-    Width="400" Height="500"
-    Title="InkHouse">
-    <views:LoginView/>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="InkHouse.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="InkHouse - 图书馆管理系统"
+        Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 侧边栏 -->
+        <Border Classes="sidebar" Grid.Column="0">
+            <StackPanel Margin="16">
+                <!-- Logo -->
+                <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
+                
+                <!-- 导航菜单 -->
+                <Button Classes="nav-item active" Content="📊 仪表板" Margin="0,0,0,8"/>
+                <Button Classes="nav-item" Content="📚图书管理" Margin="0,0,0,8"/>
+                <Button Classes="nav-item" Content="👥用户管理" Margin="0,0,0,8"/>
+                <Button Classes="nav-item" Content="📖借阅管理" Margin="0,0,0,8"/>
+                <Button Classes="nav-item" Content="📈统计报表" Margin="0,0,0,8"/>
+                <Button Classes="nav-item" Content="⚙️系统设置" Margin="0,0,0,8"/>
+                
+                <Rectangle Classes="divider" Margin="0,24"/>
+                
+                <!-- 用户信息 -->
+                <StackPanel>
+                    <TextBlock Classes="caption" Text="当前用户"/>
+                    <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
+                    <Button Classes="nav-item" Content="🚪 退出登录" Margin="0,8,0,0" Command="{Binding LogoutCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 主内容区域 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 顶部导航栏 -->
+            <Border Classes="navbar" Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Classes="subtitle" Text="仪表板" 
+                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                        <TextBox Classes="search" Watermark="搜索..." Width="300"/>
+                        <Button Classes="tool" Content="🔔"/>
+                        <Button Classes="tool" Content="⚙️"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 主要内容 -->
+            <ScrollViewer Grid.Row="1" Padding="24">
+                <StackPanel Spacing="24">
+                    <!-- 统计卡片 -->
+                    <TextBlock Classes="title" Text="系统概览"/>
+                    
+                    <UniformGrid Classes="responsive" Columns="4">
+                        <Border Classes="stat-card">
+                            <StackPanel>
+                                <TextBlock Classes="stat-number" Text="1,234"/>
+                                <TextBlock Classes="stat-label" Text="总藏书量"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Classes="stat-card">
+                            <StackPanel>
+                                <TextBlock Classes="stat-number" Text="856"/>
+                                <TextBlock Classes="stat-label" Text="可借图书"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Classes="stat-card">
+                            <StackPanel>
+                                <TextBlock Classes="stat-number" Text="378"/>
+                                <TextBlock Classes="stat-label" Text="借出图书"/>
+                            </StackPanel>
+                        </Border>
+                        
+                        <Border Classes="stat-card">
+                            <StackPanel>
+                                <TextBlock Classes="stat-number" Text="156"/>
+                                <TextBlock Classes="stat-label" Text="注册用户"/>
+                            </StackPanel>
+                        </Border>
+                    </UniformGrid>
+
+                    <!-- 状态指示器示例 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="图书状态" HorizontalAlignment="Left"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
+                                <Border Classes="status available">
+                                    <TextBlock Classes="status available" Text="可借"/>
+                                </Border>
+                                <Border Classes="status borrowed">
+                                    <TextBlock Classes="status borrowed" Text="已借出"/>
+                                </Border>
+                                <Border Classes="status overdue">
+                                    <TextBlock Classes="status overdue" Text="逾期"/>
+                                </Border>
+                                <Border Classes="status maintenance">
+                                    <TextBlock Classes="status maintenance" Text="维护中"/>
+                                </Border>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 按钮样式展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="按钮样式" HorizontalAlignment="Left"/>
+                            <StackPanel Orientation="Horizontal" Spacing="12" Margin="0,16,0,0">
+                                <Button Classes="primary" Content="主要按钮"/>
+                                <Button Classes="secondary" Content="次要按钮"/>
+                                <Button Classes="success" Content="成功按钮"/>
+                                <Button Classes="danger" Content="危险按钮"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 表单元素展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="表单元素" HorizontalAlignment="Left"/>
+                            <StackPanel Spacing="16" Margin="0,16,0,0">
+                                <StackPanel>
+                                    <TextBlock Classes="label" Text="用户名"/>
+                                    <TextBox Watermark="请输入用户名"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Classes="label" Text="密码"/>
+                                    <TextBox Classes="password" Watermark="请输入密码"/>
+                                </StackPanel>
+                                <StackPanel>
+                                    <TextBlock Classes="label" Text="角色"/>
+                                    <ComboBox>
+                                        <ComboBoxItem Content="管理员"/>
+                                        <ComboBoxItem Content="普通用户"/>
+                                    </ComboBox>
+                                </StackPanel>
+                                <StackPanel Orientation="Horizontal" Spacing="12">
+                                    <CheckBox Content="记住我"/>
+                                    <RadioButton Content="选项1" IsChecked="True"/>
+                                    <RadioButton Content="选项2"/>
+                                </StackPanel>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 消息样式展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="消息样式" HorizontalAlignment="Left"/>
+                            <StackPanel Spacing="8" Margin="0,16,0,0">
+                                <TextBlock Classes="success" Text="✅ 操作成功完成！"/>
+                                <TextBlock Classes="error" Text="❌ 操作失败，请重试"/>
+                                <TextBlock Classes="warning" Text="⚠️ 请注意，即将到期"/>
+                                <TextBlock Classes="info" Text="ℹ️ 系统维护通知"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 选项卡展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="选项卡" HorizontalAlignment="Left"/>
+                            <TabControl Margin="0,16,0,0">
+                                <TabItem Header="基本信息">
+                                    <StackPanel Margin="16">
+                                        <TextBlock Text="这是基本信息选项卡的内容"/>
+                                    </StackPanel>
+                                </TabItem>
+                                <TabItem Header="详细信息">
+                                    <StackPanel Margin="16">
+                                        <TextBlock Text="这是详细信息选项卡的内容"/>
+                                    </StackPanel>
+                                </TabItem>
+                                <TabItem Header="设置">
+                                    <StackPanel Margin="16">
+                                        <TextBlock Text="这是设置选项卡的内容"/>
+                                    </StackPanel>
+                                </TabItem>
+                            </TabControl>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 分页展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="分页控件" HorizontalAlignment="Left"/>
+                            <StackPanel Classes="pagination" Margin="0,16,0,0">
+                                <Button Classes="page" Content="上一页"/>
+                                <Button Classes="page active" Content="1"/>
+                                <Button Classes="page" Content="2"/>
+                                <Button Classes="page" Content="3"/>
+                                <TextBlock Text="..." VerticalAlignment="Center" Margin="8,0"/>
+                                <Button Classes="page" Content="10"/>
+                                <Button Classes="page" Content="下一页"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+
+                    <!-- 过滤器展示 -->
+                    <Border Classes="card">
+                        <StackPanel>
+                            <TextBlock Classes="subtitle" Text="过滤器" HorizontalAlignment="Left"/>
+                            <Border Classes="filter-panel" Margin="0,16,0,0">
+                                <StackPanel>
+                                    <TextBlock Classes="filter-label" Text="图书分类"/>
+                                    <StackPanel Orientation="Horizontal" Spacing="8">
+                                        <Button Classes="filter-option active" Content="全部"/>
+                                        <Button Classes="filter-option" Content="文学"/>
+                                        <Button Classes="filter-option" Content="科技"/>
+                                        <Button Classes="filter-option" Content="历史"/>
+                                        <Button Classes="filter-option" Content="艺术"/>
+                                    </StackPanel>
+                                </StackPanel>
+                            </Border>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </ScrollViewer>
+        </Grid>
+    </Grid>
 </Window>

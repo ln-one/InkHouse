@@ -28,7 +28,7 @@ namespace InkHouse.Services
         /// <param name="username">用户名</param>
         /// <param name="password">密码</param>
         /// <returns>登录成功的用户对象，失败返回null</returns>
-        public User Login(string username, string password)
+        public User? Login(string username, string password)
         {
             try
             {
@@ -38,7 +38,7 @@ namespace InkHouse.Services
                 var user = db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
                 Console.WriteLine($"查询结果: {(user != null ? "找到用户" : "未找到用户")}");
         
-        return user;
+                return user;
             }
             catch (Exception ex)
             {
