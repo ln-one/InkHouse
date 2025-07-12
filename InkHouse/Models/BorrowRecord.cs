@@ -26,5 +26,7 @@ namespace InkHouse.Models
         [Required]
         [MaxLength(20)]
         public string Status { get; set; } // 借出/归还
+        // 是否已归还（用于简化逻辑）
+        public bool IsReturned { get; set; } = false;
     }
 } 
