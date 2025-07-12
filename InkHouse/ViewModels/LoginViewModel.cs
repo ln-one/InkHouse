@@ -4,6 +4,8 @@ using System.Windows.Input;
 using InkHouse.Models;
 using InkHouse.Services;
 using CommunityToolkit.Mvvm.Input;
+using Avalonia.Controls;
+using Avalonia.Controls.ApplicationLifetimes;
 
 namespace InkHouse.ViewModels
 {
@@ -49,6 +51,43 @@ namespace InkHouse.ViewModels
         }
 
         /// <summary>
+        /// 导航到主界面
+        /// </summary>
+        /// <param name="user">登录成功的用户</param>
+        private void NavigateToMainView(User user)
+        {
+            Console.WriteLine("开始导航到主界面");
+            
+            // 通过主窗口的ViewModel来切换视图
+            if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                Console.WriteLine("获取到桌面应用生命周期");
+                var mainWindow = desktop.MainWindow;
+                Console.WriteLine($"主窗口: {mainWindow}");
+                
+                if (mainWindow?.DataContext is MainWindowViewModel mainWindowViewModel)
+                {
+                    Console.WriteLine("获取到主窗口ViewModel");
+                    var mainView = new Views.MainView
+                    {
+                        DataContext = new MainViewModel(user)
+                    };
+                    Console.WriteLine("创建主界面视图成功");
+                    mainWindowViewModel.CurrentView = mainView;
+                    Console.WriteLine("设置主界面视图成功");
+                }
+                else
+                {
+                    Console.WriteLine("主窗口DataContext不是MainWindowViewModel类型");
+                }
+            }
+            else
+            {
+                Console.WriteLine("无法获取桌面应用生命周期");
+            }
+        }
+
+        /// <summary>
         /// 异步登录方法
         /// 使用新的架构，自动处理错误和加载状态
         /// </summary>
@@ -71,13 +110,20 @@ namespace InkHouse.ViewModels
 
                 // 使用ServiceManager获取用户服务
                 var userService = ServiceManager.Instance.UserService;
-                var user = userService.Login(UserName, Password);
+                
+                // 先尝试测试登录，如果失败再尝试真实数据库登录
+                var user = await userService.TestLoginAsync(UserName, Password);
+                if (user == null)
+                {
+                    // 如果测试登录失败，尝试真实数据库登录
+                    user = await userService.LoginAsync(UserName, Password);
+                }
 
                 if (user != null)
                 {
                     ShowSuccess($"欢迎回来，{user.UserName}！");
-                    // TODO: 导航到主界面
-                    // 这里可以添加导航逻辑
+                    // 导航到主界面
+                    NavigateToMainView(user);
                 }
                 else
                 {

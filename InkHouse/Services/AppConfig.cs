@@ -13,7 +13,7 @@ namespace InkHouse.Services
         /// 请根据你的实际数据库信息修改这些参数
         /// </summary>
         public static string DatabaseConnectionString { get; set; } = 
-            "server=47.93.254.172;port=3306;database=InternShip;user=你的用户名;password=你的密码;";
+            "server=192.168.78.93;port=3306;database=InternShip;user=root;password=123456;";
 
         /// <summary>
         /// 应用程序名称
