@@ -23,6 +23,8 @@ namespace InkHouse.Services
             // 使用MySQL数据库，自动检测版本
             optionsBuilder.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
             return new InkHouseContext(optionsBuilder.Options);
+            
+            
         }
     }
 } 
