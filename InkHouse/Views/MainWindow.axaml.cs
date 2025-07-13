@@ -9,6 +9,7 @@ namespace InkHouse.Views;
 
 public partial class MainWindow : Window
 {
+    private static bool _isShuttingDown = false;
     public MainWindow()
     {
         InitializeComponent();
@@ -26,6 +27,8 @@ public partial class MainWindow : Window
     /// </summary>
     private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        if (_isShuttingDown) return;
+        _isShuttingDown = true;
         // 释放资源
         DisposeResources();
         

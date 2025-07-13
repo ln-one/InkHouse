@@ -1,0 +1,197 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+        x:Class="InkHouse.Views.BorrowEditDialog"
+        x:DataType="vm:BorrowEditViewModel"
+        Title="借阅管理" Width="900" Height="700"
+        WindowStartupLocation="CenterOwner">
+    
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题和模式切换 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="0,0,0,16">
+            <TextBlock Classes="title" Text="借阅管理" VerticalAlignment="Center"/>
+            <Button Classes="primary" Content="📚 借书模式" 
+                    Command="{Binding SwitchModeCommand}"
+                    IsVisible="{Binding IsBorrowMode}"/>
+            <Button Classes="primary" Content="📖 还书模式" 
+                    Command="{Binding SwitchModeCommand}"
+                    IsVisible="{Binding !IsBorrowMode}"/>
+        </StackPanel>
+
+        <!-- 搜索栏 -->
+        <Border Grid.Row="1" Classes="card" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Grid.Column="0" Classes="search" 
+                         Text="{Binding SearchText}" 
+                         Watermark="搜索..."
+                         Margin="0,0,12,0"/>
+                <Button Grid.Column="1" Classes="primary" Content="🔍 搜索" 
+                        Command="{Binding SearchBorrowRecordsCommand}"
+                        IsVisible="{Binding !IsBorrowMode}"/>
+                <Button Grid.Column="1" Classes="primary" Content="🔍 搜索" 
+                        Command="{Binding SearchAvailableBooksCommand}"
+                        IsVisible="{Binding IsBorrowMode}"/>
+            </Grid>
+        </Border>
+
+        <!-- 主要内容区域 -->
+        <Grid Grid.Row="2">
+            <!-- 借书模式 -->
+            <Grid IsVisible="{Binding IsBorrowMode}">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                    <ColumnDefinition Width="*"/>
+                </Grid.ColumnDefinitions>
+
+                <!-- 可借图书列表 -->
+                <Border Grid.Column="0" Classes="card" Margin="0,0,8,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Classes="subtitle" Text="可借图书" Margin="0,0,0,8"/>
+
+                        <ScrollViewer Grid.Row="1">
+                            <ListBox ItemsSource="{Binding AvailableBooks}" SelectedItem="{Binding SelectedBook}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Classes="list-item" Margin="0,1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                    <ColumnDefinition Width="80"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding Title}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding Available}" Classes="cell-text"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+
+                <!-- 操作按钮 -->
+                <StackPanel Grid.Column="1" VerticalAlignment="Center" Spacing="8">
+                    <Button Classes="primary" Content="借书" 
+                            Command="{Binding BorrowBookCommand}"
+                            IsEnabled="{Binding SelectedBook, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+                </StackPanel>
+
+                <!-- 用户列表 -->
+                <Border Grid.Column="2" Classes="card" Margin="8,0,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+
+                        <TextBlock Grid.Row="0" Classes="subtitle" Text="选择用户" Margin="0,0,0,8"/>
+
+                        <ScrollViewer Grid.Row="1">
+                            <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
+                                <ListBox.ItemTemplate>
+                                    <DataTemplate>
+                                        <Border Classes="list-item" Margin="0,1">
+                                            <Grid>
+                                                <Grid.ColumnDefinitions>
+                                                    <ColumnDefinition Width="50"/>
+                                                    <ColumnDefinition Width="*"/>
+                                                    <ColumnDefinition Width="100"/>
+                                                </Grid.ColumnDefinitions>
+                                                
+                                                <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="1" Text="{Binding UserName}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="2" Text="{Binding Role}" Classes="cell-text"/>
+                                            </Grid>
+                                        </Border>
+                                    </DataTemplate>
+                                </ListBox.ItemTemplate>
+                            </ListBox>
+                        </ScrollViewer>
+                    </Grid>
+                </Border>
+            </Grid>
+
+            <!-- 还书模式 -->
+            <Border IsVisible="{Binding !IsBorrowMode}" Classes="card">
+                <Grid>
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+
+                    <TextBlock Grid.Row="0" Classes="subtitle" Text="未归还的借阅记录" Margin="0,0,0,8"/>
+
+                    <ScrollViewer Grid.Row="1">
+                        <ListBox ItemsSource="{Binding BorrowRecords}" SelectedItem="{Binding SelectedBorrowRecord}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item" Margin="0,1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            
+                                            <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Book.Title}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Book.Author}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding User.UserName}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding BorrowDate, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding Status}" Classes="cell-text"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                </Grid>
+            </Border>
+
+            <!-- 加载指示器 -->
+            <Border Classes="loading-overlay" IsVisible="{Binding IsLoading}">
+                <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                    <TextBlock Text="正在加载..." Classes="loading-text"/>
+                </StackPanel>
+            </Border>
+        </Grid>
+
+        <!-- 底部按钮 -->
+        <StackPanel Grid.Row="3" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="8" Margin="0,16,0,0">
+            <Button Classes="secondary" Content="取消" Name="CancelButton"/>
+            <Button Classes="primary" Content="还书" 
+                    Command="{Binding ReturnBookCommand}"
+                    IsVisible="{Binding !IsBorrowMode}"
+                    IsEnabled="{Binding SelectedBorrowRecord, Converter={x:Static ObjectConverters.IsNotNull}}"/>
+        </StackPanel>
+    </Grid>
+</Window> 

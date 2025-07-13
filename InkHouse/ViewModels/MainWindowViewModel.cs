@@ -412,12 +412,142 @@ public partial class MainWindowViewModel : ViewModelBase
     // ================== 借阅管理 ==================
     /// <summary>借阅记录列表</summary>
     public ObservableCollection<BorrowRecord> BorrowRecords { get; set; } = new();
+    
+    /// <summary>当前选中的借阅记录</summary>
+    public BorrowRecord? SelectedBorrowRecord { get; set; }
+    
+    /// <summary>借阅搜索关键字</summary>
+    public string BorrowSearchText { get; set; } = string.Empty;
+    
     /// <summary>加载借阅记录</summary>
-    public Task LoadBorrowRecordsAsync() => Task.CompletedTask;
-    /// <summary>借书</summary>
-    public Task BorrowBookAsync(BorrowRecord record) => Task.CompletedTask;
-    /// <summary>还书</summary>
-    public Task ReturnBookAsync(BorrowRecord record) => Task.CompletedTask;
+    [RelayCommand]
+    public async Task LoadBorrowRecordsAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            var records = await _borrowRecordService.GetAllBorrowRecordsAsync();
+            
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BorrowRecords.Clear();
+                foreach (var record in records)
+                {
+                    BorrowRecords.Add(record);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"加载借阅记录失败: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    
+    /// <summary>搜索借阅记录</summary>
+    [RelayCommand]
+    public async Task SearchBorrowRecordsAsync()
+    {
+        if (string.IsNullOrWhiteSpace(BorrowSearchText))
+        {
+            await LoadBorrowRecordsAsync();
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            var records = await _borrowRecordService.SearchBorrowRecordsAsync(BorrowSearchText);
+            
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                BorrowRecords.Clear();
+                foreach (var record in records)
+                {
+                    BorrowRecords.Add(record);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"搜索借阅记录失败: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    
+    /// <summary>显示借书对话框</summary>
+    [RelayCommand]
+    public async Task ShowBorrowDialogAsync()
+    {
+        try
+        {
+            var borrowEditViewModel = new BorrowEditViewModel(_borrowRecordService, _bookService, _userService);
+            var dialog = new BorrowEditDialog
+            {
+                DataContext = borrowEditViewModel
+            };
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                await dialog.ShowDialog(desktop.MainWindow);
+            }
+            await LoadBorrowRecordsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"显示借书对话框失败: {ex.Message}");
+        }
+    }
+    
+    /// <summary>显示还书对话框</summary>
+    [RelayCommand]
+    public async Task ShowReturnDialogAsync()
+    {
+        try
+        {
+            var borrowEditViewModel = new BorrowEditViewModel(_borrowRecordService, _bookService, _userService);
+            // 设置为还书模式
+            borrowEditViewModel.IsBorrowMode = false;
+            var dialog = new BorrowEditDialog
+            {
+                DataContext = borrowEditViewModel
+            };
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                await dialog.ShowDialog(desktop.MainWindow);
+            }
+            await LoadBorrowRecordsAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"显示还书对话框失败: {ex.Message}");
+        }
+    }
+    
+    /// <summary>还书操作</summary>
+    [RelayCommand]
+    public async Task ReturnBorrowRecordAsync(BorrowRecord record)
+    {
+        if (record == null) return;
+
+        try
+        {
+            await _borrowRecordService.ReturnBookAsync(record.Id);
+            await Dispatcher.UIThread.InvokeAsync(async () => await LoadBorrowRecordsAsync());
+            await ShowMessageAsync("还书成功！");
+        }
+        catch (Exception ex)
+        {
+            await ShowMessageAsync($"还书失败：{ex.Message}");
+        }
+    }
 
     // ================== 统计报表 ==================
     /// <summary>加载统计报表</summary>
@@ -520,10 +650,27 @@ public partial class MainWindowViewModel : ViewModelBase
     
     /// <summary>显示借阅管理</summary>
     [RelayCommand]
-    public void ShowBorrowManagement()
+    public async Task ShowBorrowManagement()
     {
-        SelectedMenu = "BorrowManagement";
-        CurrentView = "BorrowManagement";
+        Console.WriteLine("切换到借阅管理视图");
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                var borrowManagementView = new BorrowManagementView { DataContext = this };
+                Console.WriteLine($"BorrowManagementView 创建成功: {borrowManagementView.GetType().Name}");
+                CurrentView = borrowManagementView;
+                SelectedMenu = "BorrowManagement";
+                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
+                
+                // 加载借阅记录数据
+                await LoadBorrowRecordsAsync();
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"创建 BorrowManagementView 失败: {ex.Message}");
+        }
     }
     
     /// <summary>显示统计报表</summary>
