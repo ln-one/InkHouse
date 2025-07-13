@@ -85,7 +85,7 @@ public partial class MainWindowViewModel : ViewModelBase
     }
 
     /// <summary>
-    /// 登出方法：关闭主窗口并弹出登录窗口
+    /// 登出方法：隐藏主窗口并显示登录窗口
     /// </summary>
     public void Logout()
     {
@@ -95,14 +95,17 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             try
             {
-                // 直接关闭当前主窗口
-                desktop.MainWindow?.Close();
+                // 隐藏当前主窗口而不是关闭
+                if (desktop.MainWindow != null)
+                {
+                    desktop.MainWindow.Hide();
+                }
                 
                 // 创建并显示新的登录窗口
                 var loginWindow = new LoginWindow();
                 loginWindow.Show();
                 
-                Console.WriteLine("登出成功：主窗口已关闭，登录窗口已显示");
+                Console.WriteLine("登出成功：主窗口已隐藏，登录窗口已显示");
             }
             catch (Exception ex)
             {

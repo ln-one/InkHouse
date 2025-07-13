@@ -24,8 +24,9 @@ public partial class App : Application
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             
-            // 启动登录窗口而不是主窗口
-            desktop.MainWindow = new LoginWindow();
+            // 只显示登录窗口，不设置主窗口
+            var loginWindow = new LoginWindow();
+            loginWindow.Show();
         }
 
         base.OnFrameworkInitializationCompleted();
