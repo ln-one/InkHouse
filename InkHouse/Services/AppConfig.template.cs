@@ -18,7 +18,7 @@ namespace InkHouse.Services
         /// 请根据你的实际数据库信息修改这些参数
         /// </summary>
         public static string DatabaseConnectionString { get; set; } = 
-            "server=YOUR_SERVER;port=3306;database=InternShip;user=YOUR_USERNAME;password=YOUR_PASSWORD;";
+            "server=47.93.254.172;port=3306;database=InternShip;user=temp_two;password=PasswordForTemp2!;";
 
         /// <summary>
         /// 应用程序名称
