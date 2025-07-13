@@ -4,8 +4,6 @@ using System.Windows.Input;
 using InkHouse.Models;
 using InkHouse.Services;
 using CommunityToolkit.Mvvm.Input;
-using Avalonia.Controls;
-using Avalonia.Controls.ApplicationLifetimes;
 
 namespace InkHouse.ViewModels
 {
@@ -15,8 +13,8 @@ namespace InkHouse.ViewModels
     /// </summary>
     public class LoginViewModel : ViewModelBase
     {
-        private string _userName;
-        private string _password;
+        private string _userName = string.Empty;
+        private string _password = string.Empty;
 
         /// <summary>
         /// 用户名
@@ -37,6 +35,16 @@ namespace InkHouse.ViewModels
         }
 
         /// <summary>
+        /// 登录成功事件
+        /// </summary>
+        public event Action? LoginSuccess;
+        
+        /// <summary>
+        /// 登录失败事件（权限不足）
+        /// </summary>
+        public event Action<string>? LoginFailed;
+
+        /// <summary>
         /// 登录命令
         /// </summary>
         public ICommand LoginCommand { get; }
@@ -51,50 +59,17 @@ namespace InkHouse.ViewModels
         }
 
         /// <summary>
-        /// 导航到主界面
-        /// </summary>
-        /// <param name="user">登录成功的用户</param>
-        private void NavigateToMainView(User user)
-        {
-            Console.WriteLine("开始导航到主界面");
-            
-            // 通过主窗口的ViewModel来切换视图
-            if (App.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-            {
-                Console.WriteLine("获取到桌面应用生命周期");
-                var mainWindow = desktop.MainWindow;
-                Console.WriteLine($"主窗口: {mainWindow}");
-                
-                if (mainWindow?.DataContext is MainWindowViewModel mainWindowViewModel)
-                {
-                    Console.WriteLine("获取到主窗口ViewModel");
-                    var mainView = new Views.MainView
-                    {
-                        DataContext = new MainViewModel(user)
-                    };
-                    Console.WriteLine("创建主界面视图成功");
-                    mainWindowViewModel.CurrentView = mainView;
-                    Console.WriteLine("设置主界面视图成功");
-                }
-                else
-                {
-                    Console.WriteLine("主窗口DataContext不是MainWindowViewModel类型");
-                }
-            }
-            else
-            {
-                Console.WriteLine("无法获取桌面应用生命周期");
-            }
-        }
-
-        /// <summary>
         /// 异步登录方法
         /// 使用新的架构，自动处理错误和加载状态
         /// </summary>
         private async Task LoginAsync()
-        {
+        {   
+            Console.WriteLine("登录按钮被点击了！");
+
             await ExecuteAsync(async () =>
             {
+                Console.WriteLine($"用户名: {UserName}, 密码: {Password}");
+                
                 // 输入验证
                 if (string.IsNullOrWhiteSpace(UserName))
                 {
@@ -109,25 +84,33 @@ namespace InkHouse.ViewModels
                 }
 
                 // 使用ServiceManager获取用户服务
-                var userService = ServiceManager.Instance.UserService;
-                
-                // 先尝试测试登录，如果失败再尝试真实数据库登录
-                var user = await userService.TestLoginAsync(UserName, Password);
-                if (user == null)
-                {
-                    // 如果测试登录失败，尝试真实数据库登录
-                    user = await userService.LoginAsync(UserName, Password);
-                }
+                var userService = ServiceManager.GetService<UserService>();
+                var user = await Task.Run(() => userService.Login(UserName, Password));
 
                 if (user != null)
                 {
-                    ShowSuccess($"欢迎回来，{user.UserName}！");
-                    // 导航到主界面
-                    NavigateToMainView(user);
+                    // 检查用户角色，只有管理员才能登录系统
+                    if (UserRoles.IsAdmin(user.Role))
+                    {
+                        ShowSuccess($"欢迎回来，管理员 {user.UserName}！");
+                        
+                        // 触发登录成功事件
+                        LoginSuccess?.Invoke();
+                    }
+                    else
+                    {
+                        ShowError("权限不足，只有管理员才能登录系统");
+                        
+                        // 触发登录失败事件（权限不足）
+                        LoginFailed?.Invoke("权限不足，只有管理员才能登录系统");
+                    }
                 }
                 else
                 {
                     ShowError("用户名或密码错误，请重试");
+                    
+                    // 触发登录失败事件（凭据错误）
+                    LoginFailed?.Invoke("用户名或密码错误，请重试");
                 }
             });
         }

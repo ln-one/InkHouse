@@ -6,6 +6,8 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using InkHouse.ViewModels;
 using InkHouse.Views;
+using InkHouse.Services;
+using System;
 
 namespace InkHouse;
 
@@ -14,6 +16,9 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        
+        // 初始化服务容器
+        ServiceManager.Initialize();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -23,10 +28,10 @@ public partial class App : Application
             // Avoid duplicate validations from both Avalonia and the CommunityToolkit. 
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
-            desktop.MainWindow = new MainWindow
-            {
-                DataContext = new MainWindowViewModel(),
-            };
+            
+            // 只显示登录窗口，不设置主窗口
+            var loginWindow = new LoginWindow();
+            loginWindow.Show();
         }
 
         base.OnFrameworkInitializationCompleted();

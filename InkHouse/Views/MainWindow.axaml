@@ -1,11 +1,84 @@
-<Window
-    xmlns="https://github.com/avaloniaui"
-    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
-    xmlns:views="clr-namespace:InkHouse.Views"
-    xmlns:viewmodels="clr-namespace:InkHouse.ViewModels"
-    x:Class="InkHouse.Views.MainWindow"
-    x:DataType="viewmodels:MainWindowViewModel"
-    Width="1000" Height="700"
-    Title="InkHouse - 图书管理系统">
-    <ContentControl Content="{Binding CurrentView}"/>
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:local="clr-namespace:InkHouse.Views"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="InkHouse.Views.MainWindow"
+        x:DataType="vm:MainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="InkHouse - 图书馆管理系统"
+        Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <local:MenuCheckedConverter x:Key="MenuCheckedConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:MainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 侧边栏 -->
+        <Border Classes="sidebar" Grid.Column="0">
+            <StackPanel Margin="16">
+                <!-- Logo -->
+                <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
+                
+                <!-- 导航菜单 -->
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="📊 仪表板" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard, Mode=TwoWay}" Command="{Binding ShowDashboardCommand}"/>
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="📚图书管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement, Mode=TwoWay}" Command="{Binding ShowBookManagementCommand}"/>
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="👥用户管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement, Mode=TwoWay}" Command="{Binding ShowUserManagementCommand}"/>
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="📖借阅管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement, Mode=TwoWay}" Command="{Binding ShowBorrowManagementCommand}"/>
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="📈统计报表" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics, Mode=TwoWay}" Command="{Binding ShowStatisticsCommand}"/>
+                <RadioButton GroupName="Menu" Classes="nav-item" Content="⚙️系统设置" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings, Mode=TwoWay}" Command="{Binding ShowSettingsCommand}"/>
+                
+                <Rectangle Classes="divider" Margin="0,24"/>
+                
+                <!-- 用户信息 -->
+                <StackPanel>
+                    <TextBlock Classes="caption" Text="当前用户"/>
+                    <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
+                    <Button Classes="nav-item" Content="🚪 退出登录" Margin="0,8,0,0" Command="{Binding LogoutCommand}"/>
+                </StackPanel>
+            </StackPanel>
+        </Border>
+
+        <!-- 主内容区域 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 顶部导航栏 -->
+            <Border Classes="navbar" Grid.Row="0">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    
+                    <TextBlock Grid.Column="0" Classes="subtitle" Text="仪表板" 
+                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
+                    
+                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
+                        <TextBox Classes="search" Watermark="搜索..." Width="300"/>
+                        <Button Classes="tool" Content="🔔"/>
+                        <Button Classes="tool" Content="⚙️"/>
+                    </StackPanel>
+                </Grid>
+            </Border>
+
+            <!-- 主要内容 -->
+            <ContentControl Grid.Row="1" Content="{Binding CurrentView}" Name="MainContentControl"/>
+        </Grid>
+    </Grid>
 </Window>

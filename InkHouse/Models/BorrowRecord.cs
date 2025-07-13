@@ -22,11 +22,18 @@ namespace InkHouse.Models
         public DateTime BorrowDate { get; set; }
         // 归还时间，可以为空
         public DateTime? ReturnDate { get; set; }
-        // 状态，必填，最大长度20（如“借出”或“归还”）
+        // 状态，必填，最大长度20（如"借出"或"归还"）
         [Required]
         [MaxLength(20)]
-        public string Status { get; set; } // 借出/归还
+        public required string Status { get; set; } // 借出/归还
         // 是否已归还（用于简化逻辑）
         public bool IsReturned { get; set; } = false;
+
+        // 导航属性：图书
+        [ForeignKey("BookId")]
+        public Book? Book { get; set; }
+        // 导航属性：用户
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
     }
 } 

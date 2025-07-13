@@ -13,14 +13,14 @@ namespace InkHouse.Models
         // 用户名，必填，最大长度50
         [Required]
         [MaxLength(50)]
-        public string UserName { get; set; }
+        public required string UserName { get; set; }
         // 密码，必填，最大长度255（建议加密存储）
         [Required]
         [MaxLength(255)]
-        public string Password { get; set; }
+        public required string Password { get; set; }
         // 角色，必填，最大长度20（如Admin或User）
         [Required]
         [MaxLength(20)]
-        public string Role { get; set; } // Admin/User
+        public required string Role { get; set; } // Admin/User
     }
 } 

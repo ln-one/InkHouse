@@ -11,8 +11,8 @@ namespace InkHouse.ViewModels
     public class ViewModelBase : ObservableObject
     {
         private bool _isLoading;
-        private string _errorMessage;
-        private string _successMessage;
+        private string _errorMessage = string.Empty;
+        private string _successMessage = string.Empty;
 
         /// <summary>
         /// 是否正在加载
@@ -49,7 +49,7 @@ namespace InkHouse.ViewModels
         {
             ErrorMessage = message;
             // 3秒后自动清除错误消息
-            Task.Delay(3000).ContinueWith(_ => ErrorMessage = null);
+            Task.Delay(3000).ContinueWith(_ => ErrorMessage = string.Empty);
         }
 
         /// <summary>
@@ -60,7 +60,7 @@ namespace InkHouse.ViewModels
         {
             SuccessMessage = message;
             // 3秒后自动清除成功消息
-            Task.Delay(3000).ContinueWith(_ => SuccessMessage = null);
+            Task.Delay(3000).ContinueWith(_ => SuccessMessage = string.Empty);
         }
 
         /// <summary>
@@ -68,8 +68,8 @@ namespace InkHouse.ViewModels
         /// </summary>
         protected void ClearMessages()
         {
-            ErrorMessage = null;
-            SuccessMessage = null;
+            ErrorMessage = string.Empty;
+            SuccessMessage = string.Empty;
         }
 
         /// <summary>
@@ -100,7 +100,7 @@ namespace InkHouse.ViewModels
         /// <typeparam name="T">返回类型</typeparam>
         /// <param name="action">要执行的操作</param>
         /// <returns>操作结果</returns>
-        protected async Task<T> ExecuteAsync<T>(Func<Task<T>> action)
+        protected async Task<T?> ExecuteAsync<T>(Func<Task<T>> action)
         {
             try
             {

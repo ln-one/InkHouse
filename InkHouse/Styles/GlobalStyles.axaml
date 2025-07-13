@@ -1,0 +1,717 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 输入框样式 -->
+    <Style Selector="TextBox">
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="SF Pro Display, Segoe UI"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="CaretBrush" Value="#007AFF"/>
+        <Setter Property="SelectionBrush" Value="#007AFF"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="TextBox:focus">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="TextBox:pointerover">
+        <Setter Property="Background" Value="#E5E5EA"/>
+    </Style>
+    
+    <!-- 搜索框样式 -->
+    <Style Selector="TextBox.search">
+        <Setter Property="Padding" Value="36,8,12,8"/>
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="CornerRadius" Value="20"/>
+        <Setter Property="Height" Value="40"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 按钮样式 -->
+    <Style Selector="Button">
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontFamily" Value="SF Pro Display, Segoe UI"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="Padding" Value="16,8"/>
+        <Setter Property="Background" Value="#007AFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <TransformOperationsTransition Property="RenderTransform" Duration="0:0:0.1"/>
+                <BrushTransition Property="Background" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
+    </Style>
+    
+    <Style Selector="Button:pointerover">
+        <Setter Property="Background" Value="#0056CC"/>
+        <Setter Property="RenderTransform" Value="scale(1.02)"/>
+    </Style>
+    
+    <Style Selector="Button:pressed">
+        <Setter Property="Background" Value="#004499"/>
+        <Setter Property="RenderTransform" Value="scale(0.98)"/>
+    </Style>
+    
+    <!-- 次要按钮样式 -->
+    <Style Selector="Button.secondary">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="Button.secondary:pointerover">
+        <Setter Property="Background" Value="#007AFF"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <!-- 危险按钮样式 -->
+    <Style Selector="Button.danger">
+        <Setter Property="Background" Value="#FF3B30"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <Style Selector="Button.danger:pointerover">
+        <Setter Property="Background" Value="#D70015"/>
+    </Style>
+    
+    <!-- 成功按钮样式 -->
+    <Style Selector="Button.success">
+        <Setter Property="Background" Value="#34C759"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <Style Selector="Button.success:pointerover">
+        <Setter Property="Background" Value="#28A745"/>
+    </Style>
+    
+    <!-- 文本样式 -->
+    <Style Selector="TextBlock">
+        <Setter Property="FontFamily" Value="SF Pro Display, Segoe UI"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="FontSize" Value="14"/>
+    </Style>
+    
+    <!-- 标题样式 -->
+    <Style Selector="TextBlock.title">
+        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontWeight" Value="700"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 副标题样式 -->
+    <Style Selector="TextBlock.subtitle">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+    </Style>
+    
+    <!-- 错误消息样式 -->
+    <Style Selector="TextBlock.error">
+        <Setter Property="Foreground" Value="#FF3B30"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 成功消息样式 -->
+    <Style Selector="TextBlock.success">
+        <Setter Property="Foreground" Value="#34C759"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 警告消息样式 -->
+    <Style Selector="TextBlock.warning">
+        <Setter Property="Foreground" Value="#FF9500"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 信息消息样式 -->
+    <Style Selector="TextBlock.info">
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Margin" Value="0,4,0,0"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 进度条样式 -->
+    <Style Selector="ProgressBar">
+        <Setter Property="Height" Value="6"/>
+        <Setter Property="CornerRadius" Value="3"/>
+        <Setter Property="Background" Value="#E5E5EA"/>
+        <Setter Property="Foreground" Value="#007AFF"/>
+    </Style>
+    
+    <!-- 容器样式 -->
+    <Style Selector="StackPanel">
+        <Setter Property="Spacing" Value="12"/>
+    </Style>
+    
+    <!-- 密码框特殊样式 -->
+    <Style Selector="TextBox.password">
+        <Setter Property="FontFamily" Value="SF Mono, Consolas, Monaco"/>
+    </Style>
+    
+    <!-- 卡片容器样式 -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="Margin" Value="12"/>
+    </Style>
+    
+    <!-- 分割线样式 -->
+    <Style Selector="Rectangle.divider">
+        <Setter Property="Height" Value="1"/>
+        <Setter Property="Fill" Value="#E5E5EA"/>
+        <Setter Property="Margin" Value="0,12"/>
+    </Style>
+    
+    <!-- 标签样式 -->
+    <Style Selector="TextBlock.label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 辅助文本样式 -->
+    <Style Selector="TextBlock.caption">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="Margin" Value="0,2,0,0"/>
+    </Style>
+    
+    <!-- 链接样式 -->
+    <Style Selector="TextBlock.link">
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="Cursor" Value="Hand"/>
+    </Style>
+    
+    <Style Selector="TextBlock.link:pointerover">
+        <Setter Property="Foreground" Value="#0056CC"/>
+    </Style>
+    
+    <!-- 数据网格样式 -->
+    <Style Selector="DataGrid">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="GridLinesVisibility" Value="Horizontal"/>
+        <Setter Property="HorizontalGridLinesBrush" Value="#F2F2F7"/>
+        <Setter Property="RowBackground" Value="White"/>
+        <Setter Property="HeadersVisibility" Value="Column"/>
+        <Setter Property="FontSize" Value="13"/>
+    </Style>
+    
+    <Style Selector="DataGrid:focus">
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+        <Setter Property="BorderThickness" Value="2"/>
+    </Style>
+    
+    <Style Selector="DataGridColumnHeader">
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="DataGridColumnHeader:pointerover">
+        <Setter Property="Background" Value="#E5E5EA"/>
+    </Style>
+    
+    <Style Selector="DataGridRow">
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="MinHeight" Value="40"/>
+    </Style>
+    
+    <Style Selector="DataGridRow:selected">
+        <Setter Property="Background" Value="#E3F2FD"/>
+    </Style>
+    
+    <Style Selector="DataGridRow:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <Style Selector="DataGridCell">
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 列表样式 -->
+    <Style Selector="ListBox">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="ScrollViewer.HorizontalScrollBarVisibility" Value="Disabled"/>
+    </Style>
+    
+    <Style Selector="ListBoxItem">
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="MinHeight" Value="44"/>
+    </Style>
+    
+    <Style Selector="ListBoxItem:selected">
+        <Setter Property="Background" Value="#E3F2FD"/>
+    </Style>
+    
+    <Style Selector="ListBoxItem:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <!-- 组合框样式 -->
+    <Style Selector="ComboBox">
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="ComboBox:focus">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="ComboBox:pointerover">
+        <Setter Property="Background" Value="#E5E5EA"/>
+    </Style>
+    
+    <!-- 复选框样式 -->
+    <Style Selector="CheckBox">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 单选按钮样式 -->
+    <Style Selector="RadioButton">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 滑块样式 -->
+    <Style Selector="Slider">
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="Background" Value="#E5E5EA"/>
+    </Style>
+    
+    <!-- 选项卡样式 -->
+    <Style Selector="TabControl">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0"/>
+    </Style>
+    
+    <Style Selector="TabItem">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="BorderBrush" Value="Transparent"/>
+        <Setter Property="BorderThickness" Value="0,0,0,2"/>
+        <Setter Property="Padding" Value="16,12"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+    </Style>
+    
+    <Style Selector="TabItem:selected">
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+    </Style>
+    
+    <Style Selector="TabItem:pointerover">
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 状态指示器样式 -->
+    <Style Selector="Border.status">
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="8,4"/>
+        <Setter Property="Background" Value="#F2F2F7"/>
+    </Style>
+    
+    <Style Selector="Border.status.available">
+        <Setter Property="Background" Value="#E8F5E8"/>
+    </Style>
+    
+    <Style Selector="Border.status.borrowed">
+        <Setter Property="Background" Value="#FFF3E0"/>
+    </Style>
+    
+    <Style Selector="Border.status.overdue">
+        <Setter Property="Background" Value="#FFEBEE"/>
+    </Style>
+    
+    <Style Selector="Border.status.maintenance">
+        <Setter Property="Background" Value="#E3F2FD"/>
+    </Style>
+    
+    <!-- 状态文本样式 -->
+    <Style Selector="TextBlock.status">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+    </Style>
+    
+    <Style Selector="TextBlock.status.available">
+        <Setter Property="Foreground" Value="#34C759"/>
+    </Style>
+    
+    <Style Selector="TextBlock.status.borrowed">
+        <Setter Property="Foreground" Value="#FF9500"/>
+    </Style>
+    
+    <Style Selector="TextBlock.status.overdue">
+        <Setter Property="Foreground" Value="#FF3B30"/>
+    </Style>
+    
+    <Style Selector="TextBlock.status.maintenance">
+        <Setter Property="Foreground" Value="#007AFF"/>
+    </Style>
+    
+    <!-- 导航栏样式 -->
+    <Style Selector="Border.navbar">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="20,16"/>
+    </Style>
+    
+    <!-- 侧边栏样式 -->
+    <Style Selector="Border.sidebar">
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,1,0"/>
+        <Setter Property="Width" Value="240"/>
+    </Style>
+    
+    <!-- 侧边栏菜单项样式 -->
+    <Style Selector="Button.nav-item">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16,0"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+        <Setter Property="FontSize" Value="15"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="Margin" Value="8,2"/>
+        <Setter Property="Height" Value="44"/>
+    </Style>
+    
+    <Style Selector="Button.nav-item:pointerover">
+        <Setter Property="Background" Value="#E5E5EA"/>
+    </Style>
+    
+    <Style Selector="Button.nav-item.active">
+        <Setter Property="Background" Value="#007AFF"/>
+        <Setter Property="Foreground" Value="White"/>
+    </Style>
+    
+    <!-- 工具栏样式 -->
+    <Style Selector="Border.toolbar">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="20,12"/>
+    </Style>
+    
+    <!-- 工具按钮样式 -->
+    <Style Selector="Button.tool">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="8"/>
+        <Setter Property="Width" Value="32"/>
+        <Setter Property="Height" Value="32"/>
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="Button.tool:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <!-- 模态框样式 -->
+    <Style Selector="Border.modal">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="24"/>
+        <Setter Property="MinWidth" Value="400"/>
+        <Setter Property="MaxWidth" Value="600"/>
+    </Style>
+    
+    <!-- 模态框标题样式 -->
+    <Style Selector="TextBlock.modal-title">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="700"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 模态框内容样式 -->
+    <Style Selector="TextBlock.modal-content">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="Margin" Value="0,0,0,24"/>
+    </Style>
+    
+    <!-- 模态框按钮容器样式 -->
+    <Style Selector="StackPanel.modal-actions">
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="HorizontalAlignment" Value="Right"/>
+        <Setter Property="Spacing" Value="12"/>
+    </Style>
+    
+    <!-- 通知样式 -->
+    <Style Selector="Border.notification">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="MaxWidth" Value="400"/>
+    </Style>
+    
+    <Style Selector="Border.notification.success">
+        <Setter Property="BorderBrush" Value="#34C759"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="Border.notification.error">
+        <Setter Property="BorderBrush" Value="#FF3B30"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <Style Selector="Border.notification.warning">
+        <Setter Property="BorderBrush" Value="#FF9500"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <!-- 统计卡片样式 -->
+    <Style Selector="Border.stat-card">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="CornerRadius" Value="12"/>
+        <Setter Property="Padding" Value="20"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <!-- 统计数字样式 -->
+    <Style Selector="TextBlock.stat-number">
+        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontWeight" Value="700"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+    
+    <!-- 统计标签样式 -->
+    <Style Selector="TextBlock.stat-label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 搜索建议样式 -->
+    <Style Selector="ListBox.search-suggestions">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="MaxHeight" Value="200"/>
+    </Style>
+    
+    <!-- 空状态样式 -->
+    <Style Selector="StackPanel.empty-state">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Spacing" Value="16"/>
+        <Setter Property="Margin" Value="40"/>
+    </Style>
+    
+    <Style Selector="TextBlock.empty-title">
+        <Setter Property="FontSize" Value="20"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="TextBlock.empty-description">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    
+    <!-- 加载状态样式 -->
+    <Style Selector="StackPanel.loading">
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+        <Setter Property="Spacing" Value="12"/>
+    </Style>
+    
+    <Style Selector="TextBlock.loading-text">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 分页样式 -->
+    <Style Selector="StackPanel.pagination">
+        <Setter Property="Orientation" Value="Horizontal"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+        <Setter Property="Spacing" Value="8"/>
+        <Setter Property="Margin" Value="20,0"/>
+    </Style>
+    
+    <Style Selector="Button.page">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="6"/>
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="MinWidth" Value="40"/>
+        <Setter Property="Height" Value="36"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="Button.page:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <Style Selector="Button.page.active">
+        <Setter Property="Background" Value="#007AFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+    </Style>
+    
+    <!-- 过滤器样式 -->
+    <Style Selector="Border.filter-panel">
+        <Setter Property="Background" Value="#F9F9F9"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+    
+    <!-- 过滤器标签样式 -->
+    <Style Selector="TextBlock.filter-label">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
+    
+    <!-- 过滤器选项样式 -->
+    <Style Selector="Button.filter-option">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="1"/>
+        <Setter Property="CornerRadius" Value="16"/>
+        <Setter Property="Padding" Value="12,6"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="Button.filter-option:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <Style Selector="Button.filter-option.active">
+        <Setter Property="Background" Value="#007AFF"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="BorderBrush" Value="#007AFF"/>
+    </Style>
+    
+    <!-- 响应式网格样式 -->
+    <Style Selector="UniformGrid.responsive">
+        <Setter Property="Columns" Value="4"/>
+        <Setter Property="Rows" Value="1"/>
+    </Style>
+    
+    <!-- 桌面端优化 -->
+    <Style Selector="Window">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <!-- 滚动条样式 -->
+    <Style Selector="ScrollBar">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Width" Value="8"/>
+        <Setter Property="Height" Value="8"/>
+    </Style>
+    
+    <Style Selector="ScrollBar:horizontal">
+        <Setter Property="Height" Value="8"/>
+    </Style>
+    
+    <Style Selector="ScrollBar:vertical">
+        <Setter Property="Width" Value="8"/>
+    </Style>
+    
+    <Style Selector="Thumb">
+        <Setter Property="Background" Value="#C7C7CC"/>
+        <Setter Property="CornerRadius" Value="4"/>
+    </Style>
+    
+    <Style Selector="Thumb:pointerover">
+        <Setter Property="Background" Value="#8E8E93"/>
+    </Style>
+    
+    <Style Selector="Thumb:pressed">
+        <Setter Property="Background" Value="#636366"/>
+    </Style>
+    
+</Styles> 

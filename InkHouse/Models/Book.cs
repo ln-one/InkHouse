@@ -13,16 +13,16 @@ namespace InkHouse.Models
         // 书名，必填，最大长度100
         [Required]
         [MaxLength(100)]
-        public string Title { get; set; }
+        public required string Title { get; set; }
         // 作者，最大长度50
         [MaxLength(50)]
-        public string Author { get; set; }
+        public required string Author { get; set; }
         // ISBN号，最大长度20
         [MaxLength(20)]
-        public string ISBN { get; set; }
+        public required string ISBN { get; set; }
         // 出版社，最大长度50
         [MaxLength(50)]
-        public string Publisher { get; set; }
+        public required string Publisher { get; set; }
         // 出版年份
         public int Year { get; set; }
         // 图书总数量

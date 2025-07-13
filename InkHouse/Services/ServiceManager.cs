@@ -1,90 +1,54 @@
+using Microsoft.Extensions.DependencyInjection;
 using InkHouse.Models;
+using InkHouse.Services;
+using InkHouse.ViewModels;
+using System;
 
 namespace InkHouse.Services
 {
     /// <summary>
-    /// 服务管理器类
-    /// 统一管理所有服务实例，避免重复创建
-    /// 使用单例模式确保全局只有一个实例
+    /// 服务管理器，负责管理所有服务的依赖注入
     /// </summary>
-    public class ServiceManager
+    public static class ServiceManager
     {
-        // 单例实例
-        private static ServiceManager _instance;
-        private static readonly object _lock = new object();
-
-        // 数据库上下文工厂
-        private readonly DbContextFactory _dbContextFactory;
-        
-        // 各种服务实例
-        private readonly UserService _userService;
-        private readonly BookService _bookService;
-        private readonly BorrowRecordService _borrowRecordService;
+        private static IServiceProvider? _serviceProvider;
 
         /// <summary>
-        /// 私有构造函数，防止外部直接创建实例
+        /// 初始化服务容器
         /// </summary>
-        private ServiceManager()
+        public static void Initialize()
         {
-            // 使用配置中的连接字符串创建数据库上下文工厂
-            _dbContextFactory = new DbContextFactory(AppConfig.DatabaseConnectionString);
-            
-            // 初始化各种服务
-            _userService = new UserService(_dbContextFactory);
-            _bookService = new BookService(_dbContextFactory);
-            _borrowRecordService = new BorrowRecordService(_dbContextFactory);
+            var services = new ServiceCollection();
+
+            // 注册数据库上下文工厂
+            services.AddSingleton<DbContextFactory>();
+
+            // 注册业务服务
+            services.AddSingleton<BookService>();
+            services.AddSingleton<UserService>();
+            services.AddSingleton<BorrowRecordService>();
+
+            // 注册视图模型
+            services.AddTransient<LoginViewModel>();
+            services.AddTransient<MainWindowViewModel>();
+            services.AddTransient<BookEditViewModel>();
+
+            _serviceProvider = services.BuildServiceProvider();
         }
 
         /// <summary>
-        /// 获取ServiceManager的单例实例
+        /// 获取服务实例
         /// </summary>
-        public static ServiceManager Instance
+        /// <typeparam name="T">服务类型</typeparam>
+        /// <returns>服务实例</returns>
+        public static T GetService<T>() where T : class
         {
-            get
+            if (_serviceProvider == null)
             {
-                if (_instance == null)
-                {
-                    lock (_lock)
-                    {
-                        if (_instance == null)
-                        {
-                            _instance = new ServiceManager();
-                        }
-                    }
-                }
-                return _instance;
+                throw new InvalidOperationException("服务容器未初始化，请先调用 Initialize() 方法");
             }
-        }
 
-        /// <summary>
-        /// 获取用户服务实例
-        /// </summary>
-        public UserService UserService => _userService;
-
-        /// <summary>
-        /// 获取图书服务实例
-        /// </summary>
-        public BookService BookService => _bookService;
-
-        /// <summary>
-        /// 获取借阅记录服务实例
-        /// </summary>
-        public BorrowRecordService BorrowRecordService => _borrowRecordService;
-
-        /// <summary>
-        /// 获取数据库上下文工厂
-        /// </summary>
-        public DbContextFactory DbContextFactory => _dbContextFactory;
-
-        /// <summary>
-        /// 重新初始化服务（当配置更改时调用）
-        /// </summary>
-        public void Reinitialize()
-        {
-            lock (_lock)
-            {
-                _instance = new ServiceManager();
-            }
+            return _serviceProvider.GetRequiredService<T>();
         }
     }
 } 
