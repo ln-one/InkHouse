@@ -11,9 +11,10 @@ namespace InkHouse.Services
         private readonly string _connectionString;
 
         // 构造函数，传入数据库连接字符串
-        public DbContextFactory(string connectionString)
+        public DbContextFactory()
         {
-            _connectionString = connectionString;
+            // 从配置文件或环境变量获取连接字符串
+            _connectionString = AppConfig.DatabaseConnectionString;
         }
 
         // 创建数据库上下文实例的方法

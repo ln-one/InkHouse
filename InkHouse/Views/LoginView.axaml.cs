@@ -1,5 +1,6 @@
 using Avalonia.Controls;
 using InkHouse.ViewModels;
+using InkHouse.Services;
 
 namespace InkHouse.Views
 {
@@ -17,9 +18,8 @@ namespace InkHouse.Views
         {
             InitializeComponent(); // 初始化界面组件
             
-            // 使用新的架构，LoginViewModel会自动从ServiceManager获取服务
-            // 无需手动创建数据库连接和服务
-            DataContext = new LoginViewModel();
+            // 使用ServiceManager获取LoginViewModel实例
+            DataContext = ServiceManager.GetService<LoginViewModel>();
         }
     }
 } 
