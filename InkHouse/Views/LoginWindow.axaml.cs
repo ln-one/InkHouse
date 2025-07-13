@@ -112,6 +112,9 @@ namespace InkHouse.Views
         /// </summary>
         private void OnLoginWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
+            // 取消订阅，避免重复进入
+            this.Closing -= OnLoginWindowClosing;
+            
             // 释放资源
             DisposeResources();
             
