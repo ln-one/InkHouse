@@ -50,5 +50,24 @@ namespace InkHouse.Services
 
             return _serviceProvider.GetRequiredService<T>();
         }
+        
+        /// <summary>
+        /// 释放服务资源
+        /// </summary>
+        public static void Dispose()
+        {
+            try
+            {
+                if (_serviceProvider is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                    _serviceProvider = null;
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"释放服务资源时发生错误: {ex.Message}");
+            }
+        }
     }
 } 

@@ -3,6 +3,7 @@ using InkHouse.ViewModels;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
 using InkHouse.Services;
+using System;
 
 namespace InkHouse.Views;
 
@@ -25,7 +26,35 @@ public partial class MainWindow : Window
     /// </summary>
     private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
-        // 允许窗口正常关闭，这将导致应用程序退出
-        // 不取消关闭行为，让应用程序正常退出
+        // 释放资源
+        DisposeResources();
+        
+        // 强制退出应用程序
+        if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            desktop.Shutdown();
+        }
+    }
+    
+    /// <summary>
+    /// 释放资源
+    /// </summary>
+    private void DisposeResources()
+    {
+        try
+        {
+            // 释放视图模型资源
+            if (DataContext is IDisposable disposable)
+            {
+                disposable.Dispose();
+            }
+            
+            // 释放服务资源
+            ServiceManager.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"释放资源时发生错误: {ex.Message}");
+        }
     }
 }

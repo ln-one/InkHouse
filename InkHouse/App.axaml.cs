@@ -17,6 +17,9 @@ public partial class App : Application
     {
         AvaloniaXamlLoader.Load(this);
         
+        // 初始化配置
+        AppConfig.Initialize();
+        
         // 初始化服务容器
         ServiceManager.Initialize();
     }
@@ -29,12 +32,31 @@ public partial class App : Application
             // More info: https://docs.avaloniaui.net/docs/guides/development-guides/data-validation#manage-validationplugins
             DisableAvaloniaDataAnnotationValidation();
             
+            // 订阅应用程序退出事件
+            desktop.Exit += OnApplicationExit;
+            
             // 只显示登录窗口，不设置主窗口
             var loginWindow = new LoginWindow();
             loginWindow.Show();
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+    
+    /// <summary>
+    /// 应用程序退出事件处理
+    /// </summary>
+    private void OnApplicationExit(object? sender, EventArgs e)
+    {
+        try
+        {
+            // 释放所有服务资源
+            ServiceManager.Dispose();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"应用程序退出时释放资源发生错误: {ex.Message}");
+        }
     }
 
     private void DisableAvaloniaDataAnnotationValidation()
