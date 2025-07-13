@@ -112,8 +112,17 @@ namespace InkHouse.Views
         /// </summary>
         private void OnLoginWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            // 只做资源释放，不再调用 desktop.Shutdown()
+            // 取消订阅，避免重复进入
+            this.Closing -= OnLoginWindowClosing;
+            
+            // 释放资源
             DisposeResources();
+            
+            // 强制退出应用程序
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                desktop.Shutdown();
+            }
         }
         
         /// <summary>
