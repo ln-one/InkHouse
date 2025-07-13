@@ -1,0 +1,118 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InkHouse.ViewModels"
+             xmlns:local="clr-namespace:InkHouse.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="InkHouse.Views.UserManagementView"
+             x:DataType="vm:MainWindowViewModel"
+             x:Name="Root">
+    <UserControl.Resources>
+        <local:ZeroToVisibleConverter x:Key="ZeroToVisibleConverter"/>
+    </UserControl.Resources>
+
+    <Grid Margin="16">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="*"/>
+        </Grid.RowDefinitions>
+
+        <!-- 标题和操作按钮 -->
+        <StackPanel Grid.Row="0" Orientation="Horizontal" Spacing="16" Margin="0,0,0,16">
+            <TextBlock Classes="title" Text="用户管理" VerticalAlignment="Center"/>
+            <Button Classes="primary" Content="➕ 添加用户" Command="{Binding AddUserCommand}"/>
+            <Button Classes="secondary" Content="✏️ 编辑" Command="{Binding EditUserCommand}"/>
+            <Button Classes="danger" Content="🗑️ 删除" Command="{Binding DeleteUserCommand}"/>
+        </StackPanel>
+
+        <!-- 搜索栏 -->
+        <Border Grid.Row="1" Classes="card" Margin="0,0,0,16">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="*"/>
+                    <ColumnDefinition Width="Auto"/>
+                </Grid.ColumnDefinitions>
+                
+                <TextBox Grid.Column="0" Classes="search" 
+                         Text="{Binding UserSearchText}" 
+                         Watermark="搜索用户（用户名、角色）..."
+                         Margin="0,0,12,0"/>
+                <Button Grid.Column="1" Classes="primary" Content="🔍 搜索" 
+                        Command="{Binding SearchUsersCommand}"/>
+            </Grid>
+        </Border>
+
+        <!-- 用户列表 -->
+        <Border Grid.Row="2" Classes="card">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="Auto"/>
+                    <RowDefinition Height="*"/>
+                </Grid.RowDefinitions>
+
+                <!-- 列表标题 -->
+                <Border Grid.Row="0" Classes="list-header">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="50"/>
+                            <ColumnDefinition Width="*"/>
+                            <ColumnDefinition Width="100"/>
+                            <ColumnDefinition Width="100"/>
+                        </Grid.ColumnDefinitions>
+                        
+                        <TextBlock Grid.Column="0" Classes="header-text" Text="ID"/>
+                        <TextBlock Grid.Column="1" Classes="header-text" Text="用户名"/>
+                        <TextBlock Grid.Column="2" Classes="header-text" Text="角色"/>
+                        <TextBlock Grid.Column="3" Classes="header-text" Text="操作"/>
+                    </Grid>
+                </Border>
+
+                <!-- 用户列表 -->
+                <ScrollViewer Grid.Row="1">
+                    <ListBox ItemsSource="{Binding Users}" SelectedItem="{Binding SelectedUser}">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Classes="list-item" Margin="0,1">
+                                    <Grid>
+                                        <Grid.ColumnDefinitions>
+                                            <ColumnDefinition Width="50"/>
+                                            <ColumnDefinition Width="*"/>
+                                            <ColumnDefinition Width="100"/>
+                                            <ColumnDefinition Width="100"/>
+                                        </Grid.ColumnDefinitions>
+                                        
+                                        <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
+                                        <TextBlock Grid.Column="1" Text="{Binding UserName}" Classes="cell-text"/>
+                                        <TextBlock Grid.Column="2" Text="{Binding Role}" Classes="cell-text"/>
+                                        <StackPanel Grid.Column="3" Orientation="Horizontal" Spacing="4">
+                                            <Button Classes="icon-button" Content="✏️" Click="EditUser_Click"/>
+                                            <Button Classes="icon-button danger" Content="🗑️" Click="DeleteUser_Click"/>
+                                        </StackPanel>
+                                    </Grid>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                </ScrollViewer>
+
+                <!-- 加载指示器 -->
+                <Border Grid.Row="1" Classes="loading-overlay" IsVisible="{Binding IsLoading}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="正在加载..." Classes="loading-text"/>
+                    </StackPanel>
+                </Border>
+
+                <!-- 空状态 -->
+                <Border Grid.Row="1" Classes="empty-state" IsVisible="{Binding Users.Count, Converter={StaticResource ZeroToVisibleConverter}}">
+                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                        <TextBlock Text="👥" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                        <TextBlock Text="暂无用户" Classes="empty-text" HorizontalAlignment="Center"/>
+                        <TextBlock Text="点击'添加用户'按钮开始添加" Classes="empty-subtext" HorizontalAlignment="Center"/>
+                    </StackPanel>
+                </Border>
+            </Grid>
+        </Border>
+    </Grid>
+</UserControl> 

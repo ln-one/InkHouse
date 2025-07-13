@@ -18,7 +18,7 @@ public partial class App : Application
         AvaloniaXamlLoader.Load(this);
         
         // 初始化配置
-        AppConfig.Initialize();
+        // AppConfig.Initialize();
         
         // 初始化服务容器
         ServiceManager.Initialize();

@@ -714,4 +714,129 @@
         <Setter Property="Background" Value="#636366"/>
     </Style>
     
+    <!-- 列表项样式 -->
+    <Style Selector="Border.list-item">
+        <Setter Property="Background" Value="White"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="16,12"/>
+    </Style>
+    
+    <Style Selector="Border.list-item:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <!-- 列表头部样式 -->
+    <Style Selector="Border.list-header">
+        <Setter Property="Background" Value="#F5F5F7"/>
+        <Setter Property="BorderBrush" Value="#E5E5EA"/>
+        <Setter Property="BorderThickness" Value="0,0,0,1"/>
+        <Setter Property="Padding" Value="16,12"/>
+    </Style>
+    
+    <!-- 头部文本样式 -->
+    <Style Selector="TextBlock.header-text">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+    </Style>
+    
+    <!-- 单元格文本样式 -->
+    <Style Selector="TextBlock.cell-text">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="Foreground" Value="#1D1D1F"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 状态文本样式 -->
+    <Style Selector="TextBlock.status-text">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+    </Style>
+    
+    <!-- 加载覆盖层样式 -->
+    <Style Selector="Border.loading-overlay">
+        <Setter Property="Background" Value="#80000000"/>
+        <Setter Property="ZIndex" Value="1000"/>
+    </Style>
+    
+    <!-- 加载文本样式 -->
+    <Style Selector="TextBlock.loading-text">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="FontWeight" Value="500"/>
+    </Style>
+    
+    <!-- 空状态样式 -->
+    <Style Selector="Border.empty-state">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="ZIndex" Value="1"/>
+    </Style>
+    
+    <!-- 空状态文本样式 -->
+    <Style Selector="TextBlock.empty-text">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#86868B"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 空状态副文本样式 -->
+    <Style Selector="TextBlock.empty-subtext">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#C7C7CC"/>
+        <Setter Property="HorizontalAlignment" Value="Center"/>
+    </Style>
+    
+    <!-- 图标按钮样式 -->
+    <Style Selector="Button.icon-button">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="4"/>
+        <Setter Property="Width" Value="24"/>
+        <Setter Property="Height" Value="24"/>
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="HorizontalContentAlignment" Value="Center"/>
+        <Setter Property="VerticalContentAlignment" Value="Center"/>
+    </Style>
+    
+    <Style Selector="Button.icon-button:pointerover">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <Style Selector="Button.icon-button.danger">
+        <Setter Property="Foreground" Value="#FF3B30"/>
+    </Style>
+    
+    <Style Selector="Button.icon-button.danger:pointerover">
+        <Setter Property="Background" Value="#FFEBEE"/>
+    </Style>
+    
+    <!-- 信息卡片样式 -->
+    <Style Selector="Border.info-card">
+        <Setter Property="Background" Value="#E3F2FD"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="12"/>
+        <Setter Property="BorderBrush" Value="#BBDEFB"/>
+        <Setter Property="BorderThickness" Value="1"/>
+    </Style>
+    
+    <!-- 信息标题样式 -->
+    <Style Selector="TextBlock.info-title">
+        <Setter Property="FontSize" Value="13"/>
+        <Setter Property="FontWeight" Value="600"/>
+        <Setter Property="Foreground" Value="#1976D2"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+    
+    <!-- 信息文本样式 -->
+    <Style Selector="TextBlock.info-text">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#1976D2"/>
+        <Setter Property="TextWrapping" Value="Wrap"/>
+    </Style>
+    
 </Styles> 

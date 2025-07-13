@@ -264,14 +264,150 @@ public partial class MainWindowViewModel : ViewModelBase
     // ================== 用户管理 ==================
     /// <summary>用户列表</summary>
     public ObservableCollection<User> Users { get; set; } = new();
+    
+    /// <summary>当前选中的用户</summary>
+    public User? SelectedUser { get; set; }
+    
+    /// <summary>用户搜索关键字</summary>
+    public string UserSearchText { get; set; } = string.Empty;
+    
     /// <summary>加载用户列表</summary>
-    public Task LoadUsersAsync() => Task.CompletedTask;
+    [RelayCommand]
+    public async Task LoadUsersAsync()
+    {
+        try
+        {
+            IsLoading = true;
+            var users = await _userService.GetAllUsersAsync();
+            
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Users.Clear();
+                foreach (var user in users)
+                {
+                    Users.Add(user);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"加载用户失败: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    
+    /// <summary>搜索用户</summary>
+    [RelayCommand]
+    public async Task SearchUsersAsync()
+    {
+        if (string.IsNullOrWhiteSpace(UserSearchText))
+        {
+            await LoadUsersAsync();
+            return;
+        }
+
+        try
+        {
+            IsLoading = true;
+            var users = await _userService.SearchUsersAsync(UserSearchText);
+            
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                Users.Clear();
+                foreach (var user in users)
+                {
+                    Users.Add(user);
+                }
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"搜索用户失败: {ex.Message}");
+        }
+        finally
+        {
+            IsLoading = false;
+        }
+    }
+    
     /// <summary>添加用户</summary>
-    public Task AddUserAsync(User user) => Task.CompletedTask;
+    [RelayCommand]
+    public async Task AddUserAsync()
+    {
+        try
+        {
+            var userEditViewModel = new UserEditViewModel(_userService);
+            var dialog = new UserEditDialog
+            {
+                DataContext = userEditViewModel
+            };
+
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                await dialog.ShowDialog(desktop.MainWindow);
+            }
+            await LoadUsersAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"添加用户失败: {ex.Message}");
+        }
+    }
+    
     /// <summary>编辑用户</summary>
-    public Task EditUserAsync(User user) => Task.CompletedTask;
+    [RelayCommand]
+    public async Task EditUserAsync()
+    {
+        Console.WriteLine($"EditUserAsync called, SelectedUser: {(SelectedUser == null ? "null" : SelectedUser.UserName)}");
+        if (SelectedUser == null) return;
+        try
+        {
+            Console.WriteLine("准备弹出编辑用户对话框");
+            var userEditViewModel = new UserEditViewModel(_userService, SelectedUser);
+            var dialog = new UserEditDialog
+            {
+                DataContext = userEditViewModel
+            };
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                await dialog.ShowDialog(desktop.MainWindow);
+                Console.WriteLine("编辑用户对话框已关闭");
+            }
+            await LoadUsersAsync();
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"编辑用户异常: {ex}");
+        }
+    }
+    
     /// <summary>删除用户</summary>
-    public Task DeleteUserAsync(User user) => Task.CompletedTask;
+    [RelayCommand]
+    public async Task DeleteUserAsync()
+    {
+        Console.WriteLine($"DeleteUserAsync called, SelectedUser: {(SelectedUser == null ? "null" : SelectedUser.UserName)}");
+        if (SelectedUser == null)
+        {
+            await ShowMessageAsync("请先选中要删除的用户！");
+            return;
+        }
+        // 弹窗确认
+        var confirm = await ShowConfirmAsync($"确定要删除用户 '{SelectedUser.UserName}' 吗？");
+        if (!confirm) return;
+        try
+        {
+            await _userService.DeleteUserAsync(SelectedUser.Id);
+            await Dispatcher.UIThread.InvokeAsync(async () => await LoadUsersAsync());
+            await ShowMessageAsync("删除成功！");
+        }
+        catch (Exception ex)
+        {
+            await ShowMessageAsync($"删除失败：{ex.Message}");
+        }
+    }
 
     // ================== 借阅管理 ==================
     /// <summary>借阅记录列表</summary>
@@ -295,8 +431,9 @@ public partial class MainWindowViewModel : ViewModelBase
             AvailableBooks = availableBooks;
             BorrowedBooks = borrowedBooks;
             
-            // TODO: 加载用户统计
-            RegisteredUsers = 0;
+            // 加载用户统计
+            var users = await _userService.GetAllUsersAsync();
+            RegisteredUsers = users.Count;
         }
         catch (Exception ex)
         {
@@ -358,10 +495,27 @@ public partial class MainWindowViewModel : ViewModelBase
     
     /// <summary>显示用户管理</summary>
     [RelayCommand]
-    public void ShowUserManagement()
+    public async Task ShowUserManagement()
     {
-        SelectedMenu = "UserManagement";
-        CurrentView = "UserManagement";
+        Console.WriteLine("切换到用户管理视图");
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(async () =>
+            {
+                var userManagementView = new UserManagementView { DataContext = this };
+                Console.WriteLine($"UserManagementView 创建成功: {userManagementView.GetType().Name}");
+                CurrentView = userManagementView;
+                SelectedMenu = "UserManagement";
+                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
+                
+                // 加载用户数据
+                await LoadUsersAsync();
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"创建 UserManagementView 失败: {ex.Message}");
+        }
     }
     
     /// <summary>显示借阅管理</summary>
