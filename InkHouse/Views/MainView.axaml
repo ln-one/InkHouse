@@ -1,0 +1,58 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:viewmodels="clr-namespace:InkHouse.ViewModels"
+    x:Class="InkHouse.Views.MainView"
+    x:DataType="viewmodels:MainViewModel">
+    
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="200"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+        
+        <!-- 侧边栏 -->
+        <StackPanel Grid.Column="0" Background="LightGray" Margin="10">
+            <!-- 用户信息 -->
+            <TextBlock Text="用户信息" FontWeight="Bold" Margin="0,0,0,10"/>
+            <TextBlock Text="{Binding CurrentUser.UserName}" Margin="0,0,0,20"/>
+            
+            <!-- 菜单 -->
+            <TextBlock Text="功能菜单" FontWeight="Bold" Margin="0,0,0,10"/>
+            
+            <!-- 借阅管理 -->
+            <Button Content="📚 借阅管理" 
+                    Command="{Binding SelectBorrowManagementCommand}"
+                    Margin="0,0,0,5"/>
+            
+            <!-- 座位预约 -->
+            <Button Content="🪑 座位预约" 
+                    Command="{Binding SelectSeatReservationCommand}"
+                    Margin="0,0,0,5"/>
+            
+            <!-- 退出登录 -->
+            <Button Content="🚪 退出登录" 
+                    Command="{Binding LogoutCommand}"
+                    Margin="0,20,0,0"/>
+        </StackPanel>
+        
+        <!-- 主内容区域 -->
+        <Grid Grid.Column="1" Margin="10">
+            <!-- 借阅管理内容 -->
+            <StackPanel IsVisible="{Binding IsBorrowManagementSelected}">
+                <TextBlock Text="借阅管理" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+                <TextBlock Text="📚 借阅管理功能" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <TextBlock Text="这里将显示借阅管理相关的功能，包括：&#x0a;• 图书借阅&#x0a;• 借阅历史&#x0a;• 图书归还&#x0a;• 借阅统计" 
+                           FontSize="14"/>
+            </StackPanel>
+            
+            <!-- 座位预约内容 -->
+            <StackPanel IsVisible="{Binding IsSeatReservationSelected}">
+                <TextBlock Text="座位预约" FontSize="20" FontWeight="Bold" Margin="0,0,0,20"/>
+                <TextBlock Text="🪑 座位预约功能" FontSize="16" FontWeight="Bold" Margin="0,0,0,10"/>
+                <TextBlock Text="这里将显示座位预约相关的功能，包括：&#x0a;• 座位查询&#x0a;• 座位预约&#x0a;• 预约历史&#x0a;• 座位状态" 
+                           FontSize="14"/>
+            </StackPanel>
+        </Grid>
+    </Grid>
+</UserControl> 
