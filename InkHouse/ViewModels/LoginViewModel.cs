@@ -84,7 +84,7 @@ namespace InkHouse.ViewModels
                 }
 
                 // 使用ServiceManager获取用户服务
-                var userService = ServiceManager.Instance.UserService;
+                var userService = ServiceManager.GetService<UserService>();
                 var user = await Task.Run(() => userService.Login(UserName, Password));
 
                 if (user != null)

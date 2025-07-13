@@ -2,6 +2,7 @@ using Avalonia.Controls;
 using InkHouse.ViewModels;
 using Avalonia.Controls.ApplicationLifetimes;
 using Avalonia;
+using InkHouse.Services;
 
 namespace InkHouse.Views;
 
@@ -11,8 +12,8 @@ public partial class MainWindow : Window
     {
         InitializeComponent();
         
-        // 设置数据上下文
-        DataContext = new MainWindowViewModel();
+        // 使用ServiceManager获取MainWindowViewModel实例
+        DataContext = ServiceManager.GetService<MainWindowViewModel>();
         
         // 订阅窗口关闭事件
         this.Closing += OnWindowClosing;

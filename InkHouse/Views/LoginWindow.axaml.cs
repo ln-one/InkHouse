@@ -3,6 +3,7 @@ using InkHouse.ViewModels;
 using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
+using InkHouse.Services;
 
 namespace InkHouse.Views
 {
@@ -54,7 +55,7 @@ namespace InkHouse.Views
             // 创建并显示主窗口
             var mainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = ServiceManager.GetService<MainWindowViewModel>()
             };
                 desktop.MainWindow = mainWindow;
             mainWindow.Show();

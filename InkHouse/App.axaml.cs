@@ -6,6 +6,8 @@ using System.Linq;
 using Avalonia.Markup.Xaml;
 using InkHouse.ViewModels;
 using InkHouse.Views;
+using InkHouse.Services;
+using System;
 
 namespace InkHouse;
 
@@ -14,6 +16,9 @@ public partial class App : Application
     public override void Initialize()
     {
         AvaloniaXamlLoader.Load(this);
+        
+        // 初始化服务容器
+        ServiceManager.Initialize();
     }
 
     public override void OnFrameworkInitializationCompleted()
