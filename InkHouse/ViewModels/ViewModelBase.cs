@@ -8,11 +8,12 @@ namespace InkHouse.ViewModels
     /// ViewModel基类
     /// 提供通用的属性和方法，简化ViewModel开发
     /// </summary>
-    public class ViewModelBase : ObservableObject
+    public class ViewModelBase : ObservableObject, IDisposable
     {
         private bool _isLoading;
         private string _errorMessage = string.Empty;
         private string _successMessage = string.Empty;
+        private bool _disposed = false;
 
         /// <summary>
         /// 是否正在加载
@@ -117,6 +118,37 @@ namespace InkHouse.ViewModels
             {
                 IsLoading = false;
             }
+        }
+        
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        public virtual void Dispose()
+        {
+            Dispose(true);
+            GC.SuppressFinalize(this);
+        }
+        
+        /// <summary>
+        /// 释放资源的受保护方法
+        /// </summary>
+        /// <param name="disposing">是否正在释放托管资源</param>
+        protected virtual void Dispose(bool disposing)
+        {
+            if (!_disposed && disposing)
+            {
+                // 释放托管资源
+                ClearMessages();
+                _disposed = true;
+            }
+        }
+        
+        /// <summary>
+        /// 析构函数
+        /// </summary>
+        ~ViewModelBase()
+        {
+            Dispose(false);
         }
     }
 }

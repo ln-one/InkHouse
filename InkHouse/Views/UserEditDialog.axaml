@@ -1,0 +1,66 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="400" d:DesignHeight="500"
+        x:Class="InkHouse.Views.UserEditDialog"
+        x:DataType="vm:UserEditViewModel"
+        Title="{Binding IsEditMode, Converter={x:Static BoolConverters.Not}, ConverterParameter='添加用户|编辑用户'}"
+        Width="400" Height="500"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 表单内容 -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <TextBlock Classes="subtitle" Text="用户信息" Margin="0,0,0,16"/>
+                
+                <!-- 用户名 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="用户名 *"/>
+                    <TextBox Text="{Binding UserName}" Watermark="请输入用户名"/>
+                </StackPanel>
+                
+                <!-- 密码（仅新增模式显示） -->
+                <StackPanel IsVisible="{Binding IsEditMode, Converter={x:Static BoolConverters.Not}}">
+                    <TextBlock Classes="label" Text="密码 *"/>
+                    <TextBox Text="{Binding Password}" Watermark="请输入密码" PasswordChar="*"/>
+                </StackPanel>
+                
+                <!-- 确认密码（仅新增模式显示） -->
+                <StackPanel IsVisible="{Binding IsEditMode, Converter={x:Static BoolConverters.Not}}">
+                    <TextBlock Classes="label" Text="确认密码 *"/>
+                    <TextBox Text="{Binding ConfirmPassword}" Watermark="请再次输入密码" PasswordChar="*"/>
+                </StackPanel>
+                
+                <!-- 角色 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="角色 *"/>
+                    <ComboBox ItemsSource="{Binding RoleOptions}" SelectedItem="{Binding Role, Mode=TwoWay}"/>
+                </StackPanel>
+                
+                <!-- 编辑模式提示 -->
+                <Border IsVisible="{Binding IsEditMode}" Classes="info-card" Margin="0,8">
+                    <StackPanel>
+                        <TextBlock Text="ℹ️ 编辑模式" Classes="info-title"/>
+                        <TextBlock Text="出于安全考虑，密码字段在编辑模式下不显示。如需修改密码，请删除用户后重新创建。" 
+                                   Classes="info-text" TextWrapping="Wrap"/>
+                    </StackPanel>
+                </Border>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- 按钮区域 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,24,0,0">
+            <Button Classes="secondary" Content="取消" Command="{Binding CancelCommand}"/>
+            <Button Classes="primary" Content="保存" Command="{Binding SaveCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window> 
