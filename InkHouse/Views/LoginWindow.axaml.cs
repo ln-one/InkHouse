@@ -50,14 +50,14 @@ namespace InkHouse.Views
         private void OnLoginSuccess()
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            // 创建并显示主窗口
+            var mainWindow = new MainWindow
             {
-                // 创建并显示主窗口
-                var mainWindow = new MainWindow
-                {
-                    DataContext = new MainWindowViewModel()
-                };
+                DataContext = new MainWindowViewModel()
+            };
                 desktop.MainWindow = mainWindow;
-                mainWindow.Show();
+            mainWindow.Show();
             }
             
             // 隐藏登录窗口而不是关闭
