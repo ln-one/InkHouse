@@ -51,18 +51,47 @@ namespace InkHouse.Views
         private void OnLoginSuccess()
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
-        {
-            // 创建并显示主窗口
-            var mainWindow = new MainWindow
             {
-                DataContext = ServiceManager.GetService<MainWindowViewModel>()
-            };
+                // 创建并显示主窗口
+                var mainWindow = new MainWindow
+                {
+                    DataContext = ServiceManager.GetService<MainWindowViewModel>()
+                };
                 desktop.MainWindow = mainWindow;
-            mainWindow.Show();
+                mainWindow.Show();
+                
+                // 立即隐藏登录窗口
+                this.Hide();
+                
+                // 清理登录窗口资源
+                CleanupLoginWindow();
             }
-            
-            // 隐藏登录窗口而不是关闭
-            this.Hide();
+        }
+        
+        /// <summary>
+        /// 清理登录窗口资源
+        /// </summary>
+        private void CleanupLoginWindow()
+        {
+            try
+            {
+                // 取消事件订阅
+                if (this.Content is LoginView loginView && loginView.DataContext is LoginViewModel loginViewModel)
+                {
+                    loginViewModel.LoginSuccess -= OnLoginSuccess;
+                    loginViewModel.LoginFailed -= OnLoginFailed;
+                }
+                
+                // 释放登录视图模型资源
+                if (this.Content is LoginView view && view.DataContext is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"清理登录窗口资源时发生错误: {ex.Message}");
+            }
         }
 
         /// <summary>
@@ -83,17 +112,36 @@ namespace InkHouse.Views
         /// </summary>
         private void OnLoginWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
         {
-            // 如果主窗口存在且可见，则隐藏主窗口
+            // 释放资源
+            DisposeResources();
+            
+            // 强制退出应用程序
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                if (desktop.MainWindow != null && desktop.MainWindow.IsVisible)
-                {
-                    desktop.MainWindow.Hide();
-                }
+                desktop.Shutdown();
             }
-            
-            // 允许登录窗口关闭，这将导致应用程序退出
-            // 因为登录窗口是唯一可见的窗口
+        }
+        
+        /// <summary>
+        /// 释放资源
+        /// </summary>
+        private void DisposeResources()
+        {
+            try
+            {
+                // 释放视图模型资源
+                if (this.Content is LoginView loginView && loginView.DataContext is IDisposable disposable)
+                {
+                    disposable.Dispose();
+                }
+                
+                // 释放服务资源
+                ServiceManager.Dispose();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"释放资源时发生错误: {ex.Message}");
+            }
         }
     }
 }
