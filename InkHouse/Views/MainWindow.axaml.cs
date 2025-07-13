@@ -26,6 +26,9 @@ public partial class MainWindow : Window
     /// </summary>
     private void OnWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
     {
+        // 取消订阅，避免重复进入
+        this.Closing -= OnWindowClosing;
+        
         // 释放资源
         DisposeResources();
         
