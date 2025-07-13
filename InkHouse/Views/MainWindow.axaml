@@ -33,12 +33,14 @@
                 <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
                 
                 <!-- 导航菜单 -->
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="📊 仪表板" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard, Mode=TwoWay}" Command="{Binding ShowDashboardCommand}"/>
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="📚图书管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement, Mode=TwoWay}" Command="{Binding ShowBookManagementCommand}"/>
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="👥用户管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement, Mode=TwoWay}" Command="{Binding ShowUserManagementCommand}"/>
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="📖借阅管理" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement, Mode=TwoWay}" Command="{Binding ShowBorrowManagementCommand}"/>
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="📈统计报表" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics, Mode=TwoWay}" Command="{Binding ShowStatisticsCommand}"/>
-                <RadioButton GroupName="Menu" Classes="nav-item" Content="⚙️系统设置" Margin="0,0,0,8" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings, Mode=TwoWay}" Command="{Binding ShowSettingsCommand}"/>
+                <StackPanel Classes="nav-group">
+                    <RadioButton GroupName="Menu" Content="仪表板" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard}" Command="{Binding ShowDashboardCommand}"/>
+                    <RadioButton GroupName="Menu" Content="图书管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement}" Command="{Binding ShowBookManagementCommand}"/>
+                    <RadioButton GroupName="Menu" Content="用户管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement}" Command="{Binding ShowUserManagementCommand}"/>
+                    <RadioButton GroupName="Menu" Content="借阅管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement}" Command="{Binding ShowBorrowManagementCommand}"/>
+                    <RadioButton GroupName="Menu" Content="座位管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics}" Command="{Binding ShowStatisticsCommand}"/>
+                    <RadioButton GroupName="Menu" Content="座位预约" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings}" Command="{Binding ShowSettingsCommand}"/>
+                </StackPanel>
                 
                 <Rectangle Classes="divider" Margin="0,24"/>
                 
