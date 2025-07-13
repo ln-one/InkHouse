@@ -37,6 +37,8 @@
         </PackageReference>
         <PackageReference Include="Microsoft.Extensions.Configuration" Version="9.0.7" />
         <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="9.0.7" />
+        <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
+        <PackageReference Include="ReactiveUI" Version="20.4.1" />
     </ItemGroup>
 </Project>

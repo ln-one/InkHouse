@@ -1,6 +1,9 @@
 using Avalonia.Controls;
 using InkHouse.ViewModels;
 using System;
+using Avalonia;
+using Avalonia.Controls.ApplicationLifetimes;
+using InkHouse.Services;
 
 namespace InkHouse.Views
 {
@@ -20,6 +23,9 @@ namespace InkHouse.Views
             
             // 等待界面加载完成后订阅事件
             this.Loaded += OnWindowLoaded;
+            
+            // 订阅窗口关闭事件
+            this.Closing += OnLoginWindowClosing;
         }
 
         /// <summary>
@@ -40,20 +46,23 @@ namespace InkHouse.Views
 
         /// <summary>
         /// 登录成功事件处理
-        /// 关闭登录窗口并打开主窗口
+        /// 隐藏登录窗口并显示主窗口
         /// </summary>
         private void OnLoginSuccess()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
         {
             // 创建并显示主窗口
             var mainWindow = new MainWindow
             {
-                DataContext = new MainWindowViewModel()
+                DataContext = ServiceManager.GetService<MainWindowViewModel>()
             };
-            
+                desktop.MainWindow = mainWindow;
             mainWindow.Show();
+            }
             
-            // 关闭登录窗口
-            this.Close();
+            // 隐藏登录窗口而不是关闭
+            this.Hide();
         }
 
         /// <summary>
@@ -66,6 +75,25 @@ namespace InkHouse.Views
             // 登录失败时保持登录窗口打开
             // 错误信息已经在 LoginViewModel 中显示
             Console.WriteLine($"登录失败: {errorMessage}");
+        }
+        
+        /// <summary>
+        /// 登录窗口关闭事件处理
+        /// 当用户关闭登录窗口时，退出应用程序
+        /// </summary>
+        private void OnLoginWindowClosing(object? sender, System.ComponentModel.CancelEventArgs e)
+        {
+            // 如果主窗口存在且可见，则隐藏主窗口
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                if (desktop.MainWindow != null && desktop.MainWindow.IsVisible)
+                {
+                    desktop.MainWindow.Hide();
+                }
+            }
+            
+            // 允许登录窗口关闭，这将导致应用程序退出
+            // 因为登录窗口是唯一可见的窗口
         }
     }
 }

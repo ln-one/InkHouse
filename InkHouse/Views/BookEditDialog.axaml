@@ -1,0 +1,72 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        mc:Ignorable="d" d:DesignWidth="500" d:DesignHeight="600"
+        x:Class="InkHouse.Views.BookEditDialog"
+        x:DataType="vm:BookEditViewModel"
+        Title="编辑图书"
+        Width="500" Height="600"
+        WindowStartupLocation="CenterOwner"
+        CanResize="False">
+
+    <Grid Margin="24">
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*"/>
+            <RowDefinition Height="Auto"/>
+        </Grid.RowDefinitions>
+
+        <!-- 表单内容 -->
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto">
+            <StackPanel Spacing="16">
+                <TextBlock Classes="subtitle" Text="图书信息" Margin="0,0,0,16"/>
+                <!-- 书名 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="书名 *"/>
+                    <TextBox Text="{Binding Title}" Watermark="请输入书名"/>
+                </StackPanel>
+                <!-- 作者 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="作者 *"/>
+                    <TextBox Text="{Binding Author}" Watermark="请输入作者"/>
+                </StackPanel>
+                <!-- ISBN -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="ISBN *"/>
+                    <TextBox Text="{Binding Isbn}" Watermark="请输入ISBN"/>
+                </StackPanel>
+                <!-- 出版社 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="出版社 *"/>
+                    <TextBox Text="{Binding Publisher}" Watermark="请输入出版社"/>
+                </StackPanel>
+                <!-- 出版年份 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="出版年份"/>
+                    <NumericUpDown Value="{Binding Year}" Minimum="1900" Maximum="2100"/>
+                </StackPanel>
+                <!-- 总数量 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="总数量"/>
+                    <NumericUpDown Value="{Binding TotalCount}" Minimum="1" Maximum="1000"/>
+                </StackPanel>
+                <!-- 可借数量 -->
+                <StackPanel>
+                    <TextBlock Classes="label" Text="可借数量"/>
+                    <NumericUpDown Value="{Binding Available}" Minimum="0" Maximum="1000"/>
+                </StackPanel>
+                <!-- 是否可借 -->
+                <StackPanel>
+                    <CheckBox Content="可借" IsChecked="{Binding IsAvailable}"/>
+                </StackPanel>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- 按钮区域 -->
+        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right" Spacing="12" Margin="0,24,0,0">
+            <Button Classes="secondary" Content="取消" Command="{Binding CancelCommand}"/>
+            <Button Classes="primary" Content="保存" Command="{Binding SaveCommand}"/>
+        </StackPanel>
+    </Grid>
+</Window> 

@@ -28,5 +28,12 @@ namespace InkHouse.Models
         public required string Status { get; set; } // 借出/归还
         // 是否已归还（用于简化逻辑）
         public bool IsReturned { get; set; } = false;
+
+        // 导航属性：图书
+        [ForeignKey("BookId")]
+        public Book? Book { get; set; }
+        // 导航属性：用户
+        [ForeignKey("UserId")]
+        public User? User { get; set; }
     }
 } 
