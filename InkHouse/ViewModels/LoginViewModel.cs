@@ -37,7 +37,7 @@ namespace InkHouse.ViewModels
         /// <summary>
         /// 登录成功事件
         /// </summary>
-        public event Action? LoginSuccess;
+        public event Action<User>? LoginSuccess;
         
         /// <summary>
         /// 登录失败事件（权限不足）
@@ -89,21 +89,10 @@ namespace InkHouse.ViewModels
 
                 if (user != null)
                 {
-                    // 检查用户角色，只有管理员才能登录系统
-                    if (UserRoles.IsAdmin(user.Role))
-                    {
-                        ShowSuccess($"欢迎回来，管理员 {user.UserName}！");
+                    ShowSuccess($"欢迎回来，{user.UserName}！");
                         
-                        // 触发登录成功事件
-                        LoginSuccess?.Invoke();
-                    }
-                    else
-                    {
-                        ShowError("权限不足，只有管理员才能登录系统");
-                        
-                        // 触发登录失败事件（权限不足）
-                        LoginFailed?.Invoke("权限不足，只有管理员才能登录系统");
-                    }
+                    // 触发登录成功事件
+                    LoginSuccess?.Invoke(user);
                 }
                 else
                 {

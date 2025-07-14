@@ -219,6 +219,36 @@
         <Setter Property="Foreground" Value="#0056CC"/>
     </Style>
     
+    <!-- 侧边栏导航项样式 -->
+    <Style Selector="StackPanel.nav-group RadioButton">
+        <Setter Property="Padding" Value="12,10"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Foreground" Value="#333"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="HorizontalAlignment" Value="Stretch"/>
+        <Setter Property="HorizontalContentAlignment" Value="Left"/>
+        <Setter Property="Transitions">
+            <Transitions>
+                <BrushTransition Property="Background" Duration="0:0:0.1"/>
+            </Transitions>
+        </Setter>
+    </Style>
+
+    <Style Selector="StackPanel.nav-group RadioButton:checked">
+        <Setter Property="Background" Value="#E6F2FF"/>
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="FontWeight" Value="600"/>
+    </Style>
+    
+    <Style Selector="StackPanel.nav-group RadioButton:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="#F5F5F7"/>
+    </Style>
+    
+    <Style Selector="StackPanel.nav-group RadioButton:checked:pointerover /template/ ContentPresenter">
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
     <!-- 数据网格样式 -->
     <Style Selector="DataGrid">
         <Setter Property="Background" Value="White"/>

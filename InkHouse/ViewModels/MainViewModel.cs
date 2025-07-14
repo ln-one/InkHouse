@@ -11,10 +11,10 @@ namespace InkHouse.ViewModels
     /// </summary>
     public partial class MainViewModel : ViewModelBase
     {
-        private User _currentUser;
+        private User _currentUser = null!;
         private bool _isBorrowManagementSelected = true;
         private bool _isSeatReservationSelected = false;
-        private object _currentView;
+        private object _currentView = null!;
 
         /// <summary>
         /// 当前登录用户

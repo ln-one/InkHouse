@@ -1,0 +1,257 @@
+<Window xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+        xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+        xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+        xmlns:vm="using:InkHouse.ViewModels"
+        xmlns:local="clr-namespace:InkHouse.Views"
+        mc:Ignorable="d" d:DesignWidth="1200" d:DesignHeight="800"
+        x:Class="InkHouse.Views.UserMainWindow"
+        x:Name="UserWindow"
+        x:DataType="vm:UserMainWindowViewModel"
+        Icon="/Assets/avalonia-logo.ico"
+        Title="InkHouse"
+        Width="1200" Height="800"
+        WindowStartupLocation="CenterScreen">
+
+    <Window.Resources>
+        <local:MenuCheckedConverter x:Key="MenuCheckedConverter"/>
+        <local:BooleanToTextConverter x:Key="BooleanToTextConverter" TrueText="可借阅" FalseText="已借出"/>
+        <local:BookCoverColorConverter x:Key="BookCoverColorConverter"/>
+        <local:BorrowStatusConverter x:Key="BorrowStatusConverter"/>
+        <local:IsNullConverter x:Key="IsNullConverter"/>
+        <local:DueDateConverter x:Key="DueDateConverter"/>
+        <local:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
+    </Window.Resources>
+
+    <Design.DataContext>
+        <vm:UserMainWindowViewModel/>
+    </Design.DataContext>
+
+    <Grid>
+        <Grid.ColumnDefinitions>
+            <ColumnDefinition Width="240"/>
+            <ColumnDefinition Width="*"/>
+        </Grid.ColumnDefinitions>
+
+        <!-- 侧边栏 -->
+        <Border Classes="sidebar" Grid.Column="0">
+            <DockPanel Margin="16">
+                <!-- 顶部区域 -->
+                <StackPanel DockPanel.Dock="Top">
+                    <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
+                    <StackPanel Classes="nav-group" Spacing="8">
+                        <RadioButton GroupName="Menu" Content="🏠 主页" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Home}" Command="{Binding ShowHomeCommand}"/>
+                        <RadioButton GroupName="Menu" Content="📚浏览图书" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BrowseBooks}" Command="{Binding ShowBrowseBooksCommand}"/>
+                        <RadioButton GroupName="Menu" Content="🧾借阅记录" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=MyBorrows}" Command="{Binding ShowMyBorrowsCommand}"/>
+                        <RadioButton GroupName="Menu" Content="🪑 座位预约" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=SeatReservation}" Command="{Binding ShowSeatReservationCommand}"/>
+                        <RadioButton GroupName="Menu" Content="🙂个人中心" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=MyProfile}" Command="{Binding ShowMyProfileCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 底部区域 -->
+                <StackPanel DockPanel.Dock="Bottom" Spacing="16">
+                    <Rectangle Classes="divider"/>
+                    <StackPanel>
+                        <TextBlock Classes="caption" Text="当前用户"/>
+                        <TextBlock Classes="label" Text="{Binding CurrentUser.UserName, FallbackValue=Guest}" FontWeight="600"/>
+                        <Button Classes="danger" Content="🚪 退出登录" Margin="0,8,0,0" Command="{Binding LogoutCommand}"/>
+                    </StackPanel>
+                </StackPanel>
+
+                <!-- 中间填充区域（推广卡片） -->
+                <Border Classes="card" VerticalAlignment="Bottom" Margin="0,24,0,0">
+                    <StackPanel Spacing="8">
+                        <TextBlock Classes="label" Text="新书速递" FontWeight="Bold"/>
+                        <TextBlock Classes="caption" Text="探索《沙丘》的广袤世界，现已开放借阅！" TextWrapping="Wrap"/>
+                        <Button Classes="success" Content="立即查看" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
+                </Border>
+
+            </DockPanel>
+        </Border>
+
+        <!-- 主内容区域 -->
+        <Grid Grid.Column="1">
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto"/>
+                <RowDefinition Height="60"/>
+                <RowDefinition Height="*"/>
+            </Grid.RowDefinitions>
+
+            <!-- 消息提示区域 -->
+            <Border Grid.Row="0" 
+                    Padding="16,8" 
+                    Margin="16,8,16,0"
+                    CornerRadius="4"
+                    IsVisible="{Binding ShowMessage}">
+                <Border.Background>
+                    <Binding Path="IsErrorMessage" Converter="{StaticResource MessageBackgroundConverter}"/>
+                </Border.Background>
+                <TextBlock Text="{Binding Message}" 
+                           Foreground="White" 
+                           FontWeight="SemiBold" 
+                           HorizontalAlignment="Center"/>
+            </Border>
+
+            <Border Classes="navbar" Grid.Row="1">
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Classes="search" Watermark="搜索图书..." Text="{Binding SearchText}" Width="300" HorizontalAlignment="Left"/>
+                    <Button Grid.Column="1" Content="🔍" Command="{Binding SearchCommand}" Margin="8,0,0,0"/>
+                </Grid>
+            </Border>
+
+            <ContentControl Grid.Row="2" Content="{Binding CurrentView}">
+                <ContentControl.Styles>
+                    <!-- 主页视图 -->
+                    <Style Selector="ContentControl[Content=Home]">
+                        <Setter Property="ContentTemplate">
+                            <DataTemplate>
+                                <TextBlock Text="欢迎来到 InkHouse！" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </Setter>
+                    </Style>
+                    <!-- 图书浏览视图 -->
+                    <Style Selector="ContentControl[Content=BrowseBooks]">
+                        <Setter Property="ContentTemplate">
+                            <DataTemplate>
+                                <Grid>
+                                    <ScrollViewer>
+                                        <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.Books}" Margin="24">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Classes="card" Width="220" Margin="10">
+                                                        <StackPanel Spacing="8">
+                                                            <!-- 文字封面 -->
+                                                            <Border CornerRadius="8" Height="200" ClipToBounds="True" Background="{Binding Title, Converter={StaticResource BookCoverColorConverter}}">
+                                                                <TextBlock Text="{Binding Title}" 
+                                                                           FontSize="16" 
+                                                                           FontWeight="Bold" 
+                                                                           Foreground="White" 
+                                                                           HorizontalAlignment="Center" 
+                                                                           VerticalAlignment="Center" 
+                                                                           TextWrapping="Wrap" 
+                                                                           TextAlignment="Center"
+                                                                           Margin="8"/>
+                                                            </Border>
+                                                            <TextBlock Text="{Binding Title}" Classes="label" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding Author}" Classes="caption" TextTrimming="CharacterEllipsis" Margin="0,0,0,8"/>
+                                                            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                                                                <TextBlock Grid.Column="0" Text="{Binding IsAvailable, Converter={StaticResource BooleanToTextConverter}}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                                <Button Grid.Column="1" Content="借阅" 
+                                                                        Command="{Binding #UserWindow.DataContext.BorrowBookCommand}" 
+                                                                        CommandParameter="{Binding}"
+                                                                        IsEnabled="{Binding IsAvailable}" 
+                                                                        Classes="success"/>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                    <!-- 加载指示器 -->
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </Setter>
+                    </Style>
+                    <!-- 我的借阅视图 -->
+                    <Style Selector="ContentControl[Content=MyBorrows]">
+                        <Setter Property="ContentTemplate">
+                            <DataTemplate>
+                                <Grid>
+                                    <ScrollViewer>
+                                        <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.BorrowRecords}" Margin="24">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Classes="card" Width="280" Margin="10">
+                                                        <StackPanel Spacing="12">
+                                                            <!-- 图书封面 -->
+                                                            <Border CornerRadius="8" Height="120" ClipToBounds="True" Background="{Binding Book.Title, Converter={StaticResource BookCoverColorConverter}}">
+                                                                <TextBlock Text="{Binding Book.Title}" 
+                                                                           FontSize="14" 
+                                                                           FontWeight="Bold" 
+                                                                           Foreground="White" 
+                                                                           HorizontalAlignment="Center" 
+                                                                           VerticalAlignment="Center" 
+                                                                           TextWrapping="Wrap" 
+                                                                           TextAlignment="Center"
+                                                                           Margin="8"/>
+                                                            </Border>
+                                                            
+                                                            <!-- 图书信息 -->
+                                                            <StackPanel Spacing="4">
+                                                                <TextBlock Text="{Binding Book.Title}" Classes="label" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                                                <TextBlock Text="{Binding Book.Author}" Classes="caption" TextTrimming="CharacterEllipsis"/>
+                                                            </StackPanel>
+                                                            
+                                                            <!-- 借阅信息 -->
+                                                            <Border Background="#F8F9FA" Padding="8" CornerRadius="4">
+                                                                <StackPanel Spacing="4">
+                                                                <TextBlock Text="{Binding ., Converter={StaticResource BorrowStatusConverter}}" FontWeight="SemiBold" FontSize="12"/>
+                                                                <TextBlock Text="{Binding BorrowDate, StringFormat='借阅日期: {0:yyyy-MM-dd}'}" Classes="caption"/>
+                                                                <TextBlock Text="{Binding BorrowDate, Converter={StaticResource DueDateConverter}, StringFormat='应还日期: {0}'}" Classes="caption"/>
+                                                                </StackPanel>
+                                                            </Border>
+                                                            
+                                                            <!-- 操作按钮 -->
+                                                            <Button Content="归还图书" 
+                                                                    Command="{Binding #UserWindow.DataContext.ReturnBookCommand}" 
+                                                                    CommandParameter="{Binding}"
+                                                                    IsEnabled="{Binding ReturnDate, Converter={x:Static local:IsNullConverter.Instance}}"
+                                                                    Classes="success"/>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                    <!-- 加载指示器 -->
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
+                            </DataTemplate>
+                        </Setter>
+                    </Style>
+                    <!-- 座位预约视图 -->
+                    <Style Selector="ContentControl[Content=SeatReservation]">
+                        <Setter Property="ContentTemplate">
+                            <DataTemplate>
+                                <TextBlock Text="座位预约（待实现）" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </Setter>
+                    </Style>
+                    <!-- 个人中心视图 -->
+                    <Style Selector="ContentControl[Content=MyProfile]">
+                        <Setter Property="ContentTemplate">
+                            <DataTemplate>
+                                <TextBlock Text="个人中心（待实现）" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                            </DataTemplate>
+                        </Setter>
+                    </Style>
+                </ContentControl.Styles>
+            </ContentControl>
+        </Grid>
+    </Grid>
+</Window>

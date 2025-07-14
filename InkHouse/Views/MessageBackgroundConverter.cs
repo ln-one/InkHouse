@@ -1,21 +1,22 @@
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 
 namespace InkHouse.Views
 {
-    public class BooleanToTextConverter : IValueConverter
+    public class MessageBackgroundConverter : IValueConverter
     {
-        public string TrueText { get; set; } = "True";
-        public string FalseText { get; set; } = "False";
+        public static readonly MessageBackgroundConverter Instance = new();
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            if (value is bool boolValue)
+            if (value is bool isErrorMessage)
             {
-                return boolValue ? TrueText : FalseText;
+                return isErrorMessage ? new SolidColorBrush(Color.Parse("#F44336")) : new SolidColorBrush(Color.Parse("#4CAF50"));
             }
-            return value;
+            
+            return new SolidColorBrush(Color.Parse("#4CAF50")); // 默认绿色
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
