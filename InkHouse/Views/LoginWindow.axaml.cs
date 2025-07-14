@@ -4,6 +4,7 @@ using System;
 using Avalonia;
 using Avalonia.Controls.ApplicationLifetimes;
 using InkHouse.Services;
+using InkHouse.Models;
 
 namespace InkHouse.Views
 {
@@ -48,18 +49,32 @@ namespace InkHouse.Views
         /// 登录成功事件处理
         /// 隐藏登录窗口并显示主窗口
         /// </summary>
-        private void OnLoginSuccess()
+        private void OnLoginSuccess(Models.User user)
         {
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                // 创建并显示主窗口
-                var mainWindow = new MainWindow
+                // 根据用户角色决定显示哪个窗口
+                if (UserRoles.IsAdmin(user.Role))
                 {
-                    DataContext = ServiceManager.GetService<MainWindowViewModel>()
-                };
-                desktop.MainWindow = mainWindow;
-                mainWindow.Show();
-                
+                    // 创建并显示主窗口
+                    var mainWindow = new MainWindow
+                    {
+                        DataContext = ServiceManager.GetService<MainWindowViewModel>()
+                    };
+                    desktop.MainWindow = mainWindow;
+                    mainWindow.Show();
+                }
+                else
+                {
+                    // 创建并显示用户主窗口
+                    var userMainWindow = new UserMainWindow
+                    {
+                        DataContext = new UserMainWindowViewModel() // 这里可以后面再用ServiceManager管理
+                    };
+                    desktop.MainWindow = userMainWindow;
+                    userMainWindow.Show();
+                }
+
                 // 立即隐藏登录窗口
                 this.Hide();
                 
