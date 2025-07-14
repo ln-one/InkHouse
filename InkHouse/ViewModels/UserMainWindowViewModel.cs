@@ -54,6 +54,8 @@ namespace InkHouse.ViewModels
         public ICommand SearchCommand { get; }
         public ICommand ReturnBookCommand { get; }
         public ICommand BorrowBookCommand { get; }
+        public IAsyncRelayCommand ShowBrowseBooksCommand { get; }
+        public IAsyncRelayCommand ShowMyBorrowsCommand { get; }
 
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
@@ -69,9 +71,14 @@ namespace InkHouse.ViewModels
             SearchCommand = new AsyncRelayCommand(SearchBooksAsync);
             ReturnBookCommand = new AsyncRelayCommand<BorrowRecord>(ReturnBookAsync);
             BorrowBookCommand = new AsyncRelayCommand<Book>(BorrowBookAsync);
+            ShowBrowseBooksCommand = new AsyncRelayCommand(ShowBrowseBooks);
+            ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
 
             // 默认显示主页
             ShowHome();
+            // 自动加载主页统计数据
+            _ = LoadBooksAsync();
+            _ = LoadBorrowRecordsAsync();
         }
 
         [RelayCommand]
@@ -81,16 +88,14 @@ namespace InkHouse.ViewModels
             CurrentView = "Home";
         }
 
-        [RelayCommand]
-        private async Task ShowBrowseBooks()
+        public async Task ShowBrowseBooks()
         {
             SelectedMenu = "BrowseBooks";
             CurrentView = "BrowseBooks";
             await LoadBooksAsync();
         }
 
-        [RelayCommand]
-        private async Task ShowMyBorrows()
+        public async Task ShowMyBorrows()
         {
             SelectedMenu = "MyBorrows";
             CurrentView = "MyBorrows";
@@ -98,14 +103,14 @@ namespace InkHouse.ViewModels
         }
 
         [RelayCommand]
-        private void ShowSeatReservation()
+        public void ShowSeatReservation()
         {
             SelectedMenu = "SeatReservation";
             CurrentView = "SeatReservation";
         }
 
         [RelayCommand]
-        private void ShowMyProfile()
+        public void ShowMyProfile()
         {
             SelectedMenu = "MyProfile";
             CurrentView = "MyProfile";

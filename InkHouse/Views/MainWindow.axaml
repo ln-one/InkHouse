@@ -14,6 +14,7 @@
 
     <Window.Resources>
         <local:MenuCheckedConverter x:Key="MenuCheckedConverter"/>
+        <local:InverseBooleanConverter x:Key="InverseBooleanConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
@@ -28,38 +29,51 @@
 
         <!-- 侧边栏 -->
         <Border Classes="sidebar" Grid.Column="0">
-            <StackPanel Margin="16">
-                <!-- Logo -->
-                <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
-                
-                <!-- 导航菜单 -->
-                <StackPanel Classes="nav-group">
-                    <RadioButton GroupName="Menu" Content="仪表板" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard}" Command="{Binding ShowDashboardCommand}"/>
-                    <RadioButton GroupName="Menu" Content="图书管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement}" Command="{Binding ShowBookManagementCommand}"/>
-                    <RadioButton GroupName="Menu" Content="用户管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement}" Command="{Binding ShowUserManagementCommand}"/>
-                    <RadioButton GroupName="Menu" Content="借阅管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement}" Command="{Binding ShowBorrowManagementCommand}"/>
-                    <RadioButton GroupName="Menu" Content="座位管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics}" Command="{Binding ShowStatisticsCommand}"/>
-                    <RadioButton GroupName="Menu" Content="座位预约" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings}" Command="{Binding ShowSettingsCommand}"/>
+            <DockPanel Margin="16">
+                <!-- 顶部区域 -->
+                <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
+                    <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
+                    <StackPanel Classes="nav-group" Spacing="8" HorizontalAlignment="Stretch">
+                        <RadioButton GroupName="Menu" Content="🏠仪表板" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard}" Command="{Binding ShowDashboardCommand}" HorizontalAlignment="Stretch"/>
+                        <RadioButton GroupName="Menu" Content="📚图书管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement}" Command="{Binding ShowBookManagementCommand}" HorizontalAlignment="Stretch"/>
+                        <RadioButton GroupName="Menu" Content="👤用户管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement}" Command="{Binding ShowUserManagementCommand}" HorizontalAlignment="Stretch"/>
+                        <RadioButton GroupName="Menu" Content="📝借阅管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement}" Command="{Binding ShowBorrowManagementCommand}" HorizontalAlignment="Stretch"/>
+                        <RadioButton GroupName="Menu" Content="📊统计分析" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics}" Command="{Binding ShowStatisticsCommand}" HorizontalAlignment="Stretch"/>
+                        <RadioButton GroupName="Menu" Content="⚙️系统设置" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings}" Command="{Binding ShowSettingsCommand}" HorizontalAlignment="Stretch"/>
+                    </StackPanel>
                 </StackPanel>
-                
-                <Rectangle Classes="divider" Margin="0,24"/>
-                
-                <!-- 用户信息 -->
-                <StackPanel>
-                    <TextBlock Classes="caption" Text="当前用户"/>
-                    <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
-                    <Button Classes="nav-item" Content="🚪 退出登录" Margin="0,8,0,0" Command="{Binding LogoutCommand}"/>
+                <!-- 底部区域 -->
+                <StackPanel DockPanel.Dock="Bottom" Spacing="16" HorizontalAlignment="Stretch">
+                    <Rectangle Classes="divider"/>
+                    <StackPanel HorizontalAlignment="Stretch">
+                        <TextBlock Classes="caption" Text="当前用户"/>
+                        <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
+                        <Button Classes="danger" Content="🚪 退出登录" Margin="0,8,0,0" HorizontalAlignment="Stretch" MinWidth="0" Command="{Binding LogoutCommand}"/>
+                    </StackPanel>
                 </StackPanel>
-            </StackPanel>
+                <!-- 中间卡片区域 -->
+                <Border Classes="card" VerticalAlignment="Bottom" Margin="0,24,0,0" Padding="20">
+                    <StackPanel Spacing="8" HorizontalAlignment="Stretch">
+                        <TextBlock Classes="label" Text="最近借阅记录" FontWeight="Bold"/>
+                        <ItemsControl ItemsSource="{Binding RecentBorrowRecords}" IsVisible="{Binding HasRecentBorrowRecords}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <TextBlock Classes="caption" Text="{Binding Book.Title, StringFormat=《{0}》}  {Binding User.UserName}  {Binding BorrowDate, StringFormat=yyyy-MM-dd}" TextWrapping="Wrap"/>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                        <TextBlock Classes="caption" Text="暂无借阅记录" IsVisible="{Binding HasRecentBorrowRecords, Converter={StaticResource InverseBooleanConverter}}"/>
+                        <Button Classes="success" Content="查看" HorizontalAlignment="Stretch" Command="{Binding ShowBorrowManagementCommand}"/>
+                    </StackPanel>
+                </Border>
+            </DockPanel>
         </Border>
-
-        <!-- 主内容区域 -->
+        <!-- 主内容区 -->
         <Grid Grid.Column="1">
             <Grid.RowDefinitions>
                 <RowDefinition Height="60"/>
                 <RowDefinition Height="*"/>
             </Grid.RowDefinitions>
-
             <!-- 顶部导航栏 -->
             <Border Classes="navbar" Grid.Row="0">
                 <Grid>
@@ -67,10 +81,7 @@
                         <ColumnDefinition Width="*"/>
                         <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
-                    
-                    <TextBlock Grid.Column="0" Classes="subtitle" Text="仪表板" 
-                               HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    
+                    <TextBlock Grid.Column="0" Classes="subtitle" Text="{Binding SelectedMenu}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
                     <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
                         <TextBox Classes="search" Watermark="搜索..." Width="300"/>
                         <Button Classes="tool" Content="🔔"/>
@@ -78,7 +89,6 @@
                     </StackPanel>
                 </Grid>
             </Border>
-
             <!-- 主要内容 -->
             <ContentControl Grid.Row="1" Content="{Binding CurrentView}" Name="MainContentControl"/>
         </Grid>

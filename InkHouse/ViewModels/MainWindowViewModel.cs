@@ -18,6 +18,7 @@ using Avalonia.Media;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Avalonia.Threading;
+using System.Collections.Generic;
 
 namespace InkHouse.ViewModels;
 
@@ -435,6 +436,10 @@ public partial class MainWindowViewModel : ViewModelBase
                 {
                     BorrowRecords.Add(record);
                 }
+                // 强制通知界面刷新
+                OnPropertyChanged(nameof(RecentBorrowRecords));
+                OnPropertyChanged(nameof(HasRecentBorrowRecords));
+                Console.WriteLine($"BorrowRecords count: {BorrowRecords.Count}, 未归还: {BorrowRecords.Count(r => r.ReturnDate == null)}");
             });
         }
         catch (Exception ex)
@@ -693,6 +698,15 @@ public partial class MainWindowViewModel : ViewModelBase
     /// <summary>登出命令</summary>
     public ICommand LogoutCommand { get; }
 
+    /// <summary>最近借阅记录（前5条）</summary>
+    public IEnumerable<BorrowRecord> RecentBorrowRecords =>
+        BorrowRecords
+            .Where(r => r.ReturnDate == null)
+            .OrderByDescending(r => r.BorrowDate)
+            .Take(1);
+
+    public bool HasRecentBorrowRecords => RecentBorrowRecords.Any();
+
     public string DashboardButtonClass => SelectedMenu == "Dashboard" ? "nav-item active" : "nav-item";
     public string BookManagementButtonClass => SelectedMenu == "BookManagement" ? "nav-item active" : "nav-item";
     public string UserManagementButtonClass => SelectedMenu == "UserManagement" ? "nav-item active" : "nav-item";
@@ -715,6 +729,7 @@ public partial class MainWindowViewModel : ViewModelBase
             {
                 await LoadStatisticsAsync();
                 await LoadBooksAsync();
+                await LoadBorrowRecordsAsync(); // 新增：加载借阅记录
                 Console.WriteLine($"MainWindowViewModel 初始化完成，Books count: {Books.Count}");
             }
             catch (Exception ex)
