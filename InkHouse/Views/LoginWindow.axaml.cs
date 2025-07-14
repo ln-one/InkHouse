@@ -67,9 +67,10 @@ namespace InkHouse.Views
                 else
                 {
                     // 创建并显示用户主窗口
+                    var viewModel = new UserMainWindowViewModel(user);
                     var userMainWindow = new UserMainWindow
                     {
-                        DataContext = new UserMainWindowViewModel() // 这里可以后面再用ServiceManager管理
+                        DataContext = viewModel
                     };
                     desktop.MainWindow = userMainWindow;
                     userMainWindow.Show();
