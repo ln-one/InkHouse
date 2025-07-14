@@ -95,6 +95,9 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Service Architecture**: Centralized service management with dependency injection
 - **Error Handling**: Unified error handling across all layers
 - **Event System**: Login success/failure events with proper window switching
+- **Book Browsing & Borrowing**: Users can browse available books with pagination and borrow/return without reloading the entire list
+- **Search & Pagination**: Optimized search using EF Core `AsNoTracking`, `Skip/Take`, and a "Load More" UI for smooth paging
+- **Performance Optimizations**: Connection pooling, lazy loading, and optimized queries for noticeably faster response times, even with large datasets
 
 #### 🔄 Ready for Implementation
 - **Book Management**: UI interface ready, service methods need implementation
