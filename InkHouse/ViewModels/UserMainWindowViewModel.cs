@@ -38,21 +38,37 @@ namespace InkHouse.ViewModels
         [ObservableProperty]
         private bool _isLoading = false;
 
+        [ObservableProperty]
+        private string _message = string.Empty;
+
+        [ObservableProperty]
+        private bool _showMessage = false;
+
+        [ObservableProperty]
+        private bool _isErrorMessage = false;
+
         public ObservableCollection<Book> Books { get; } = new();
+        public ObservableCollection<BorrowRecord> BorrowRecords { get; } = new();
 
         public ICommand LogoutCommand { get; }
         public ICommand SearchCommand { get; }
+        public ICommand ReturnBookCommand { get; }
+        public ICommand BorrowBookCommand { get; }
 
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
+        private readonly BorrowRecordService _borrowRecordService;
 
-        public UserMainWindowViewModel(User user, BookService bookService)
+        public UserMainWindowViewModel(User user, BookService bookService, BorrowRecordService borrowRecordService)
         {
-            _currentUser = user;
+            CurrentUser = user;
             _bookService = bookService;
+            _borrowRecordService = borrowRecordService;
 
             LogoutCommand = new RelayCommand(Logout);
             SearchCommand = new AsyncRelayCommand(SearchBooksAsync);
+            ReturnBookCommand = new AsyncRelayCommand<BorrowRecord>(ReturnBookAsync);
+            BorrowBookCommand = new AsyncRelayCommand<Book>(BorrowBookAsync);
 
             // 默认显示主页
             ShowHome();
@@ -74,10 +90,11 @@ namespace InkHouse.ViewModels
         }
 
         [RelayCommand]
-        private void ShowMyBorrows()
+        private async Task ShowMyBorrows()
         {
             SelectedMenu = "MyBorrows";
             CurrentView = "MyBorrows";
+            await LoadBorrowRecordsAsync();
         }
 
         [RelayCommand]
@@ -146,6 +163,65 @@ namespace InkHouse.ViewModels
             }
         }
 
+        private async Task LoadBorrowRecordsAsync()
+        {
+            if (CurrentUser == null) return;
+
+            try
+            {
+                IsLoading = true;
+                var records = await _borrowRecordService.GetBorrowRecordsByUserIdAsync(CurrentUser.Id);
+                
+                BorrowRecords.Clear();
+                foreach (var record in records)
+                {
+                    BorrowRecords.Add(record);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"加载借阅记录失败: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task ReturnBookAsync(BorrowRecord? record)
+        {
+            if (record == null) return;
+
+            try
+            {
+                await _borrowRecordService.ReturnBookAsync(record.Id);
+                await LoadBorrowRecordsAsync(); // 重新加载借阅记录
+                await LoadBooksAsync(); // 重新加载图书列表（更新可用状态）
+                ShowSuccessMessage("还书成功！");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"还书失败: {ex.Message}");
+            }
+        }
+
+        private async Task BorrowBookAsync(Book? book)
+        {
+            if (book == null || CurrentUser == null) return;
+
+            try
+            {
+                await _borrowRecordService.BorrowBookAsync(book.Id, CurrentUser.Id);
+                await LoadBooksAsync(); // 重新加载图书列表（更新可用状态）
+                await LoadBorrowRecordsAsync(); // 重新加载借阅记录
+                ShowSuccessMessage("借阅成功！");
+            }
+            catch (Exception ex)
+            {
+                ShowErrorMessage($"借阅失败: {ex.Message}");
+            }
+        }
+
         private void Logout()
         {
             if (Avalonia.Application.Current?.ApplicationLifetime is Avalonia.Controls.ApplicationLifetimes.IClassicDesktopStyleApplicationLifetime desktop)
@@ -158,6 +234,28 @@ namespace InkHouse.ViewModels
                 desktop.MainWindow = loginWindow;
                 loginWindow.Show();
             }
+        }
+
+        private async void ShowSuccessMessage(string message)
+        {
+            Message = message;
+            IsErrorMessage = false;
+            ShowMessage = true;
+            
+            // 3秒后自动隐藏消息
+            await Task.Delay(3000);
+            ShowMessage = false;
+        }
+
+        private async void ShowErrorMessage(string message)
+        {
+            Message = message;
+            IsErrorMessage = true;
+            ShowMessage = true;
+            
+            // 5秒后自动隐藏错误消息
+            await Task.Delay(5000);
+            ShowMessage = false;
         }
     }
 }
