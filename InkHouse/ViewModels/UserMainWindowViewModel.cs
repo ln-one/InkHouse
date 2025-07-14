@@ -4,7 +4,6 @@ using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
 using System.Windows.Input;
 using InkHouse.Models;
-// using InkHouse.Services.Interfaces; // 等待实现时再取消注释
 using InkHouse.Services;
 using InkHouse.Views;
 using Avalonia.Controls.ApplicationLifetimes;
@@ -22,15 +21,6 @@ using Avalonia.Threading;
 
 namespace InkHouse.ViewModels
 {
-    // 用于设计时预览的图书模型
-    public class DesignBook
-    {
-        public string Title { get; set; } = "Book Title";
-        public string Author { get; set; } = "Author Name";
-        public string CoverUrl { get; set; } = "https://img3.doubanio.com/view/subject/s/public/s33943361.jpg"; // 示例封面
-        public bool IsAvailable { get; set; } = true;
-    }
-
     public partial class UserMainWindowViewModel : ViewModelBase
     {
         [ObservableProperty]
@@ -42,34 +32,27 @@ namespace InkHouse.ViewModels
         [ObservableProperty]
         private User? _currentUser;
 
-        public ObservableCollection<DesignBook> Books { get; }
+        [ObservableProperty]
+        private string _searchText = string.Empty;
+
+        [ObservableProperty]
+        private bool _isLoading = false;
+
+        public ObservableCollection<Book> Books { get; } = new();
 
         public ICommand LogoutCommand { get; }
+        public ICommand SearchCommand { get; }
 
         // TODO: 依赖注入这些服务
-        // private readonly IUserBookService _bookService;
-        // private readonly IUserBorrowService _borrowService;
-        // private readonly IUserAccountService _accountService;
+        private readonly BookService _bookService;
 
-        public UserMainWindowViewModel(User user)
+        public UserMainWindowViewModel(User user, BookService bookService)
         {
             _currentUser = user;
-            // _bookService = bookService;
-            // _borrowService = borrowService;
-            // _accountService = accountService;
+            _bookService = bookService;
 
             LogoutCommand = new RelayCommand(Logout);
-
-            // 为设计时预览创建示例数据
-            Books = new ObservableCollection<DesignBook>
-            {
-                new() { Title = "三体", Author = "刘慈欣", IsAvailable = true },
-                new() { Title = "流浪地球", Author = "刘慈欣", IsAvailable = false },
-                new() { Title = "活着", Author = "余华", IsAvailable = true },
-                new() { Title = "许三观卖血记", Author = "余华", IsAvailable = true },
-                new() { Title = "代码整洁之道", Author = "Robert C. Martin", IsAvailable = false },
-                new() { Title = "深入理解计算机系统", Author = "Randal E. Bryant", IsAvailable = true },
-            };
+            SearchCommand = new AsyncRelayCommand(SearchBooksAsync);
 
             // 默认显示主页
             ShowHome();
@@ -83,10 +66,11 @@ namespace InkHouse.ViewModels
         }
 
         [RelayCommand]
-        private void ShowBrowseBooks()
+        private async Task ShowBrowseBooks()
         {
             SelectedMenu = "BrowseBooks";
             CurrentView = "BrowseBooks";
+            await LoadBooksAsync();
         }
 
         [RelayCommand]
@@ -108,6 +92,58 @@ namespace InkHouse.ViewModels
         {
             SelectedMenu = "MyProfile";
             CurrentView = "MyProfile";
+        }
+
+        private async Task LoadBooksAsync()
+        {
+            try
+            {
+                IsLoading = true;
+                var books = await _bookService.GetAllBooksAsync();
+                
+                Books.Clear();
+                foreach (var book in books)
+                {
+                    Books.Add(book);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"加载图书失败: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
+        }
+
+        private async Task SearchBooksAsync()
+        {
+            if (string.IsNullOrWhiteSpace(SearchText))
+            {
+                await LoadBooksAsync();
+                return;
+            }
+
+            try
+            {
+                IsLoading = true;
+                var books = await _bookService.SearchBooksAsync(SearchText);
+                
+                Books.Clear();
+                foreach (var book in books)
+                {
+                    Books.Add(book);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"搜索图书失败: {ex.Message}");
+            }
+            finally
+            {
+                IsLoading = false;
+            }
         }
 
         private void Logout()

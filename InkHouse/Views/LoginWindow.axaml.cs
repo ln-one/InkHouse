@@ -67,7 +67,8 @@ namespace InkHouse.Views
                 else
                 {
                     // 创建并显示用户主窗口
-                    var viewModel = new UserMainWindowViewModel(user);
+                    var bookService = ServiceManager.GetService<BookService>();
+                    var viewModel = new UserMainWindowViewModel(user, bookService);
                     var userMainWindow = new UserMainWindow
                     {
                         DataContext = viewModel

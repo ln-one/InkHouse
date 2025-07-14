@@ -16,6 +16,7 @@
     <Window.Resources>
         <local:MenuCheckedConverter x:Key="MenuCheckedConverter"/>
         <local:BooleanToTextConverter x:Key="BooleanToTextConverter" TrueText="可借阅" FalseText="已借出"/>
+        <local:BookCoverColorConverter x:Key="BookCoverColorConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
@@ -73,7 +74,14 @@
             </Grid.RowDefinitions>
 
             <Border Classes="navbar" Grid.Row="0">
-                <TextBox Classes="search" Watermark="搜索图书..." Width="300" HorizontalAlignment="Left"/>
+                <Grid>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*"/>
+                        <ColumnDefinition Width="Auto"/>
+                    </Grid.ColumnDefinitions>
+                    <TextBox Grid.Column="0" Classes="search" Watermark="搜索图书..." Text="{Binding SearchText}" Width="300" HorizontalAlignment="Left"/>
+                    <Button Grid.Column="1" Content="🔍" Command="{Binding SearchCommand}" Margin="8,0,0,0"/>
+                </Grid>
             </Border>
 
             <ContentControl Grid.Row="1" Content="{Binding CurrentView}">
@@ -90,32 +98,49 @@
                     <Style Selector="ContentControl[Content=BrowseBooks]">
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
-                                <ScrollViewer>
-                                    <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.Books}" Margin="24">
-                                        <ItemsControl.ItemsPanel>
-                                            <ItemsPanelTemplate>
-                                                <WrapPanel />
-                                            </ItemsPanelTemplate>
-                                        </ItemsControl.ItemsPanel>
-                                        <ItemsControl.ItemTemplate>
-                                            <DataTemplate>
-                                                <Border Classes="card" Width="220" Margin="10">
-                                                    <StackPanel Spacing="8">
-                                                        <Border CornerRadius="8" Height="200" ClipToBounds="True">
-                                                            <Image Source="{Binding CoverUrl}" Stretch="UniformToFill" />
-                                                        </Border>
-                                                        <TextBlock Text="{Binding Title}" Classes="label" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
-                                                        <TextBlock Text="{Binding Author}" Classes="caption" TextTrimming="CharacterEllipsis" Margin="0,0,0,8"/>
-                                                        <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
-                                                            <TextBlock Grid.Column="0" Text="{Binding IsAvailable, Converter={StaticResource BooleanToTextConverter}}" FontWeight="SemiBold" VerticalAlignment="Center"/>
-                                                            <Button Grid.Column="1" Content="借阅" IsEnabled="{Binding IsAvailable}" Classes="success"/>
-                                                        </Grid>
-                                                    </StackPanel>
-                                                </Border>
-                                            </DataTemplate>
-                                        </ItemsControl.ItemTemplate>
-                                    </ItemsControl>
-                                </ScrollViewer>
+                                <Grid>
+                                    <ScrollViewer>
+                                        <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.Books}" Margin="24">
+                                            <ItemsControl.ItemsPanel>
+                                                <ItemsPanelTemplate>
+                                                    <WrapPanel />
+                                                </ItemsPanelTemplate>
+                                            </ItemsControl.ItemsPanel>
+                                            <ItemsControl.ItemTemplate>
+                                                <DataTemplate>
+                                                    <Border Classes="card" Width="220" Margin="10">
+                                                        <StackPanel Spacing="8">
+                                                            <!-- 文字封面 -->
+                                                            <Border CornerRadius="8" Height="200" ClipToBounds="True" Background="{Binding Title, Converter={StaticResource BookCoverColorConverter}}">
+                                                                <TextBlock Text="{Binding Title}" 
+                                                                           FontSize="16" 
+                                                                           FontWeight="Bold" 
+                                                                           Foreground="White" 
+                                                                           HorizontalAlignment="Center" 
+                                                                           VerticalAlignment="Center" 
+                                                                           TextWrapping="Wrap" 
+                                                                           TextAlignment="Center"
+                                                                           Margin="8"/>
+                                                            </Border>
+                                                            <TextBlock Text="{Binding Title}" Classes="label" FontWeight="Bold" TextTrimming="CharacterEllipsis"/>
+                                                            <TextBlock Text="{Binding Author}" Classes="caption" TextTrimming="CharacterEllipsis" Margin="0,0,0,8"/>
+                                                            <Grid ColumnDefinitions="*,Auto" VerticalAlignment="Center">
+                                                                <TextBlock Grid.Column="0" Text="{Binding IsAvailable, Converter={StaticResource BooleanToTextConverter}}" FontWeight="SemiBold" VerticalAlignment="Center"/>
+                                                                <Button Grid.Column="1" Content="借阅" IsEnabled="{Binding IsAvailable}" Classes="success"/>
+                                                            </Grid>
+                                                        </StackPanel>
+                                                    </Border>
+                                                </DataTemplate>
+                                            </ItemsControl.ItemTemplate>
+                                        </ItemsControl>
+                                    </ScrollViewer>
+                                    <!-- 加载指示器 -->
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}">
+                                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                                            <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
+                                        </StackPanel>
+                                    </Border>
+                                </Grid>
                             </DataTemplate>
                         </Setter>
                     </Style>

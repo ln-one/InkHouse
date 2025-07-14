@@ -40,5 +40,6 @@
         <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.7" />
         <PackageReference Include="Pomelo.EntityFrameworkCore.MySql" Version="8.0.3" />
         <PackageReference Include="ReactiveUI" Version="20.4.1" />
+        <PackageReference Include="Avalonia.ReactiveUI" Version="11.3.2" />
     </ItemGroup>
 </Project>
