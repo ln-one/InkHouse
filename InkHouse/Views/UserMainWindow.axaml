@@ -155,7 +155,11 @@
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
                                 <Grid>
-                                    <ScrollViewer>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer Grid.Row="0">
                                         <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.Books}" Margin="24">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -194,8 +198,18 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
+                                    
+                                    <!-- 加载更多按钮 -->
+                                    <Button Grid.Row="1" 
+                                            Content="加载更多..." 
+                                            Command="{Binding #UserWindow.DataContext.LoadMoreBooksCommand}"
+                                            HorizontalAlignment="Center" 
+                                            Margin="0,0,0,20" 
+                                            Classes="outline"
+                                            IsVisible="{Binding #UserWindow.DataContext.Books.Count}" />
+                                    
                                     <!-- 加载指示器 -->
-                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}">
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
                                         </StackPanel>
@@ -209,7 +223,11 @@
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
                                 <Grid>
-                                    <ScrollViewer>
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="*" />
+                                        <RowDefinition Height="Auto" />
+                                    </Grid.RowDefinitions>
+                                    <ScrollViewer Grid.Row="0">
                                         <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.BorrowRecords}" Margin="24">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -260,8 +278,18 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
+                                    
+                                    <!-- 加载更多按钮 -->
+                                    <Button Grid.Row="1" 
+                                            Content="加载更多..." 
+                                            Command="{Binding #UserWindow.DataContext.LoadMoreBorrowRecordsCommand}"
+                                            HorizontalAlignment="Center" 
+                                            Margin="0,0,0,20" 
+                                            Classes="outline"
+                                            IsVisible="{Binding #UserWindow.DataContext.BorrowRecords.Count}" />
+                                    
                                     <!-- 加载指示器 -->
-                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}">
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
                                         </StackPanel>

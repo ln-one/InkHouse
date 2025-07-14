@@ -32,7 +32,7 @@
             <DockPanel Margin="16">
                 <!-- 顶部区域 -->
                 <StackPanel DockPanel.Dock="Top" HorizontalAlignment="Stretch">
-                    <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
+                <TextBlock Classes="title" Text="InkHouse" Margin="0,0,0,32"/>
                     <StackPanel Classes="nav-group" Spacing="8" HorizontalAlignment="Stretch">
                         <RadioButton GroupName="Menu" Content="🏠仪表板" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Dashboard}" Command="{Binding ShowDashboardCommand}" HorizontalAlignment="Stretch"/>
                         <RadioButton GroupName="Menu" Content="📚图书管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement}" Command="{Binding ShowBookManagementCommand}" HorizontalAlignment="Stretch"/>
@@ -46,8 +46,8 @@
                 <StackPanel DockPanel.Dock="Bottom" Spacing="16" HorizontalAlignment="Stretch">
                     <Rectangle Classes="divider"/>
                     <StackPanel HorizontalAlignment="Stretch">
-                        <TextBlock Classes="caption" Text="当前用户"/>
-                        <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
+                    <TextBlock Classes="caption" Text="当前用户"/>
+                    <TextBlock Classes="label" Text="管理员" FontWeight="600"/>
                         <Button Classes="danger" Content="🚪 退出登录" Margin="0,8,0,0" HorizontalAlignment="Stretch" MinWidth="0" Command="{Binding LogoutCommand}"/>
                     </StackPanel>
                 </StackPanel>
@@ -64,7 +64,7 @@
                         </ItemsControl>
                         <TextBlock Classes="caption" Text="暂无借阅记录" IsVisible="{Binding HasRecentBorrowRecords, Converter={StaticResource InverseBooleanConverter}}"/>
                         <Button Classes="success" Content="查看" HorizontalAlignment="Stretch" Command="{Binding ShowBorrowManagementCommand}"/>
-                    </StackPanel>
+            </StackPanel>
                 </Border>
             </DockPanel>
         </Border>
