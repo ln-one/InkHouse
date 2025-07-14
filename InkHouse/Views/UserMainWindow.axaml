@@ -49,12 +49,22 @@
                 </StackPanel>
 
                 <!-- 底部区域 -->
-                <StackPanel DockPanel.Dock="Bottom" Spacing="16">
+                <StackPanel DockPanel.Dock="Bottom" Spacing="16" HorizontalAlignment="Stretch">
                     <Rectangle Classes="divider"/>
-                    <StackPanel>
-                        <TextBlock Classes="caption" Text="当前用户"/>
-                        <TextBlock Classes="label" Text="{Binding CurrentUser.UserName, FallbackValue=Guest}" FontWeight="600"/>
-                        <Button Classes="danger" Content="🚪 退出登录" Margin="0,8,0,0" Command="{Binding LogoutCommand}"/>
+                    <StackPanel Spacing="8" HorizontalAlignment="Stretch">
+                        <TextBlock Classes="caption" Text="当前用户" Foreground="#A0A0A0" FontSize="12"/>
+                        <StackPanel Orientation="Horizontal" Spacing="6" VerticalAlignment="Center">
+                            <TextBlock Text="👤" FontSize="16" VerticalAlignment="Center"/>
+                            <TextBlock Classes="label" Text="{Binding CurrentUser.UserName, FallbackValue=Guest}" FontWeight="Bold" FontSize="15" VerticalAlignment="Center"/>
+                        </StackPanel>
+                        <Rectangle Height="1" Fill="#EEE" Margin="0,2,0,0"/>
+                        <Button Classes="danger"
+                                Content="🚪 退出登录"
+                                Margin="0,8,0,0"
+                                HorizontalAlignment="Stretch"
+                                MinWidth="0"
+                                Height="36"
+                                Command="{Binding DataContext.LogoutCommand, ElementName=UserWindow}"/>
                     </StackPanel>
                 </StackPanel>
 
@@ -110,7 +120,33 @@
                     <Style Selector="ContentControl[Content=Home]">
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
-                                <TextBlock Text="欢迎来到 InkHouse！" FontSize="24" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <StackPanel Spacing="32" HorizontalAlignment="Center" VerticalAlignment="Center">
+                                    <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                        <TextBlock FontSize="28" FontWeight="Bold" HorizontalAlignment="Center">
+                                            <Run Text="👋 欢迎回来，"/>
+                                            <Run Text="{Binding DataContext.CurrentUser.UserName, ElementName=UserWindow, FallbackValue=Guest}"/>
+                                            <Run Text="！"/>
+                                        </TextBlock>
+                                        <TextBlock Text="祝你阅读愉快！" FontSize="16" Foreground="#888" HorizontalAlignment="Center"/>
+                                    </StackPanel>
+                                    <StackPanel Orientation="Horizontal" Spacing="48" HorizontalAlignment="Center">
+                                        <Border Classes="card" Padding="32" Width="220">
+                                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                                <TextBlock Text="📚" FontSize="28" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding DataContext.Books.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="可借图书" FontSize="14" Foreground="#888" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                        <Border Classes="card" Padding="32" Width="220">
+                                            <StackPanel Spacing="8" HorizontalAlignment="Center">
+                                                <TextBlock Text="🧾" FontSize="28" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="{Binding DataContext.BorrowRecords.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
+                                                <TextBlock Text="我的借阅" FontSize="14" Foreground="#888" HorizontalAlignment="Center"/>
+                                            </StackPanel>
+                                        </Border>
+                                    </StackPanel>
+                                    <Button Content="去借书" Classes="success" Width="120" HorizontalAlignment="Center" Margin="0,16,0,0" Command="{Binding DataContext.ShowBrowseBooksCommand, ElementName=UserWindow}"/>
+                                </StackPanel>
                             </DataTemplate>
                         </Setter>
                     </Style>
