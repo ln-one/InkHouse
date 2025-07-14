@@ -29,10 +29,14 @@ namespace InkHouse.Services
         /// 获取所有图书
         /// </summary>
         /// <returns>图书列表</returns>
-        public async Task<List<Book>> GetAllBooksAsync()
+        public async Task<List<Book>> GetAllBooksAsync(int page = 1, int pageSize = 50)
         {
             using var context = _dbContextFactory.CreateDbContext();
-            return await context.Books.ToListAsync();
+            return await context.Books
+                .AsNoTracking() // Improves query performance since we're only reading
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
         }
 
         /// <summary>
@@ -50,15 +54,20 @@ namespace InkHouse.Services
         /// 搜索图书
         /// </summary>
         /// <param name="keyword">搜索关键字</param>
+        /// <param name="page">页码</param>
+        /// <param name="pageSize">每页条数</param>
         /// <returns>匹配的图书列表</returns>
-        public async Task<List<Book>> SearchBooksAsync(string keyword)
+        public async Task<List<Book>> SearchBooksAsync(string keyword, int page = 1, int pageSize = 50)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.Books
-                .Where(b => b.Title.Contains(keyword) || 
-                           b.Author.Contains(keyword) || 
-                           b.ISBN.Contains(keyword) ||
-                           b.Publisher.Contains(keyword))
+                .AsNoTracking() // Improves query performance
+                .Where(b => EF.Functions.Like(b.Title, $"%{keyword}%") || 
+                           EF.Functions.Like(b.Author, $"%{keyword}%") || 
+                           EF.Functions.Like(b.ISBN, $"%{keyword}%") ||
+                           EF.Functions.Like(b.Publisher, $"%{keyword}%"))
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 

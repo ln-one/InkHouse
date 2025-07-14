@@ -50,12 +50,26 @@ namespace InkHouse.ViewModels
         public ObservableCollection<Book> Books { get; } = new();
         public ObservableCollection<BorrowRecord> BorrowRecords { get; } = new();
 
+        [ObservableProperty]
+        private int _currentPage = 1;
+
+        [ObservableProperty]
+        private int _pageSize = 20;
+
+        [ObservableProperty]
+        private int _totalBooks = 0;
+
+        [ObservableProperty]
+        private int _totalBorrowRecords = 0;
+
         public ICommand LogoutCommand { get; }
         public ICommand SearchCommand { get; }
         public ICommand ReturnBookCommand { get; }
         public ICommand BorrowBookCommand { get; }
         public IAsyncRelayCommand ShowBrowseBooksCommand { get; }
         public IAsyncRelayCommand ShowMyBorrowsCommand { get; }
+        public IAsyncRelayCommand LoadMoreBooksCommand { get; }
+        public IAsyncRelayCommand LoadMoreBorrowRecordsCommand { get; }
 
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
@@ -73,6 +87,8 @@ namespace InkHouse.ViewModels
             BorrowBookCommand = new AsyncRelayCommand<Book>(BorrowBookAsync);
             ShowBrowseBooksCommand = new AsyncRelayCommand(ShowBrowseBooks);
             ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
+            LoadMoreBooksCommand = new AsyncRelayCommand(LoadMoreBooks);
+            LoadMoreBorrowRecordsCommand = new AsyncRelayCommand(LoadMoreBorrowRecords);
 
             // 默认显示主页
             ShowHome();
@@ -121,7 +137,14 @@ namespace InkHouse.ViewModels
             try
             {
                 IsLoading = true;
-                var books = await _bookService.GetAllBooksAsync();
+                var books = await _bookService.GetAllBooksAsync(CurrentPage, PageSize);
+                
+                // Get total count for the first time only (optimization)
+                if (CurrentPage == 1 && TotalBooks == 0)
+                {
+                    // In a real app we'd have a count method, but for now just use this
+                    TotalBooks = books.Count; // This is just an approximation for now
+                }
                 
                 Books.Clear();
                 foreach (var book in books)
@@ -143,6 +166,7 @@ namespace InkHouse.ViewModels
         {
             if (string.IsNullOrWhiteSpace(SearchText))
             {
+                CurrentPage = 1; // Reset to first page when searching
                 await LoadBooksAsync();
                 return;
             }
@@ -150,7 +174,7 @@ namespace InkHouse.ViewModels
             try
             {
                 IsLoading = true;
-                var books = await _bookService.SearchBooksAsync(SearchText);
+                var books = await _bookService.SearchBooksAsync(SearchText, CurrentPage, PageSize);
                 
                 Books.Clear();
                 foreach (var book in books)
@@ -175,7 +199,13 @@ namespace InkHouse.ViewModels
             try
             {
                 IsLoading = true;
-                var records = await _borrowRecordService.GetBorrowRecordsByUserIdAsync(CurrentUser.Id);
+                var records = await _borrowRecordService.GetBorrowRecordsByUserIdAsync(CurrentUser.Id, CurrentPage, PageSize);
+                
+                // Get total count for the first time only (optimization)
+                if (CurrentPage == 1 && TotalBorrowRecords == 0)
+                {
+                    TotalBorrowRecords = records.Count; // This is just an approximation for now
+                }
                 
                 BorrowRecords.Clear();
                 foreach (var record in records)
@@ -200,8 +230,20 @@ namespace InkHouse.ViewModels
             try
             {
                 await _borrowRecordService.ReturnBookAsync(record.Id);
-                await LoadBorrowRecordsAsync(); // 重新加载借阅记录
-                await LoadBooksAsync(); // 重新加载图书列表（更新可用状态）
+                
+                // Update the record locally instead of reloading everything
+                record.ReturnDate = DateTime.Now;
+                record.Status = "已归还";
+                record.IsReturned = true;
+                
+                // Update the book availability if it's in the current view
+                var book = Books.FirstOrDefault(b => b.Id == record.BookId);
+                if (book != null)
+                {
+                    book.Available++;
+                    book.IsAvailable = true;
+                }
+                
                 ShowSuccessMessage("还书成功！");
             }
             catch (Exception ex)
@@ -216,9 +258,21 @@ namespace InkHouse.ViewModels
 
             try
             {
-                await _borrowRecordService.BorrowBookAsync(book.Id, CurrentUser.Id);
-                await LoadBooksAsync(); // 重新加载图书列表（更新可用状态）
-                await LoadBorrowRecordsAsync(); // 重新加载借阅记录
+                var borrowRecord = await _borrowRecordService.BorrowBookAsync(book.Id, CurrentUser.Id);
+                
+                // Update book locally instead of reloading everything
+                book.Available--;
+                if (book.Available <= 0)
+                {
+                    book.IsAvailable = false;
+                }
+                
+                // Add the borrow record to the collection if we're on the MyBorrows view
+                if (CurrentView == "MyBorrows")
+                {
+                    BorrowRecords.Insert(0, borrowRecord);
+                }
+                
                 ShowSuccessMessage("借阅成功！");
             }
             catch (Exception ex)
@@ -261,6 +315,18 @@ namespace InkHouse.ViewModels
             // 5秒后自动隐藏错误消息
             await Task.Delay(5000);
             ShowMessage = false;
+        }
+
+        private async Task LoadMoreBooks()
+        {
+            CurrentPage++;
+            await LoadBooksAsync();
+        }
+
+        private async Task LoadMoreBorrowRecords()
+        {
+            CurrentPage++;
+            await LoadBorrowRecordsAsync();
         }
     }
 }

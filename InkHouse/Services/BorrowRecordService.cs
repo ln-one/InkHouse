@@ -56,15 +56,19 @@ namespace InkHouse.Services
         /// 获取用户的借阅记录
         /// </summary>
         /// <param name="userId">用户ID</param>
+        /// <param name="page">页码</param>
+        /// <param name="pageSize">每页条数</param>
         /// <returns>用户的借阅记录列表</returns>
-        public async Task<List<BorrowRecord>> GetBorrowRecordsByUserIdAsync(int userId)
+        public async Task<List<BorrowRecord>> GetBorrowRecordsByUserIdAsync(int userId, int page = 1, int pageSize = 20)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.BorrowRecords
+                .AsNoTracking() // Improves query performance
                 .Include(br => br.Book)
-                .Include(br => br.User)
                 .Where(br => br.UserId == userId)
                 .OrderByDescending(br => br.BorrowDate)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
                 .ToListAsync();
         }
 
