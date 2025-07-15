@@ -12,5 +12,8 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://InkHouse/Styles/GlobalStyles.axaml"/>
+        <Style Selector="TextBlock">
+            <Setter Property="FontFamily" Value="Microsoft YaHei, SimSun, Arial Unicode MS, Arial"/>
+        </Style>
     </Application.Styles>
 </Application>

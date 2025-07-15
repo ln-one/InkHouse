@@ -27,6 +27,7 @@ namespace InkHouse.Services
             services.AddSingleton<BookService>();
             services.AddSingleton<UserService>();
             services.AddSingleton<BorrowRecordService>();
+            services.AddSingleton<SeatService>();
 
             // 注册视图模型
             services.AddTransient<LoginViewModel>();
