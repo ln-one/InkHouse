@@ -199,15 +199,6 @@
                                         </ItemsControl>
                                     </ScrollViewer>
                                     
-                                    <!-- 加载更多按钮 -->
-                                    <Button Grid.Row="1" 
-                                            Content="加载更多..." 
-                                            Command="{Binding #UserWindow.DataContext.LoadMoreBooksCommand}"
-                                            HorizontalAlignment="Center" 
-                                            Margin="0,0,0,20" 
-                                            Classes="outline"
-                                            IsVisible="{Binding #UserWindow.DataContext.Books.Count}" />
-                                    
                                     <!-- 加载指示器 -->
                                     <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
