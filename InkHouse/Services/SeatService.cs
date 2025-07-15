@@ -142,5 +142,46 @@ namespace InkHouse.Services
                 .Where(r => r.Status == "已预约" || r.Status == "使用中")
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// 添加座位
+        /// </summary>
+        public async Task<Seat> AddSeatAsync(string seatNumber)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            if (await context.Seats.AnyAsync(s => s.SeatNumber == seatNumber))
+                throw new InvalidOperationException("座位编号已存在");
+            var seat = new Seat { SeatNumber = seatNumber, Status = "Free" };
+            context.Seats.Add(seat);
+            await context.SaveChangesAsync();
+            return seat;
+        }
+
+        /// <summary>
+        /// 删除座位
+        /// </summary>
+        public async Task<bool> DeleteSeatAsync(int seatId)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            var seat = await context.Seats.FindAsync(seatId);
+            if (seat == null) return false;
+            context.Seats.Remove(seat);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// 修改座位状态
+        /// </summary>
+        public async Task<Seat> UpdateSeatStatusAsync(int seatId, string newStatus)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            var seat = await context.Seats.FindAsync(seatId);
+            if (seat == null) throw new InvalidOperationException("座位不存在");
+            seat.Status = newStatus;
+            if (newStatus == "Free") seat.CurrentUserId = null;
+            await context.SaveChangesAsync();
+            return seat;
+        }
     }
 } 

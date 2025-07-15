@@ -694,6 +694,20 @@ public partial class MainWindowViewModel : ViewModelBase
         CurrentView = "Settings";
     }
 
+    /// <summary>显示座位管理</summary>
+    [RelayCommand]
+    public async Task ShowSeatManagement()
+    {
+        var seatService = ServiceManager.GetService<SeatService>();
+        var vm = new AdminSeatManagementViewModel(seatService);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var seatManagementView = new InkHouse.Views.AdminSeatManagementView { DataContext = vm };
+            CurrentView = seatManagementView;
+            SelectedMenu = "SeatManagement";
+        });
+    }
+
     // ================== 登出 ==================
     /// <summary>登出命令</summary>
     public ICommand LogoutCommand { get; }
