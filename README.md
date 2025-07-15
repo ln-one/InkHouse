@@ -592,9 +592,6 @@ git push origin feature/your-feature-name
 - **Dependency Injection** (service management)
 
 
-## License
-
-This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
 
 ## 👥 Contributors
 - Member A
@@ -608,4 +605,4 @@ This project is licensed under the MIT License - see the [LICENSE](./LICENSE) fi
 - For more Rider tips, see [Rider Documentation](https://www.jetbrains.com/help/rider/)
 
 ## 📄 License
-This project is for educational and internship purposes only. Feel free to use and modify.
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
