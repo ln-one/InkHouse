@@ -591,6 +591,11 @@ git push origin feature/your-feature-name
 - **MVVM Pattern** (architecture)
 - **Dependency Injection** (service management)
 
+
+## License
+
+This project is licensed under the MIT License - see the [LICENSE](./LICENSE) file for details.
+
 ## 👥 Contributors
 - Member A
 - Member B
