@@ -21,6 +21,10 @@
         <local:IsNullConverter x:Key="IsNullConverter"/>
         <local:DueDateConverter x:Key="DueDateConverter"/>
         <local:MessageBackgroundConverter x:Key="MessageBackgroundConverter"/>
+        <local:SeatStatusColorConverter x:Key="SeatStatusColorConverter"/>
+        <local:SeatCanReserveConverter x:Key="SeatCanReserveConverter"/>
+        <local:SeatCanCheckInConverter x:Key="SeatCanCheckInConverter"/>
+        <local:SeatCanCheckOutConverter x:Key="SeatCanCheckOutConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
@@ -302,7 +306,7 @@
                     <Style Selector="ContentControl[Content=SeatReservation]">
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
-                                <TextBlock Text="座位预约（待实现）" FontSize="18" HorizontalAlignment="Center" VerticalAlignment="Center" />
+                                <local:SeatReservationView DataContext="{Binding DataContext.SeatReservationViewModel, ElementName=UserWindow}"/>
                             </DataTemplate>
                         </Setter>
                     </Style>

@@ -71,4 +71,17 @@ public partial class App : Application
             BindingPlugins.DataValidators.Remove(plugin);
         }
     }
+
+    public App()
+    {
+        AppDomain.CurrentDomain.UnhandledException += (s, e) =>
+        {
+            Console.WriteLine("全局未捕获异常: " + e.ExceptionObject);
+        };
+        System.Threading.Tasks.TaskScheduler.UnobservedTaskException += (s, e) =>
+        {
+            Console.WriteLine("全局未观察到的任务异常: " + e.Exception);
+            e.SetObserved();
+        };
+    }
 }
