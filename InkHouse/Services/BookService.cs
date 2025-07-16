@@ -243,10 +243,13 @@ namespace InkHouse.Services
             borrowRecord.Status = "归还";
 
             // 更新图书库存
-            borrowRecord.Book.AvailableCount++;
-            if (borrowRecord.Book.AvailableCount > 0)
+            if (borrowRecord.Book != null)
             {
-                borrowRecord.Book.IsAvailable = true;
+                borrowRecord.Book.AvailableCount++;
+                if (borrowRecord.Book.AvailableCount > 0)
+                {
+                    borrowRecord.Book.IsAvailable = true;
+                }
             }
 
             await context.SaveChangesAsync();
@@ -284,4 +287,4 @@ namespace InkHouse.Services
                 .ToListAsync();
         }
     }
-} 
+}

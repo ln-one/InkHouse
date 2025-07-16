@@ -23,26 +23,6 @@
                                    IsVisible="{Binding UserNameError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
                     </StackPanel>
                     
-                    <!-- 真实姓名 -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="真实姓名 *" Classes="label"/>
-                        <TextBox Watermark="请输入您的真实姓名" 
-                                 Text="{Binding FullName, Mode=TwoWay}"/>
-                        <TextBlock Text="{Binding FullNameError}" 
-                                   Classes="error" 
-                                   IsVisible="{Binding FullNameError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                    </StackPanel>
-                    
-                    <!-- 邮箱 -->
-                    <StackPanel Spacing="4">
-                        <TextBlock Text="邮箱地址 *" Classes="label"/>
-                        <TextBox Watermark="请输入邮箱地址" 
-                                 Text="{Binding Email, Mode=TwoWay}"/>
-                        <TextBlock Text="{Binding EmailError}" 
-                                   Classes="error" 
-                                   IsVisible="{Binding EmailError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
-                    </StackPanel>
-                    
                     <!-- 密码 -->
                     <StackPanel Spacing="4">
                         <TextBlock Text="密码 *" Classes="label"/>

@@ -8,6 +8,8 @@ using InkHouse.ViewModels;
 using InkHouse.Views;
 using InkHouse.Services;
 using System;
+using System.Threading.Tasks;
+using Avalonia.Threading;
 
 namespace InkHouse;
 
@@ -38,9 +40,76 @@ public partial class App : Application
             // 只显示登录窗口，不设置主窗口
             var loginWindow = new LoginWindow();
             loginWindow.Show();
+            
+            // 如果启用了自动测试，则执行测试
+            if (Program.IsAutoTestEnabled)
+            {
+                StartAutoTest();
+            }
         }
 
         base.OnFrameworkInitializationCompleted();
+    }
+    
+    /// <summary>
+    /// 启动自动测试
+    /// </summary>
+    private void StartAutoTest()
+    {
+        if (ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+        {
+            Console.WriteLine("开始执行自动测试...");
+            
+            // 延迟2秒后执行，确保UI已经加载完成
+            Task.Delay(2000).ContinueWith(_ => 
+            {
+                Dispatcher.UIThread.InvokeAsync(async () => 
+                {
+                    Console.WriteLine("准备测试从登录窗口导航到注册窗口...");
+                    
+                    // 1. 找到登录窗口
+                    var loginWindow = desktop.Windows.FirstOrDefault(w => w is LoginWindow);
+                    if (loginWindow == null || !(loginWindow.Content is LoginView loginView))
+                    {
+                        Console.WriteLine("测试失败：找不到登录窗口");
+                        return;
+                    }
+                    
+                    // 2. 获取登录窗口的ViewModel
+                    var loginViewModel = loginView.DataContext as LoginViewModel;
+                    if (loginViewModel == null)
+                    {
+                        Console.WriteLine("测试失败：找不到LoginViewModel");
+                        return;
+                    }
+                    
+                    // 3. 模拟点击注册链接
+                    Console.WriteLine("模拟点击注册链接...");
+                    if (loginViewModel.NavigateToRegisterCommand.CanExecute(null))
+                    {
+                        loginViewModel.NavigateToRegisterCommand.Execute(null);
+                    }
+                    
+                    // 4. 等待注册窗口打开
+                    await Task.Delay(1000);
+                    
+                    // 5. 验证注册窗口是否打开
+                    var registerWindow = desktop.Windows.FirstOrDefault(w => w is RegisterWindow);
+                    if (registerWindow == null)
+                    {
+                        Console.WriteLine("测试失败：注册窗口未打开");
+                    }
+                    else
+                    {
+                        Console.WriteLine("测试成功：注册窗口已打开");
+                    }
+                    
+                    // 6. 等待3秒后退出测试
+                    await Task.Delay(3000);
+                    desktop.Shutdown();
+                });
+            });
+        }
     }
     
     /// <summary>

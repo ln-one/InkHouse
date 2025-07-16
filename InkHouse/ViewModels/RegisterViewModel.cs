@@ -18,8 +18,6 @@ namespace InkHouse.ViewModels
         private string _userName = string.Empty;
         private string _password = string.Empty;
         private string _confirmPassword = string.Empty;
-        private string _email = string.Empty;
-        private string _fullName = string.Empty;
 
         /// <summary>
         /// 用户名
@@ -61,38 +59,12 @@ namespace InkHouse.ViewModels
             }
         }
 
-        /// <summary>
-        /// 邮箱地址
-        /// </summary>
-        public string Email
-        {
-            get => _email;
-            set
-            {
-                SetProperty(ref _email, value);
-                ValidateEmail();
-            }
-        }
 
-        /// <summary>
-        /// 真实姓名
-        /// </summary>
-        public string FullName
-        {
-            get => _fullName;
-            set
-            {
-                SetProperty(ref _fullName, value);
-                ValidateFullName();
-            }
-        }
 
         // 验证错误消息
         private string _userNameError = string.Empty;
         private string _passwordError = string.Empty;
         private string _confirmPasswordError = string.Empty;
-        private string _emailError = string.Empty;
-        private string _fullNameError = string.Empty;
 
         public string UserNameError
         {
@@ -112,17 +84,7 @@ namespace InkHouse.ViewModels
             set => SetProperty(ref _confirmPasswordError, value);
         }
 
-        public string EmailError
-        {
-            get => _emailError;
-            set => SetProperty(ref _emailError, value);
-        }
 
-        public string FullNameError
-        {
-            get => _fullNameError;
-            set => SetProperty(ref _fullNameError, value);
-        }
 
         /// <summary>
         /// 注册成功事件
@@ -162,13 +124,9 @@ namespace InkHouse.ViewModels
                    !string.IsNullOrWhiteSpace(UserName) &&
                    !string.IsNullOrWhiteSpace(Password) &&
                    !string.IsNullOrWhiteSpace(ConfirmPassword) &&
-                   !string.IsNullOrWhiteSpace(Email) &&
-                   !string.IsNullOrWhiteSpace(FullName) &&
                    string.IsNullOrEmpty(UserNameError) &&
                    string.IsNullOrEmpty(PasswordError) &&
-                   string.IsNullOrEmpty(ConfirmPasswordError) &&
-                   string.IsNullOrEmpty(EmailError) &&
-                   string.IsNullOrEmpty(FullNameError);
+                   string.IsNullOrEmpty(ConfirmPasswordError);
         }
 
         /// <summary>
@@ -197,7 +155,7 @@ namespace InkHouse.ViewModels
                 };
 
                 // 调用注册服务
-                var result = await userService.RegisterAsync(newUser, Email.Trim(), FullName.Trim());
+                var result = await userService.RegisterAsync(newUser);
                 
                 if (result.Success)
                 {
@@ -306,54 +264,6 @@ namespace InkHouse.ViewModels
         }
 
         /// <summary>
-        /// 验证邮箱
-        /// </summary>
-        private void ValidateEmail()
-        {
-            if (string.IsNullOrWhiteSpace(Email))
-            {
-                EmailError = "邮箱地址不能为空";
-                return;
-            }
-
-            // 邮箱格式验证
-            var emailRegex = @"^[a-zA-Z0-9._%+-]+@[a-zA-Z0-9.-]+\.[a-zA-Z]{2,}$";
-            if (!Regex.IsMatch(Email, emailRegex))
-            {
-                EmailError = "请输入有效的邮箱地址";
-                return;
-            }
-
-            EmailError = string.Empty;
-        }
-
-        /// <summary>
-        /// 验证真实姓名
-        /// </summary>
-        private void ValidateFullName()
-        {
-            if (string.IsNullOrWhiteSpace(FullName))
-            {
-                FullNameError = "真实姓名不能为空";
-                return;
-            }
-
-            if (FullName.Trim().Length < 2)
-            {
-                FullNameError = "真实姓名至少需要2个字符";
-                return;
-            }
-
-            if (FullName.Length > 20)
-            {
-                FullNameError = "真实姓名不能超过20个字符";
-                return;
-            }
-
-            FullNameError = string.Empty;
-        }
-
-        /// <summary>
         /// 验证所有字段
         /// </summary>
         private bool ValidateAllFields()
@@ -361,14 +271,10 @@ namespace InkHouse.ViewModels
             ValidateUserName();
             ValidatePassword();
             ValidateConfirmPassword();
-            ValidateEmail();
-            ValidateFullName();
 
             return string.IsNullOrEmpty(UserNameError) &&
                    string.IsNullOrEmpty(PasswordError) &&
-                   string.IsNullOrEmpty(ConfirmPasswordError) &&
-                   string.IsNullOrEmpty(EmailError) &&
-                   string.IsNullOrEmpty(FullNameError);
+                   string.IsNullOrEmpty(ConfirmPasswordError);
         }
 
         #endregion

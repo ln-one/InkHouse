@@ -102,7 +102,7 @@ namespace InkHouse.Services
         /// <param name="email">邮箱地址</param>
         /// <param name="fullName">真实姓名</param>
         /// <returns>注册结果</returns>
-        public async Task<RegisterResult> RegisterAsync(User user, string email, string fullName)
+        public async Task<RegisterResult> RegisterAsync(User user)
         {
             try
             {

@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
@@ -67,7 +67,7 @@ namespace InkHouse.ViewModels
         private List<string> _bookTypes = new();
         [ObservableProperty]
         private string _selectedBookType = "全部";
-        partial void OnSelectedBookTypeChanged(string? value)
+        partial void OnSelectedBookTypeChanged(string value)
         {
             CurrentPage = 1;
             _ = LoadBooksAsync();

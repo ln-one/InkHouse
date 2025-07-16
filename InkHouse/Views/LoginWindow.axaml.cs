@@ -14,6 +14,9 @@ namespace InkHouse.Views
     /// </summary>
     public partial class LoginWindow : Window
     {
+        // 标记是否是导航到注册页面
+        private bool _isNavigatingToRegister = false;
+
         /// <summary>
         /// 构造函数
         /// 初始化登录窗口
@@ -140,6 +143,9 @@ namespace InkHouse.Views
                 // 创建并显示注册窗口
                 var registerWindow = new RegisterWindow();
                 registerWindow.Show();
+                
+                // 设置标记，防止在关闭窗口时退出应用程序
+                _isNavigatingToRegister = true;
 
                 // 关闭当前登录窗口
                 this.Close();
@@ -158,10 +164,14 @@ namespace InkHouse.Views
             // 释放资源
             DisposeResources();
             
+            // 只有在不是导航到注册页面的情况下才退出应用程序
+            if (!_isNavigatingToRegister)
+            {
             // 强制退出应用程序
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.Shutdown();
+                }
             }
         }
         
