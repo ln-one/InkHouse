@@ -8,7 +8,7 @@ using InkHouse.Models;
 namespace InkHouse.Services
 {
     /// <summary>
-    /// ×ùÎ»·şÎñÀà£¬¸ºÔğ×ùÎ»Ô¤Ô¼Ïà¹ØÒµÎñÂß¼­
+    /// åº§ä½æœåŠ¡ç±»ï¼Œè´Ÿè´£åº§ä½é¢„çº¦ç›¸å…³ä¸šåŠ¡é€»è¾‘
     /// </summary>
     public class SeatService
     {
@@ -20,7 +20,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡ËùÓĞ×ùÎ»
+        /// è·å–æ‰€æœ‰åº§ä½
         /// </summary>
         public async Task<List<Seat>> GetAllSeatsAsync()
         {
@@ -29,7 +29,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡×ùÎ»Ô¤Ô¼Í³¼ÆĞÅÏ¢
+        /// è·å–åº§ä½é¢„çº¦ç»Ÿè®¡ä¿¡æ¯
         /// </summary>
         public async Task<(int totalSeats, int freeSeats, int reservedSeats, int occupiedSeats)> GetSeatStatisticsAsync()
         {
@@ -42,30 +42,30 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§Ô¤Ô¼×ùÎ»
+        /// ç”¨æˆ·é¢„çº¦åº§ä½
         /// </summary>
         public async Task<SeatReservation> ReserveSeatAsync(int seatId, int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var seat = await context.Seats.FindAsync(seatId);
             if (seat == null)
-                throw new InvalidOperationException("×ùÎ»²»´æÔÚ");
+                throw new InvalidOperationException("åº§ä½ä¸å­˜åœ¨");
             if (seat.Status != "Free")
-                throw new InvalidOperationException("¸Ã×ùÎ»²»¿ÉÔ¤Ô¼");
-            // ¼ì²éÓÃ»§ÊÇ·ñÒÑÓĞÎ´Íê³ÉµÄÔ¤Ô¼
-            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ"));
+                throw new InvalidOperationException("è¯¥åº§ä½ä¸å¯é¢„çº¦");
+            // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å·²æœ‰æœªå®Œæˆçš„é¢„çº¦
+            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "å·²é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­"));
             if (hasActive)
-                throw new InvalidOperationException("ÄúÒÑÓĞÎ´Íê³ÉµÄ×ùÎ»Ô¤Ô¼");
-            // ´´½¨Ô¤Ô¼¼ÇÂ¼
+                throw new InvalidOperationException("æ‚¨å·²æœ‰æœªå®Œæˆçš„åº§ä½é¢„çº¦");
+            // åˆ›å»ºé¢„çº¦è®°å½•
             var reservation = new SeatReservation
             {
                 UserId = userId,
                 SeatId = seatId,
                 ReserveTime = DateTime.Now,
-                Status = "ÒÑÔ¤Ô¼"
+                Status = "å·²é¢„çº¦"
             };
             context.SeatReservations.Add(reservation);
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             seat.Status = "Reserved";
             seat.CurrentUserId = userId;
             await context.SaveChangesAsync();
@@ -73,19 +73,19 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§µ½¹İ£¬×ùÎ»±äÎªÊ¹ÓÃÖĞ
+        /// ç”¨æˆ·åˆ°é¦†ï¼Œåº§ä½å˜ä¸ºä½¿ç”¨ä¸­
         /// </summary>
         public async Task<SeatReservation> CheckInAsync(int reservationId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
-                throw new InvalidOperationException("Ô¤Ô¼¼ÇÂ¼²»´æÔÚ");
-            if (reservation.Status != "ÒÑÔ¤Ô¼")
-                throw new InvalidOperationException("µ±Ç°Ô¤Ô¼²»¿Éµ½¹İ");
-            reservation.Status = "Ê¹ÓÃÖĞ";
+                throw new InvalidOperationException("é¢„çº¦è®°å½•ä¸å­˜åœ¨");
+            if (reservation.Status != "å·²é¢„çº¦")
+                throw new InvalidOperationException("å½“å‰é¢„çº¦ä¸å¯åˆ°é¦†");
+            reservation.Status = "ä½¿ç”¨ä¸­";
             reservation.CheckInTime = DateTime.Now;
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             if (reservation.Seat != null)
             {
                 reservation.Seat.Status = "Occupied";
@@ -95,19 +95,19 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§Àë¹İ£¬×ùÎ»±äÎª¿ÕÏĞ
+        /// ç”¨æˆ·ç¦»é¦†ï¼Œåº§ä½å˜ä¸ºç©ºé—²
         /// </summary>
         public async Task<SeatReservation> CheckOutAsync(int reservationId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
-                throw new InvalidOperationException("Ô¤Ô¼¼ÇÂ¼²»´æÔÚ");
-            if (reservation.Status != "Ê¹ÓÃÖĞ")
-                throw new InvalidOperationException("µ±Ç°Ô¤Ô¼²»¿ÉÀë¹İ");
-            reservation.Status = "ÒÑÀë¹İ";
+                throw new InvalidOperationException("é¢„çº¦è®°å½•ä¸å­˜åœ¨");
+            if (reservation.Status != "ä½¿ç”¨ä¸­")
+                throw new InvalidOperationException("å½“å‰é¢„çº¦ä¸å¯ç¦»é¦†");
+            reservation.Status = "å·²ç¦»é¦†";
             reservation.CheckOutTime = DateTime.Now;
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             if (reservation.Seat != null)
             {
                 reservation.Seat.Status = "Free";
@@ -118,20 +118,20 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡ÓÃ»§µ±Ç°ÓĞĞ§Ô¤Ô¼£¨ÒÑÔ¤Ô¼/Ê¹ÓÃÖĞ£©
+        /// è·å–ç”¨æˆ·å½“å‰æœ‰æ•ˆé¢„çº¦ï¼ˆå·²é¢„çº¦/ä½¿ç”¨ä¸­ï¼‰
         /// </summary>
         public async Task<SeatReservation?> GetUserActiveReservationAsync(int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.SeatReservations
                 .Include(r => r.Seat)
-                .Where(r => r.UserId == userId && (r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ"))
+                .Where(r => r.UserId == userId && (r.Status == "å·²é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­"))
                 .OrderByDescending(r => r.ReserveTime)
                 .FirstOrDefaultAsync();
         }
 
         /// <summary>
-        /// »ñÈ¡ËùÓĞ×ùÎ»Ô¤Ô¼Çé¿ö
+        /// è·å–æ‰€æœ‰åº§ä½é¢„çº¦æƒ…å†µ
         /// </summary>
         public async Task<List<SeatReservation>> GetAllActiveReservationsAsync()
         {
@@ -139,7 +139,7 @@ namespace InkHouse.Services
             return await context.SeatReservations
                 .Include(r => r.Seat)
                 .Include(r => r.User)
-                .Where(r => r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ")
+                .Where(r => r.Status == "å·²é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­")
                 .ToListAsync();
         }
     }
