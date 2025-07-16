@@ -69,7 +69,8 @@ namespace InkHouse.Views
                     // 创建并显示用户主窗口
                     var bookService = ServiceManager.GetService<BookService>();
                     var borrowRecordService = ServiceManager.GetService<BorrowRecordService>();
-                    var viewModel = new UserMainWindowViewModel(user, bookService, borrowRecordService);
+                    var seatService = ServiceManager.GetService<SeatService>();
+                    var viewModel = new UserMainWindowViewModel(user, bookService, borrowRecordService, seatService);
                     var userMainWindow = new UserMainWindow
                     {
                         DataContext = viewModel

@@ -11,6 +11,10 @@ namespace InkHouse.Models
         public DbSet<Book> Books { get; set; }
         // 借阅记录表
         public DbSet<BorrowRecord> BorrowRecords { get; set; }
+        // 座位表
+        public DbSet<Seat> Seats { get; set; }
+        // 座位预约记录表
+        public DbSet<SeatReservation> SeatReservations { get; set; }
 
         // 构造函数，传入数据库配置参数
         public InkHouseContext(DbContextOptions<InkHouseContext> options) : base(options)

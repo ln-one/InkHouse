@@ -1,0 +1,88 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:InkHouse.ViewModels"
+             xmlns:local="clr-namespace:InkHouse.Views"
+             x:Class="InkHouse.Views.SeatReservationView"
+             x:DataType="vm:SeatReservationViewModel"
+             x:Name="root"
+             mc:Ignorable="d"
+             d:DesignWidth="900" d:DesignHeight="600">
+    <UserControl.Resources>
+        <local:SeatStatusColorConverter x:Key="SeatStatusColorConverter"/>
+        <local:SeatCanReserveConverter x:Key="SeatCanReserveConverter"/>
+        <local:SeatCanCheckInConverter x:Key="SeatCanCheckInConverter"/>
+        <local:SeatCanCheckOutConverter x:Key="SeatCanCheckOutConverter"/>
+    </UserControl.Resources>
+    <Grid ColumnDefinitions="3*,2*" RowDefinitions="*">
+        <!-- 座位表格区 -->
+        <ScrollViewer Grid.Column="0" Margin="24" VerticalScrollBarVisibility="Auto" Height="700">
+            <StackPanel Spacing="16">
+                <TextBlock Text="座位预约" FontSize="24" FontWeight="Bold" Margin="0,0,0,20"/>
+                <ItemsControl ItemsSource="{Binding Seats}">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <WrapPanel Orientation="Horizontal"/>
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate>
+                            <Border Width="90" Height="90" Margin="8" CornerRadius="8" Padding="4"
+                                    Background="{Binding Status, Converter={StaticResource SeatStatusColorConverter}}"
+                                    BorderBrush="#DDD" BorderThickness="1">
+                                <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="4">
+                                    <TextBlock Text="{Binding SeatNumber}" FontWeight="Bold" FontSize="18" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="{Binding Status}" FontSize="14" Foreground="#666" HorizontalAlignment="Center"/>
+                                    <Button Content="预约" Command="{Binding #root.DataContext.ReserveCommand}"
+                                            CommandParameter="{Binding .}" IsEnabled="{Binding Status, Converter={StaticResource SeatCanReserveConverter}}"/>
+                                </StackPanel>
+                            </Border>
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </ScrollViewer>
+        <!-- 右侧统计与操作区 -->
+        <StackPanel Grid.Column="1" Margin="24" Spacing="16">
+            <TextBlock Text="预约情况" FontSize="20" FontWeight="Bold"/>
+            <StackPanel Orientation="Horizontal" Spacing="16">
+                <TextBlock Text="总座位："/>
+                <TextBlock Text="{Binding TotalSeats}" FontWeight="Bold"/>
+                <TextBlock Text="空闲："/>
+                <TextBlock Text="{Binding FreeSeats}" Foreground="Green" FontWeight="Bold"/>
+                <TextBlock Text="被预约："/>
+                <TextBlock Text="{Binding ReservedSeats}" Foreground="#FFA500" FontWeight="Bold"/>
+                <TextBlock Text="使用中："/>
+                <TextBlock Text="{Binding OccupiedSeats}" Foreground="Red" FontWeight="Bold"/>
+            </StackPanel>
+            <Border Background="#F8F8F8" CornerRadius="8" Padding="12" Margin="0,8,0,0">
+                <StackPanel Spacing="8">
+                    <TextBlock Text="我的预约" FontWeight="Bold"/>
+                    <StackPanel Orientation="Horizontal" Spacing="8" VerticalAlignment="Center">
+                        <TextBlock Text="{Binding MyReservation.Seat.SeatNumber, FallbackValue=无}" FontWeight="Bold"/>
+                        <TextBlock Text="{Binding MyReservation.Status}"/>
+                        <Button Content="已到馆" Command="{Binding CheckInCommand}" IsEnabled="{Binding MyReservation.Status, Converter={StaticResource SeatCanCheckInConverter}}"/>
+                        <Button Content="离馆" Command="{Binding CheckOutCommand}" IsEnabled="{Binding MyReservation.Status, Converter={StaticResource SeatCanCheckOutConverter}}"/>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            <TextBlock Text="当前预约情况" FontWeight="Bold" Margin="0,16,0,0"/>
+            <ListBox ItemsSource="{Binding ActiveReservations}" Height="180">
+                <ListBox.ItemTemplate>
+                    <DataTemplate>
+                        <StackPanel Orientation="Horizontal" Spacing="12">
+                            <TextBlock Text="座位："/>
+                            <TextBlock Text="{Binding Seat.SeatNumber}" FontWeight="Bold"/>
+                            <TextBlock Text="用户："/>
+                            <TextBlock Text="{Binding User.UserName}"/>
+                            <TextBlock Text="状态："/>
+                            <TextBlock Text="{Binding Status}"/>
+                        </StackPanel>
+                    </DataTemplate>
+                </ListBox.ItemTemplate>
+            </ListBox>
+            <Button Content="刷新" Command="{Binding RefreshCommand}" Margin="0,12,0,0"/>
+        </StackPanel>
+    </Grid>
+</UserControl>

@@ -74,12 +74,17 @@ namespace InkHouse.ViewModels
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
         private readonly BorrowRecordService _borrowRecordService;
+        private readonly SeatService _seatService;
+        [ObservableProperty]
+        private SeatReservationViewModel? _seatReservationViewModel;
 
-        public UserMainWindowViewModel(User user, BookService bookService, BorrowRecordService borrowRecordService)
+        public UserMainWindowViewModel(User user, BookService bookService, BorrowRecordService borrowRecordService, SeatService seatService)
         {
             CurrentUser = user;
             _bookService = bookService;
             _borrowRecordService = borrowRecordService;
+            _seatService = seatService;
+            SeatReservationViewModel = new SeatReservationViewModel(_seatService, user);
 
             LogoutCommand = new RelayCommand(Logout);
             SearchCommand = new AsyncRelayCommand(SearchBooksAsync);
@@ -89,7 +94,7 @@ namespace InkHouse.ViewModels
             ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
             LoadMoreBooksCommand = new AsyncRelayCommand(LoadMoreBooks);
             LoadMoreBorrowRecordsCommand = new AsyncRelayCommand(LoadMoreBorrowRecords);
-
+            // 已自动删除递归创建自身的代码，防止栈溢出
             // 默认显示主页
             ShowHome();
             // 自动加载主页统计数据

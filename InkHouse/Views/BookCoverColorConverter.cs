@@ -42,4 +42,48 @@ namespace InkHouse.Views
             throw new NotImplementedException();
         }
     }
+
+    // 新增：座位状态颜色转换器
+    public class SeatStatusColorConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value switch
+            {
+                "Free" => Brushes.LightGreen,
+                "Reserved" => Brushes.Orange,
+                "Occupied" => Brushes.IndianRed,
+                _ => Brushes.LightGray
+            };
+        }
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
+
+    // 是否可预约转换器
+    public class SeatCanReserveConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value is string status && status == "Free";
+        }
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
+    // 是否可到馆转换器
+    public class SeatCanCheckInConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value is string status && status == "已预约";
+        }
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
+    // 是否可离馆转换器
+    public class SeatCanCheckOutConverter : IValueConverter
+    {
+        public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
+        {
+            return value is string status && status == "使用中";
+        }
+        public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
+    }
 } 
