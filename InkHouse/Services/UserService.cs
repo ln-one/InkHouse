@@ -99,8 +99,6 @@ namespace InkHouse.Services
         /// 用户注册
         /// </summary>
         /// <param name="user">用户对象</param>
-        /// <param name="email">邮箱地址</param>
-        /// <param name="fullName">真实姓名</param>
         /// <returns>注册结果</returns>
         public async Task<RegisterResult> RegisterAsync(User user)
         {

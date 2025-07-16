@@ -34,7 +34,7 @@
 
                 <!-- 注册链接 -->
                 <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
-                    <TextBlock Text="还没有账户？" Classes="caption"/>
+                    
                     <Button Content="立即注册"
                             Command="{Binding NavigateToRegisterCommand}"
                             Classes="link"/>

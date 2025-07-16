@@ -72,7 +72,7 @@
                     <StackPanel Orientation="Horizontal" 
                                 HorizontalAlignment="Center" 
                                 Spacing="8">
-                        <TextBlock Text="已有账户？" Classes="caption"/>
+                        
                         <Button Content="返回登录" 
                                 Command="{Binding BackToLoginCommand}"
                                 Classes="link"/>
