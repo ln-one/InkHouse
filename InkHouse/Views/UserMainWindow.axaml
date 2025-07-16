@@ -160,10 +160,24 @@
                             <DataTemplate>
                                 <Grid>
                                     <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto" />
                                         <RowDefinition Height="*" />
                                         <RowDefinition Height="Auto" />
                                     </Grid.RowDefinitions>
-                                    <ScrollViewer Grid.Row="0">
+                                    <!-- 类型Tab菜单 -->
+                                    <TabControl
+                                        Grid.Row="0"
+                                        ItemsSource="{Binding DataContext.BookTypes, ElementName=UserWindow}"
+                                        SelectedItem="{Binding DataContext.SelectedBookType, ElementName=UserWindow, Mode=TwoWay}"
+                                        Margin="24,12,24,0">
+                                        <TabControl.ItemTemplate>
+                                            <DataTemplate>
+                                                <TextBlock Text="{Binding}" Padding="16,4"/>
+                                            </DataTemplate>
+                                        </TabControl.ItemTemplate>
+                                    </TabControl>
+                                    <!-- 图书列表 -->
+                                    <ScrollViewer Grid.Row="1">
                                         <ItemsControl ItemsSource="{Binding #UserWindow.DataContext.Books}" Margin="24">
                                             <ItemsControl.ItemsPanel>
                                                 <ItemsPanelTemplate>
@@ -202,9 +216,8 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
-                                    
                                     <!-- 加载指示器 -->
-                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
+                                    <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="3">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
                                             <TextBlock Text="加载中..." Foreground="White" FontSize="16" HorizontalAlignment="Center"/>
                                         </StackPanel>

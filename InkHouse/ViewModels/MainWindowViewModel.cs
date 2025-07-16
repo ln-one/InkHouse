@@ -51,9 +51,6 @@ public partial class MainWindowViewModel : ViewModelBase
     /// <summary>搜索关键字</summary>
     public string BookSearchText { get; set; } = string.Empty;
     
-    /// <summary>是否正在加载</summary>
-    public new bool IsLoading { get; set; }
-    
     /// <summary>加载图书列表</summary>
     [RelayCommand]
     public async Task LoadBooksAsync()
@@ -61,7 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             IsLoading = true;
-            var books = await _bookService.GetAllBooksAsync();
+            var books = await _bookService.GetBooksByTypeAsync(SelectedBookType);
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -714,6 +711,15 @@ public partial class MainWindowViewModel : ViewModelBase
     public string StatisticsButtonClass => SelectedMenu == "Statistics" ? "nav-item active" : "nav-item";
     public string SettingsButtonClass => SelectedMenu == "Settings" ? "nav-item active" : "nav-item";
 
+    [ObservableProperty]
+    private List<string> _bookTypes = new();
+    [ObservableProperty]
+    private string _selectedBookType = "全部";
+    partial void OnSelectedBookTypeChanged(string? value)
+    {
+        _ = LoadBooksAsync();
+    }
+
     public MainWindowViewModel(BookService bookService, UserService userService, BorrowRecordService borrowRecordService)
     {
         _bookService = bookService;
@@ -727,6 +733,7 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             try
             {
+                await LoadBookTypesAsync();
                 await LoadStatisticsAsync();
                 await LoadBooksAsync();
                 await LoadBorrowRecordsAsync(); // 新增：加载借阅记录
@@ -739,6 +746,13 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         Console.WriteLine($"MainWindowViewModel 构造完成");
+    }
+
+    private async Task LoadBookTypesAsync()
+    {
+        var types = await _bookService.GetAllBookTypesAsync();
+        types.Insert(0, "全部");
+        BookTypes = types;
     }
 
     /// <summary>

@@ -1,12 +1,13 @@
 using InkHouse.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
 
 namespace InkHouse.Services
 {
     // 数据库上下文工厂类，用于创建数据库上下文实例
-    public class DbContextFactory
+    public class DbContextFactory : IDesignTimeDbContextFactory<InkHouseContext>
     {
         // 数据库连接字符串
         private readonly string _connectionString;
@@ -39,6 +40,16 @@ namespace InkHouse.Services
         public InkHouseContext CreateDbContext()
         {
             return new InkHouseContext(_options);
+        }
+
+        // 设计时工厂方法，供EF Core迁移工具使用
+        public InkHouseContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<InkHouseContext>();
+            // 这里可以指定一个默认的连接字符串，或从环境变量/配置文件读取
+            var connectionString = AppConfig.DatabaseConnectionString;
+            optionsBuilder.UseMySql(connectionString, ServerVersion.AutoDetect(connectionString));
+            return new InkHouseContext(optionsBuilder.Options);
         }
     }
 } 

@@ -51,86 +51,99 @@
                     <RowDefinition Height="Auto"/>
                     <RowDefinition Height="*"/>
                 </Grid.RowDefinitions>
-
-                <!-- 列表标题 -->
-                <Border Grid.Row="0" Classes="list-header">
-                    <Grid>
-                        <Grid.ColumnDefinitions>
-                            <ColumnDefinition Width="50"/>
-                            <ColumnDefinition Width="*"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="100"/>
-                            <ColumnDefinition Width="120"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="80"/>
-                            <ColumnDefinition Width="100"/>
-                        </Grid.ColumnDefinitions>
-                        
-                        <TextBlock Grid.Column="0" Classes="header-text" Text="ID"/>
-                        <TextBlock Grid.Column="1" Classes="header-text" Text="书名"/>
-                        <TextBlock Grid.Column="2" Classes="header-text" Text="作者"/>
-                        <TextBlock Grid.Column="3" Classes="header-text" Text="ISBN"/>
-                        <TextBlock Grid.Column="4" Classes="header-text" Text="出版社"/>
-                        <TextBlock Grid.Column="5" Classes="header-text" Text="年份"/>
-                        <TextBlock Grid.Column="6" Classes="header-text" Text="总数"/>
-                        <TextBlock Grid.Column="7" Classes="header-text" Text="可借"/>
-                        <TextBlock Grid.Column="8" Classes="header-text" Text="状态"/>
-                    </Grid>
-                </Border>
-
-                <!-- 图书列表 -->
-                <ScrollViewer Grid.Row="1">
-                    <ListBox ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}">
-                        <ListBox.ItemTemplate>
-                            <DataTemplate>
-                                <Border Classes="list-item" Margin="0,1">
-                                    <Grid>
-                                        <Grid.ColumnDefinitions>
-                                            <ColumnDefinition Width="50"/>
-                                            <ColumnDefinition Width="*"/>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="100"/>
-                                            <ColumnDefinition Width="120"/>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="80"/>
-                                            <ColumnDefinition Width="100"/>
-                                        </Grid.ColumnDefinitions>
-                                        
-                                        <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="1" Text="{Binding Title}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="3" Text="{Binding ISBN}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="4" Text="{Binding Publisher}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="5" Text="{Binding Year}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="6" Text="{Binding TotalCount}" Classes="cell-text"/>
-                                        <TextBlock Grid.Column="7" Text="{Binding Available}" Classes="cell-text"/>
-                                        <Border Grid.Column="8">
-                                            <TextBlock Text="{Binding IsAvailable, Converter={StaticResource BooleanToTextConverter}}" Classes="status-text"/>
-                                        </Border>
-                                    </Grid>
-                                </Border>
-                            </DataTemplate>
-                        </ListBox.ItemTemplate>
-                    </ListBox>
-                </ScrollViewer>
-
-                <!-- 加载指示器 -->
-                <Border Grid.Row="1" Classes="loading-overlay" IsVisible="{Binding IsLoading}">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="正在加载..." Classes="loading-text"/>
-                    </StackPanel>
-                </Border>
-
-                <!-- 空状态 -->
-                <Border Grid.Row="1" Classes="empty-state" IsVisible="{Binding Books.Count, Converter={StaticResource ZeroToVisibleConverter}}">
-                    <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
-                        <TextBlock Text="📚" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
-                        <TextBlock Text="暂无图书" Classes="empty-text" HorizontalAlignment="Center"/>
-                        <TextBlock Text="点击‘添加图书’按钮开始添加" Classes="empty-subtext" HorizontalAlignment="Center"/>
-                    </StackPanel>
-                </Border>
+                <!-- 类型Tab菜单 -->
+                <TabControl
+                    Grid.Row="0"
+                    ItemsSource="{Binding BookTypes}"
+                    SelectedItem="{Binding SelectedBookType, Mode=TwoWay}"
+                    Margin="0,0,0,8">
+                    <TabControl.ItemTemplate>
+                        <DataTemplate>
+                            <TextBlock Text="{Binding}" Padding="16,4"/>
+                        </DataTemplate>
+                    </TabControl.ItemTemplate>
+                </TabControl>
+                <!-- 列表标题和列表内容 -->
+                <Grid Grid.Row="1">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="Auto"/>
+                        <RowDefinition Height="*"/>
+                    </Grid.RowDefinitions>
+                    <!-- 列表标题 -->
+                    <Border Grid.Row="0" Classes="list-header">
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="50"/>
+                                <ColumnDefinition Width="*"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="100"/>
+                                <ColumnDefinition Width="120"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="80"/>
+                                <ColumnDefinition Width="100"/>
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Classes="header-text" Text="ID"/>
+                            <TextBlock Grid.Column="1" Classes="header-text" Text="书名"/>
+                            <TextBlock Grid.Column="2" Classes="header-text" Text="作者"/>
+                            <TextBlock Grid.Column="3" Classes="header-text" Text="ISBN"/>
+                            <TextBlock Grid.Column="4" Classes="header-text" Text="出版社"/>
+                            <TextBlock Grid.Column="5" Classes="header-text" Text="年份"/>
+                            <TextBlock Grid.Column="6" Classes="header-text" Text="总数"/>
+                            <TextBlock Grid.Column="7" Classes="header-text" Text="可借"/>
+                            <TextBlock Grid.Column="8" Classes="header-text" Text="状态"/>
+                        </Grid>
+                    </Border>
+                    <!-- 图书列表 -->
+                    <ScrollViewer Grid.Row="1">
+                        <ListBox ItemsSource="{Binding Books}" SelectedItem="{Binding SelectedBook}">
+                            <ListBox.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item" Margin="0,1">
+                                        <Grid>
+                                            <Grid.ColumnDefinitions>
+                                                <ColumnDefinition Width="50"/>
+                                                <ColumnDefinition Width="*"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="100"/>
+                                                <ColumnDefinition Width="120"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="80"/>
+                                                <ColumnDefinition Width="100"/>
+                                            </Grid.ColumnDefinitions>
+                                            <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding Title}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="3" Text="{Binding ISBN}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="4" Text="{Binding Publisher}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="5" Text="{Binding Year}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="6" Text="{Binding TotalCount}" Classes="cell-text"/>
+                                            <TextBlock Grid.Column="7" Text="{Binding AvailableCount}" Classes="cell-text"/>
+                                            <Border Grid.Column="8">
+                                                <TextBlock Text="{Binding IsAvailable, Converter={StaticResource BooleanToTextConverter}}" Classes="status-text"/>
+                                            </Border>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ListBox.ItemTemplate>
+                        </ListBox>
+                    </ScrollViewer>
+                    <!-- 加载指示器 -->
+                    <Border Grid.Row="1" Classes="loading-overlay" IsVisible="{Binding IsLoading}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="正在加载..." Classes="loading-text"/>
+                        </StackPanel>
+                    </Border>
+                    <!-- 空状态 -->
+                    <Border Grid.Row="1" Classes="empty-state" IsVisible="{Binding Books.Count, Converter={StaticResource ZeroToVisibleConverter}}">
+                        <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
+                            <TextBlock Text="📚" FontSize="48" HorizontalAlignment="Center" Margin="0,0,0,16"/>
+                            <TextBlock Text="暂无图书" Classes="empty-text" HorizontalAlignment="Center"/>
+                            <TextBlock Text="点击‘添加图书’按钮开始添加" Classes="empty-subtext" HorizontalAlignment="Center"/>
+                        </StackPanel>
+                    </Border>
+                </Grid>
             </Grid>
         </Border>
     </Grid>
