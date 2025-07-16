@@ -144,6 +144,45 @@ namespace InkHouse.Services
         }
 
         /// <summary>
+        /// 获取用户所有座位预约记录
+        /// </summary>
+        public async Task<List<SeatReservation>> GetUserReservationsAsync(int userId)
+        {
+            try
+            {
+                Console.WriteLine($"开始查询用户ID {userId} 的座位预约记录...");
+                using var context = _dbContextFactory.CreateDbContext();
+                
+                // 先检查数据库中是否有数据
+                var totalCount = await context.SeatReservations.CountAsync();
+                Console.WriteLine($"数据库中总共有 {totalCount} 条座位预约记录");
+                
+                var userCount = await context.SeatReservations.CountAsync(sr => sr.UserId == userId);
+                Console.WriteLine($"用户 {userId} 在数据库中有 {userCount} 条座位预约记录");
+                
+                var records = await context.SeatReservations
+                    .Include(r => r.Seat)
+                    .Where(r => r.UserId == userId)
+                    .OrderByDescending(r => r.ReserveTime)
+                    .ToListAsync();
+                
+                Console.WriteLine($"查询到 {records.Count} 条座位预约记录");
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"座位预约记录: ID={record.Id}, 用户ID={record.UserId}, 座位ID={record.SeatId}, 状态={record.Status}");
+                }
+                
+                return records;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"查询用户座位预约记录时发生异常: {ex.Message}");
+                Console.WriteLine($"异常堆栈: {ex.StackTrace}");
+                return new List<SeatReservation>();
+            }
+        }
+
+        /// <summary>
         /// 添加座位
         /// </summary>
         public async Task<Seat> AddSeatAsync(string seatNumber)

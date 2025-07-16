@@ -8,6 +8,7 @@ using InkHouse.ViewModels;
 using InkHouse.Views;
 using InkHouse.Services;
 using System;
+using System.Threading.Tasks;
 
 namespace InkHouse;
 
@@ -35,6 +36,9 @@ public partial class App : Application
             // 订阅应用程序退出事件
             desktop.Exit += OnApplicationExit;
             
+            // 测试数据库连接
+            _ = TestDatabaseConnectionAsync();
+            
             // 只显示登录窗口，不设置主窗口
             var loginWindow = new LoginWindow();
             loginWindow.Show();
@@ -56,6 +60,26 @@ public partial class App : Application
         catch (Exception ex)
         {
             Console.WriteLine($"应用程序退出时释放资源发生错误: {ex.Message}");
+        }
+    }
+
+    /// <summary>
+    /// 测试数据库连接
+    /// </summary>
+    private async Task TestDatabaseConnectionAsync()
+    {
+        try
+        {
+            var dbContextFactory = new DbContextFactory();
+            var isConnected = await dbContextFactory.TestConnectionAsync();
+            if (!isConnected)
+            {
+                Console.WriteLine("警告：数据库连接失败，请检查连接配置！");
+            }
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"数据库连接测试时发生异常: {ex.Message}");
         }
     }
 

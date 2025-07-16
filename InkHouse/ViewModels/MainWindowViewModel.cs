@@ -129,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 DataContext = bookEditViewModel
             };
 
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 await dialog.ShowDialog(desktop.MainWindow);
             }
@@ -155,7 +155,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 DataContext = bookEditViewModel
             };
 
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 await dialog.ShowDialog(desktop.MainWindow);
             }

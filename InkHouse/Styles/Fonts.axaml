@@ -1,0 +1,24 @@
+<ResourceDictionary xmlns="https://github.com/avaloniaui"
+                    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    
+    <!-- 跨平台中文字体定义 -->
+    <FontFamily x:Key="ChineseFont">Noto Sans CJK SC, Noto Sans CJK TC, Noto Sans CJK JP, Noto Sans CJK KR, Source Han Sans CN, Source Han Sans TC, Source Han Sans JP, Source Han Sans KR, PingFang SC, PingFang TC, Hiragino Sans GB, Microsoft YaHei, SimSun, Arial Unicode MS, Arial</FontFamily>
+    
+    <!-- 跨平台中文字体（等宽） -->
+    <FontFamily x:Key="ChineseMonoFont">Noto Sans Mono CJK SC, Noto Sans Mono CJK TC, Noto Sans Mono CJK JP, Noto Sans Mono CJK KR, Source Code Pro, SF Mono, Consolas, Monaco</FontFamily>
+    
+    <!-- 字体大小定义 -->
+    <x:Double x:Key="FontSizeSmall">12</x:Double>
+    <x:Double x:Key="FontSizeNormal">14</x:Double>
+    <x:Double x:Key="FontSizeLarge">16</x:Double>
+    <x:Double x:Key="FontSizeTitle">24</x:Double>
+    <x:Double x:Key="FontSizeHeading">20</x:Double>
+    <x:Double x:Key="FontSizeSubheading">18</x:Double>
+    
+    <!-- 字体粗细定义 -->
+    <FontWeight x:Key="FontWeightNormal">Normal</FontWeight>
+    <FontWeight x:Key="FontWeightMedium">Medium</FontWeight>
+    <FontWeight x:Key="FontWeightSemiBold">SemiBold</FontWeight>
+    <FontWeight x:Key="FontWeightBold">Bold</FontWeight>
+    
+</ResourceDictionary> 
