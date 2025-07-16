@@ -18,13 +18,14 @@ using Avalonia.Media;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Avalonia.Threading;
+using System.Collections.Generic;
 
 namespace InkHouse.ViewModels
 {
     public partial class UserMainWindowViewModel : ViewModelBase
     {
         [ObservableProperty]
-        private string _currentView = "Home";
+        private object _currentView = "Home";
 
         [ObservableProperty]
         private string _selectedMenu = "Home";
@@ -78,6 +79,105 @@ namespace InkHouse.ViewModels
         [ObservableProperty]
         private SeatReservationViewModel? _seatReservationViewModel;
 
+        [ObservableProperty]
+        private ObservableCollection<SeatReservation> _seatReservationRecords = new();
+        [ObservableProperty]
+        private ObservableCollection<BorrowRecord> _userBorrowRecords = new();
+
+        // 统计信息属性
+        [ObservableProperty]
+        private int _totalBorrowCount = 0;
+        [ObservableProperty]
+        private int _totalReservationCount = 0;
+        [ObservableProperty]
+        private int _currentBorrowCount = 0;
+        [ObservableProperty]
+        private int _currentReservationCount = 0;
+        [ObservableProperty]
+        private int _returnedBorrowCount = 0;
+        [ObservableProperty]
+        private int _completedReservationCount = 0;
+        [ObservableProperty]
+        private DateTime _firstBorrowDate = DateTime.MinValue;
+        [ObservableProperty]
+        private DateTime _firstReservationDate = DateTime.MinValue;
+        [ObservableProperty]
+        private DateTime _lastBorrowDate = DateTime.MinValue;
+        [ObservableProperty]
+        private DateTime _lastReservationDate = DateTime.MinValue;
+
+        public IAsyncRelayCommand LoadProfileDataCommand { get; }
+        public IAsyncRelayCommand RefreshStatisticsCommand { get; }
+
+        public async Task LoadProfileDataAsync()
+        {
+            if (CurrentUser == null) return;
+            
+            try
+            {
+                Console.WriteLine($"开始加载用户 {CurrentUser.UserName} (ID: {CurrentUser.Id}) 的个人资料数据...");
+                
+                // 加载座位预约记录
+                var seatRecords = await _seatService.GetUserReservationsAsync(CurrentUser.Id);
+                Console.WriteLine($"从数据库加载到 {seatRecords.Count} 条座位预约记录");
+                SeatReservationRecords.Clear();
+                foreach (var record in seatRecords)
+                {
+                    Console.WriteLine($"座位预约记录: ID={record.Id}, 座位={record.Seat?.SeatNumber}, 状态={record.Status}, 预约时间={record.ReserveTime}");
+                    SeatReservationRecords.Add(record);
+                }
+                
+                // 加载借阅记录
+                var borrowRecords = await _borrowRecordService.GetBorrowRecordsByUserIdAsync(CurrentUser.Id, 1, 100);
+                Console.WriteLine($"从数据库加载到 {borrowRecords.Count} 条借阅记录");
+                UserBorrowRecords.Clear();
+                foreach (var record in borrowRecords)
+                {
+                    Console.WriteLine($"借阅记录: ID={record.Id}, 图书={record.Book?.Title}, 状态={record.Status}, 借阅时间={record.BorrowDate}");
+                    UserBorrowRecords.Add(record);
+                }
+
+                // 计算统计信息
+                CalculateStatistics(seatRecords, borrowRecords);
+
+                Console.WriteLine($"最终数据：座位预约记录 {SeatReservationRecords.Count} 条，借阅记录 {UserBorrowRecords.Count} 条");
+                Console.WriteLine($"统计信息：总借阅 {TotalBorrowCount} 次，总预约 {TotalReservationCount} 次");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"加载个人资料数据失败: {ex.Message}");
+                Console.WriteLine($"异常堆栈: {ex.StackTrace}");
+            }
+        }
+
+        /// <summary>
+        /// 计算用户统计信息
+        /// </summary>
+        private void CalculateStatistics(List<SeatReservation> seatRecords, List<BorrowRecord> borrowRecords)
+        {
+            // 借阅统计
+            TotalBorrowCount = borrowRecords.Count;
+            CurrentBorrowCount = borrowRecords.Count(r => r.Status == "借出" || r.Status == "借阅中");
+            ReturnedBorrowCount = borrowRecords.Count(r => r.Status == "归还" || r.Status == "已归还");
+            
+            if (borrowRecords.Any())
+            {
+                FirstBorrowDate = borrowRecords.Min(r => r.BorrowDate);
+                LastBorrowDate = borrowRecords.Max(r => r.BorrowDate);
+            }
+
+            // 预约统计
+            TotalReservationCount = seatRecords.Count;
+            CurrentReservationCount = seatRecords.Count(r => r.Status == "已预约" || r.Status == "使用中");
+            CompletedReservationCount = seatRecords.Count(r => r.Status == "已离馆" || r.Status == "已完成");
+            
+            if (seatRecords.Any())
+            {
+                FirstReservationDate = seatRecords.Min(r => r.ReserveTime);
+                LastReservationDate = seatRecords.Max(r => r.ReserveTime);
+            }
+        }
+
         public UserMainWindowViewModel(User user, BookService bookService, BorrowRecordService borrowRecordService, SeatService seatService)
         {
             CurrentUser = user;
@@ -94,12 +194,16 @@ namespace InkHouse.ViewModels
             ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
             LoadMoreBooksCommand = new AsyncRelayCommand(LoadMoreBooks);
             LoadMoreBorrowRecordsCommand = new AsyncRelayCommand(LoadMoreBorrowRecords);
+            LoadProfileDataCommand = new AsyncRelayCommand(LoadProfileDataAsync);
+            RefreshStatisticsCommand = new AsyncRelayCommand(RefreshStatistics);
             // 已自动删除递归创建自身的代码，防止栈溢出
             // 默认显示主页
             ShowHome();
             // 自动加载主页统计数据
             _ = LoadBooksAsync();
             _ = LoadBorrowRecordsAsync();
+            // 预加载个人中心数据
+            _ = LoadProfileDataAsync();
         }
 
         [RelayCommand]
@@ -121,20 +225,27 @@ namespace InkHouse.ViewModels
             SelectedMenu = "MyBorrows";
             CurrentView = "MyBorrows";
             await LoadBorrowRecordsAsync();
+            // 同步更新个人中心的借阅记录
+            await LoadProfileDataAsync();
         }
 
         [RelayCommand]
-        public void ShowSeatReservation()
+        public async Task ShowSeatReservation()
         {
             SelectedMenu = "SeatReservation";
             CurrentView = "SeatReservation";
+            // 同步更新个人中心的座位预约记录
+            await LoadProfileDataAsync();
         }
 
         [RelayCommand]
-        public void ShowMyProfile()
+        public async Task ShowMyProfile()
         {
             SelectedMenu = "MyProfile";
-            CurrentView = "MyProfile";
+            var view = new InkHouse.Views.UserProfileView { DataContext = this };
+            CurrentView = view;
+            // 确保在设置DataContext后加载数据
+            await LoadProfileDataAsync();
         }
 
         private async Task LoadBooksAsync()
@@ -249,6 +360,9 @@ namespace InkHouse.ViewModels
                     book.IsAvailable = true;
                 }
                 
+                // 同步更新个人中心的借阅记录
+                await LoadProfileDataAsync();
+                
                 ShowSuccessMessage("还书成功！");
             }
             catch (Exception ex)
@@ -277,6 +391,9 @@ namespace InkHouse.ViewModels
                 {
                     BorrowRecords.Insert(0, borrowRecord);
                 }
+                
+                // 同步更新个人中心的借阅记录
+                await LoadProfileDataAsync();
                 
                 ShowSuccessMessage("借阅成功！");
             }
@@ -332,6 +449,11 @@ namespace InkHouse.ViewModels
         {
             CurrentPage++;
             await LoadBorrowRecordsAsync();
+        }
+
+        private async Task RefreshStatistics()
+        {
+            await LoadProfileDataAsync();
         }
     }
 }

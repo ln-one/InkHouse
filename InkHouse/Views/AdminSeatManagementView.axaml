@@ -1,0 +1,42 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:InkHouse.ViewModels"
+             xmlns:local="clr-namespace:InkHouse.Views"
+             x:Class="InkHouse.Views.AdminSeatManagementView"
+             x:DataType="vm:AdminSeatManagementViewModel"
+             mc:Ignorable="d"
+             d:DesignWidth="900" d:DesignHeight="600" x:Name="Root">
+    <UserControl.Resources>
+        <local:SeatStatusToColorConverter x:Key="SeatStatusToColorConverter"/>
+    </UserControl.Resources>
+    <StackPanel Margin="24" Spacing="16">
+        <TextBlock Text="座位管理" FontSize="24" FontWeight="Bold"/>
+        <StackPanel Orientation="Horizontal" Spacing="8" Margin="0,0,0,8">
+            <TextBox Width="120" Watermark="座位号" Text="{Binding NewSeatNumber, UpdateSourceTrigger=PropertyChanged}"/>
+            <Button Content="添加座位" Command="{Binding AddSeatCommand}"/>
+        </StackPanel>
+        <ScrollViewer Height="600">
+            <ItemsControl ItemsSource="{Binding Seats}">
+                <ItemsControl.ItemsPanel>
+                    <ItemsPanelTemplate>
+                        <WrapPanel Orientation="Horizontal" ItemWidth="170" ItemHeight="150"/>
+                    </ItemsPanelTemplate>
+                </ItemsControl.ItemsPanel>
+                <ItemsControl.ItemTemplate>
+                    <DataTemplate>
+                        <Border CornerRadius="12" Margin="16" Padding="12" Width="150" Height="130"
+                                Background="{Binding Status, Converter={StaticResource SeatStatusToColorConverter}}">
+                            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="106" Spacing="16">
+                                <TextBlock Text="{Binding SeatNumber}" FontWeight="Bold" FontSize="28" HorizontalAlignment="Center" Margin="0,10,0,0"/>
+                                <Button Content="删除" Command="{Binding DataContext.DeleteSeatCommand, ElementName=Root}" CommandParameter="{Binding}"
+                                        Width="90" Height="36" Margin="0,10,0,0" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+                            </StackPanel>
+                        </Border>
+                    </DataTemplate>
+                </ItemsControl.ItemTemplate>
+            </ItemsControl>
+        </ScrollViewer>
+    </StackPanel>
+</UserControl> 

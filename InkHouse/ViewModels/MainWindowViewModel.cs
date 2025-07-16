@@ -129,7 +129,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 DataContext = bookEditViewModel
             };
 
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 await dialog.ShowDialog(desktop.MainWindow);
             }
@@ -155,7 +155,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 DataContext = bookEditViewModel
             };
 
-            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
                 await dialog.ShowDialog(desktop.MainWindow);
             }
@@ -692,6 +692,20 @@ public partial class MainWindowViewModel : ViewModelBase
     {
         SelectedMenu = "Settings";
         CurrentView = "Settings";
+    }
+
+    /// <summary>显示座位管理</summary>
+    [RelayCommand]
+    public async Task ShowSeatManagement()
+    {
+        var seatService = ServiceManager.GetService<SeatService>();
+        var vm = new AdminSeatManagementViewModel(seatService);
+        await Dispatcher.UIThread.InvokeAsync(() =>
+        {
+            var seatManagementView = new InkHouse.Views.AdminSeatManagementView { DataContext = vm };
+            CurrentView = seatManagementView;
+            SelectedMenu = "SeatManagement";
+        });
     }
 
     // ================== 登出 ==================

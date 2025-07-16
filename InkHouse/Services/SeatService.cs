@@ -142,5 +142,85 @@ namespace InkHouse.Services
                 .Where(r => r.Status == "å·²é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­")
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// »ñÈ¡ÓÃ»§ËùÓÐ×ùÎ»Ô¤Ô¼¼ÇÂ¼
+        /// </summary>
+        public async Task<List<SeatReservation>> GetUserReservationsAsync(int userId)
+        {
+            try
+            {
+                Console.WriteLine($"¿ªÊ¼²éÑ¯ÓÃ»§ID {userId} µÄ×ùÎ»Ô¤Ô¼¼ÇÂ¼...");
+                using var context = _dbContextFactory.CreateDbContext();
+                
+                // ÏÈ¼ì²éÊý¾Ý¿âÖÐÊÇ·ñÓÐÊý¾Ý
+                var totalCount = await context.SeatReservations.CountAsync();
+                Console.WriteLine($"Êý¾Ý¿âÖÐ×Ü¹²ÓÐ {totalCount} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                
+                var userCount = await context.SeatReservations.CountAsync(sr => sr.UserId == userId);
+                Console.WriteLine($"ÓÃ»§ {userId} ÔÚÊý¾Ý¿âÖÐÓÐ {userCount} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                
+                var records = await context.SeatReservations
+                    .Include(r => r.Seat)
+                    .Where(r => r.UserId == userId)
+                    .OrderByDescending(r => r.ReserveTime)
+                    .ToListAsync();
+                
+                Console.WriteLine($"²éÑ¯µ½ {records.Count} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"×ùÎ»Ô¤Ô¼¼ÇÂ¼: ID={record.Id}, ÓÃ»§ID={record.UserId}, ×ùÎ»ID={record.SeatId}, ×´Ì¬={record.Status}");
+                }
+                
+                return records;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"²éÑ¯ÓÃ»§×ùÎ»Ô¤Ô¼¼ÇÂ¼Ê±·¢ÉúÒì³£: {ex.Message}");
+                Console.WriteLine($"Òì³£¶ÑÕ»: {ex.StackTrace}");
+                return new List<SeatReservation>();
+            }
+        }
+
+        /// <summary>
+        /// Ìí¼Ó×ùÎ»
+        /// </summary>
+        public async Task<Seat> AddSeatAsync(string seatNumber)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            if (await context.Seats.AnyAsync(s => s.SeatNumber == seatNumber))
+                throw new InvalidOperationException("×ùÎ»±àºÅÒÑ´æÔÚ");
+            var seat = new Seat { SeatNumber = seatNumber, Status = "Free" };
+            context.Seats.Add(seat);
+            await context.SaveChangesAsync();
+            return seat;
+        }
+
+        /// <summary>
+        /// É¾³ý×ùÎ»
+        /// </summary>
+        public async Task<bool> DeleteSeatAsync(int seatId)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            var seat = await context.Seats.FindAsync(seatId);
+            if (seat == null) return false;
+            context.Seats.Remove(seat);
+            await context.SaveChangesAsync();
+            return true;
+        }
+
+        /// <summary>
+        /// ÐÞ¸Ä×ùÎ»×´Ì¬
+        /// </summary>
+        public async Task<Seat> UpdateSeatStatusAsync(int seatId, string newStatus)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            var seat = await context.Seats.FindAsync(seatId);
+            if (seat == null) throw new InvalidOperationException("×ùÎ»²»´æÔÚ");
+            seat.Status = newStatus;
+            if (newStatus == "Free") seat.CurrentUserId = null;
+            await context.SaveChangesAsync();
+            return seat;
+        }
     }
 } 
