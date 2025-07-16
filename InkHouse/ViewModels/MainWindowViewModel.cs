@@ -51,9 +51,6 @@ public partial class MainWindowViewModel : ViewModelBase
     /// <summary>搜索关键字</summary>
     public string BookSearchText { get; set; } = string.Empty;
     
-    /// <summary>是否正在加载</summary>
-    public new bool IsLoading { get; set; }
-    
     /// <summary>加载图书列表</summary>
     [RelayCommand]
     public async Task LoadBooksAsync()
