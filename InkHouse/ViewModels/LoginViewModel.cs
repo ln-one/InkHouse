@@ -45,9 +45,19 @@ namespace InkHouse.ViewModels
         public event Action<string>? LoginFailed;
 
         /// <summary>
+        /// 跳转到注册页面事件
+        /// </summary>
+        public event Action? NavigateToRegister;
+
+        /// <summary>
         /// 登录命令
         /// </summary>
         public ICommand LoginCommand { get; }
+
+        /// <summary>
+        /// 跳转到注册命令
+        /// </summary>
+        public ICommand NavigateToRegisterCommand { get; }
 
         /// <summary>
         /// 构造函数
@@ -56,6 +66,7 @@ namespace InkHouse.ViewModels
         public LoginViewModel()
         {
             LoginCommand = new AsyncRelayCommand(LoginAsync);
+            NavigateToRegisterCommand = new RelayCommand(() => NavigateToRegister?.Invoke());
         }
 
         /// <summary>

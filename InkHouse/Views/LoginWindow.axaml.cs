@@ -39,9 +39,12 @@ namespace InkHouse.Views
             {
                 // 订阅登录成功事件
                 loginViewModel.LoginSuccess += OnLoginSuccess;
-                
+
                 // 订阅登录失败事件
                 loginViewModel.LoginFailed += OnLoginFailed;
+
+                // 订阅注册导航事件
+                loginViewModel.NavigateToRegister += OnNavigateToRegister;
             }
         }
 
@@ -99,6 +102,7 @@ namespace InkHouse.Views
                 {
                     loginViewModel.LoginSuccess -= OnLoginSuccess;
                     loginViewModel.LoginFailed -= OnLoginFailed;
+                    loginViewModel.NavigateToRegister -= OnNavigateToRegister;
                 }
                 
                 // 释放登录视图模型资源
@@ -123,6 +127,23 @@ namespace InkHouse.Views
             // 登录失败时保持登录窗口打开
             // 错误信息已经在 LoginViewModel 中显示
             Console.WriteLine($"登录失败: {errorMessage}");
+        }
+
+        /// <summary>
+        /// 导航到注册页面事件处理
+        /// 关闭登录窗口并显示注册窗口
+        /// </summary>
+        private void OnNavigateToRegister()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                // 创建并显示注册窗口
+                var registerWindow = new RegisterWindow();
+                registerWindow.Show();
+
+                // 关闭当前登录窗口
+                this.Close();
+            }
         }
         
         /// <summary>

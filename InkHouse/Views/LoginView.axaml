@@ -31,9 +31,17 @@
                 
                 <!-- 分割线 -->
                 <Rectangle Classes="divider"/>
-                
+
+                <!-- 注册链接 -->
+                <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Spacing="8">
+                    <TextBlock Text="还没有账户？" Classes="caption"/>
+                    <Button Content="立即注册"
+                            Command="{Binding NavigateToRegisterCommand}"
+                            Classes="link"/>
+                </StackPanel>
+
                 <!-- 辅助信息 -->
-                <TextBlock Text="首次使用？请联系管理员获取账户信息" Classes="caption" HorizontalAlignment="Center"/>
+                <TextBlock Text="如有问题，请联系管理员" Classes="caption" HorizontalAlignment="Center"/>
             </StackPanel>
         </Border>
     </Grid>

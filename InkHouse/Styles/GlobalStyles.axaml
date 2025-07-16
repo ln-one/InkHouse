@@ -218,6 +218,27 @@
     <Style Selector="TextBlock.link:pointerover">
         <Setter Property="Foreground" Value="#0056CC"/>
     </Style>
+
+    <!-- 链接按钮样式 -->
+    <Style Selector="Button.link">
+        <Setter Property="Background" Value="Transparent"/>
+        <Setter Property="Foreground" Value="#007AFF"/>
+        <Setter Property="FontWeight" Value="500"/>
+        <Setter Property="BorderThickness" Value="0"/>
+        <Setter Property="Padding" Value="0"/>
+        <Setter Property="Cursor" Value="Hand"/>
+        <Setter Property="VerticalAlignment" Value="Center"/>
+    </Style>
+
+    <Style Selector="Button.link:pointerover">
+        <Setter Property="Foreground" Value="#0056CC"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
+
+    <Style Selector="Button.link:pressed">
+        <Setter Property="Foreground" Value="#004499"/>
+        <Setter Property="Background" Value="Transparent"/>
+    </Style>
     
     <!-- 侧边栏导航项样式 -->
     <Style Selector="StackPanel.nav-group RadioButton">
