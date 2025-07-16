@@ -4,9 +4,20 @@ using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.EntityFrameworkCore;
 using InkHouse.Models;
+using BC = BCrypt.Net.BCrypt;
 
 namespace InkHouse.Services
 {
+    /// <summary>
+    /// 注册结果类
+    /// </summary>
+    public class RegisterResult
+    {
+        public bool Success { get; set; }
+        public string? ErrorMessage { get; set; }
+        public User? User { get; set; }
+    }
+
     /// <summary>
     /// 用户服务类
     /// 负责用户相关的业务逻辑操作
@@ -36,16 +47,117 @@ namespace InkHouse.Services
             {
                 Console.WriteLine("开始登录验证...");
                 using var db = _dbContextFactory.CreateDbContext();
-                // 注意：在实际项目中，密码应该加密存储和验证
-                var user = db.Users.FirstOrDefault(u => u.UserName == username && u.Password == password);
-                Console.WriteLine($"查询结果: {(user != null ? "找到用户" : "未找到用户")}");
-        
-                return user;
+
+                // 先根据用户名查找用户
+                var user = db.Users.FirstOrDefault(u => u.UserName == username);
+                if (user == null)
+                {
+                    Console.WriteLine("用户不存在");
+                    return null;
+                }
+
+                // 验证密码
+                bool isPasswordValid;
+                if (user.Password.StartsWith("$2"))
+                {
+                    // 新的加密密码
+                    isPasswordValid = BC.Verify(password, user.Password);
+                }
+                else
+                {
+                    // 兼容旧的明文密码（用于现有数据）
+                    isPasswordValid = user.Password == password;
+
+                    // 如果验证成功，将明文密码升级为加密密码
+                    if (isPasswordValid)
+                    {
+                        user.Password = BC.HashPassword(password);
+                        db.SaveChanges();
+                        Console.WriteLine("密码已升级为加密存储");
+                    }
+                }
+
+                if (isPasswordValid)
+                {
+                    Console.WriteLine("登录验证成功");
+                    return user;
+                }
+                else
+                {
+                    Console.WriteLine("密码错误");
+                    return null;
+                }
             }
             catch (Exception ex)
             {
                 Console.WriteLine($"用户登录时发生错误: {ex.Message}");
                 return null;
+            }
+        }
+
+        /// <summary>
+        /// 用户注册
+        /// </summary>
+        /// <param name="user">用户对象</param>
+        /// <returns>注册结果</returns>
+        public async Task<RegisterResult> RegisterAsync(User user)
+        {
+            try
+            {
+                using var db = _dbContextFactory.CreateDbContext();
+
+                // 检查用户名是否已存在
+                if (await db.Users.AnyAsync(u => u.UserName == user.UserName))
+                {
+                    return new RegisterResult
+                    {
+                        Success = false,
+                        ErrorMessage = "用户名已存在，请选择其他用户名"
+                    };
+                }
+
+                // 加密密码
+                user.Password = BC.HashPassword(user.Password);
+
+                // 添加用户到数据库
+                db.Users.Add(user);
+                await db.SaveChangesAsync();
+
+                Console.WriteLine($"用户注册成功: {user.UserName}");
+
+                return new RegisterResult
+                {
+                    Success = true,
+                    User = user
+                };
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"用户注册失败: {ex.Message}");
+                return new RegisterResult
+                {
+                    Success = false,
+                    ErrorMessage = "注册失败，请稍后重试"
+                };
+            }
+        }
+
+        /// <summary>
+        /// 检查用户名是否可用
+        /// </summary>
+        /// <param name="username">用户名</param>
+        /// <returns>是否可用</returns>
+        public async Task<bool> IsUsernameAvailableAsync(string username)
+        {
+            try
+            {
+                using var db = _dbContextFactory.CreateDbContext();
+                return !await db.Users.AnyAsync(u => u.UserName == username);
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"检查用户名可用性失败: {ex.Message}");
+                return false;
             }
         }
 

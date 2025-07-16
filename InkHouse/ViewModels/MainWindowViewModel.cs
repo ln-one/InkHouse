@@ -128,7 +128,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBooksAsync();
         }
@@ -154,7 +154,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBooksAsync();
         }
@@ -213,7 +213,7 @@ public partial class MainWindowViewModel : ViewModelBase
                         }
                     }
                 };
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
         });
     }
@@ -252,7 +252,7 @@ public partial class MainWindowViewModel : ViewModelBase
                         }
                     }
                 };
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
                 return await tcs.Task;
             }
             return false;
@@ -345,7 +345,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadUsersAsync();
         }
@@ -371,7 +371,7 @@ public partial class MainWindowViewModel : ViewModelBase
             };
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
                 Console.WriteLine("编辑用户对话框已关闭");
             }
             await LoadUsersAsync();
@@ -497,7 +497,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBorrowRecordsAsync();
         }
@@ -523,7 +523,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBorrowRecordsAsync();
         }
@@ -715,7 +715,7 @@ public partial class MainWindowViewModel : ViewModelBase
     private List<string> _bookTypes = new();
     [ObservableProperty]
     private string _selectedBookType = "全部";
-    partial void OnSelectedBookTypeChanged(string? value)
+    partial void OnSelectedBookTypeChanged(string value)
     {
         _ = LoadBooksAsync();
     }

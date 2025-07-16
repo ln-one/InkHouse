@@ -99,11 +99,11 @@ namespace InkHouse.Services
             return await context.BorrowRecords
                 .Include(br => br.Book)
                 .Include(br => br.User)
-                .Where(br => br.Book.Title.Contains(keyword) || 
+                .Where(br => br.Book != null && br.User != null && (br.Book.Title.Contains(keyword) || 
                            br.Book.Author.Contains(keyword) ||
                            br.Book.ISBN.Contains(keyword) ||
                            br.User.UserName.Contains(keyword) ||
-                           br.Status.Contains(keyword))
+                           br.Status.Contains(keyword)))
                 .OrderByDescending(br => br.BorrowDate)
                 .ToListAsync();
         }
@@ -217,10 +217,13 @@ namespace InkHouse.Services
             borrowRecord.IsReturned = true;
 
             // 更新图书库存
-            borrowRecord.Book.AvailableCount++;
-            if (borrowRecord.Book.AvailableCount > 0)
+            if(borrowRecord.Book != null)
             {
-                borrowRecord.Book.IsAvailable = true;
+                borrowRecord.Book.AvailableCount++;
+                if (borrowRecord.Book.AvailableCount > 0)
+                {
+                    borrowRecord.Book.IsAvailable = true;
+                }
             }
 
             await context.SaveChangesAsync();
@@ -268,4 +271,4 @@ namespace InkHouse.Services
             return true;
         }
     }
-} 
+}

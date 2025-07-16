@@ -14,6 +14,9 @@ namespace InkHouse.Views
     /// </summary>
     public partial class LoginWindow : Window
     {
+        // 标记是否是导航到注册页面
+        private bool _isNavigatingToRegister = false;
+
         /// <summary>
         /// 构造函数
         /// 初始化登录窗口
@@ -39,9 +42,12 @@ namespace InkHouse.Views
             {
                 // 订阅登录成功事件
                 loginViewModel.LoginSuccess += OnLoginSuccess;
-                
+
                 // 订阅登录失败事件
                 loginViewModel.LoginFailed += OnLoginFailed;
+
+                // 订阅注册导航事件
+                loginViewModel.NavigateToRegister += OnNavigateToRegister;
             }
         }
 
@@ -99,6 +105,7 @@ namespace InkHouse.Views
                 {
                     loginViewModel.LoginSuccess -= OnLoginSuccess;
                     loginViewModel.LoginFailed -= OnLoginFailed;
+                    loginViewModel.NavigateToRegister -= OnNavigateToRegister;
                 }
                 
                 // 释放登录视图模型资源
@@ -124,6 +131,26 @@ namespace InkHouse.Views
             // 错误信息已经在 LoginViewModel 中显示
             Console.WriteLine($"登录失败: {errorMessage}");
         }
+
+        /// <summary>
+        /// 导航到注册页面事件处理
+        /// 关闭登录窗口并显示注册窗口
+        /// </summary>
+        private void OnNavigateToRegister()
+        {
+            if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
+            {
+                // 创建并显示注册窗口
+                var registerWindow = new RegisterWindow();
+                registerWindow.Show();
+                
+                // 设置标记，防止在关闭窗口时退出应用程序
+                _isNavigatingToRegister = true;
+
+                // 关闭当前登录窗口
+                this.Close();
+            }
+        }
         
         /// <summary>
         /// 登录窗口关闭事件处理
@@ -137,10 +164,14 @@ namespace InkHouse.Views
             // 释放资源
             DisposeResources();
             
+            // 只有在不是导航到注册页面的情况下才退出应用程序
+            if (!_isNavigatingToRegister)
+            {
             // 强制退出应用程序
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
                 desktop.Shutdown();
+                }
             }
         }
         
@@ -157,8 +188,8 @@ namespace InkHouse.Views
                     disposable.Dispose();
                 }
                 
-                // 释放服务资源
-                ServiceManager.Dispose();
+                // 不要在这里释放服务资源，因为其他窗口可能还需要使用
+                // ServiceManager.Dispose();
             }
             catch (Exception ex)
             {

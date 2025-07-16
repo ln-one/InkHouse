@@ -31,6 +31,7 @@ namespace InkHouse.Services
 
             // 注册视图模型
             services.AddTransient<LoginViewModel>();
+            services.AddTransient<RegisterViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<BookEditViewModel>();
 
