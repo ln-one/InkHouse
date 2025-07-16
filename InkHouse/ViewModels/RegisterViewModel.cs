@@ -29,6 +29,7 @@ namespace InkHouse.ViewModels
             {
                 SetProperty(ref _userName, value);
                 ValidateUserName();
+                RegisterCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -43,6 +44,7 @@ namespace InkHouse.ViewModels
                 SetProperty(ref _password, value);
                 ValidatePassword();
                 ValidateConfirmPassword(); // 重新验证确认密码
+                RegisterCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -56,6 +58,7 @@ namespace InkHouse.ViewModels
             {
                 SetProperty(ref _confirmPassword, value);
                 ValidateConfirmPassword();
+                RegisterCommand.NotifyCanExecuteChanged();
             }
         }
 
@@ -69,19 +72,31 @@ namespace InkHouse.ViewModels
         public string UserNameError
         {
             get => _userNameError;
-            set => SetProperty(ref _userNameError, value);
+            set
+            {
+                SetProperty(ref _userNameError, value);
+                RegisterCommand.NotifyCanExecuteChanged();
+            }
         }
 
         public string PasswordError
         {
             get => _passwordError;
-            set => SetProperty(ref _passwordError, value);
+            set
+            {
+                SetProperty(ref _passwordError, value);
+                RegisterCommand.NotifyCanExecuteChanged();
+            }
         }
 
         public string ConfirmPasswordError
         {
             get => _confirmPasswordError;
-            set => SetProperty(ref _confirmPasswordError, value);
+            set
+            {
+                SetProperty(ref _confirmPasswordError, value);
+                RegisterCommand.NotifyCanExecuteChanged();
+            }
         }
 
 
@@ -99,7 +114,7 @@ namespace InkHouse.ViewModels
         /// <summary>
         /// 注册命令
         /// </summary>
-        public ICommand RegisterCommand { get; }
+        public AsyncRelayCommand RegisterCommand { get; }
 
         /// <summary>
         /// 返回登录命令

@@ -22,8 +22,8 @@ public partial class App : Application
         // 初始化配置
         // AppConfig.Initialize();
         
-        // 初始化服务容器
-        ServiceManager.Initialize();
+        // 服务容器已在Program.cs中初始化，这里不需要重复初始化
+        // ServiceManager.Initialize();
     }
 
     public override void OnFrameworkInitializationCompleted()
@@ -143,6 +143,8 @@ public partial class App : Application
 
     public App()
     {
+        // 服务容器已在Program.cs中初始化，这里不需要重复初始化
+        // ServiceManager.Initialize();
         AppDomain.CurrentDomain.UnhandledException += (s, e) =>
         {
             Console.WriteLine("全局未捕获异常: " + e.ExceptionObject);

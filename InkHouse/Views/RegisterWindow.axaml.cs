@@ -18,8 +18,8 @@ namespace InkHouse.Views
         {
             InitializeComponent();
             
-            // 创建ViewModel并设置DataContext
-            _viewModel = new RegisterViewModel();
+            // 通过ServiceManager获取ViewModel实例
+            _viewModel = ServiceManager.GetService<RegisterViewModel>();
             DataContext = _viewModel;
             
             // 订阅事件

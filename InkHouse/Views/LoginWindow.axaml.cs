@@ -188,8 +188,8 @@ namespace InkHouse.Views
                     disposable.Dispose();
                 }
                 
-                // 释放服务资源
-                ServiceManager.Dispose();
+                // 不要在这里释放服务资源，因为其他窗口可能还需要使用
+                // ServiceManager.Dispose();
             }
             catch (Exception ex)
             {

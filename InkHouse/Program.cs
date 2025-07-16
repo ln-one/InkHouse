@@ -1,5 +1,6 @@
-﻿using Avalonia;
+using Avalonia;
 using System;
+using InkHouse.Services;
 
 namespace InkHouse;
 
@@ -14,6 +15,7 @@ sealed class Program
     [STAThread]
     public static void Main(string[] args)
     {
+        ServiceManager.Initialize();
         // 检查是否启用自动测试
         if (args.Length > 0 && args[0] == "--auto-test")
         {
