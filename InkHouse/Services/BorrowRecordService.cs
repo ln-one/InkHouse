@@ -148,7 +148,7 @@ namespace InkHouse.Services
             }
 
             // 检查图书是否可借
-            if (book.Available <= 0)
+            if (book.AvailableCount <= 0)
             {
                 throw new InvalidOperationException("图书库存不足，无法借阅");
             }
@@ -176,8 +176,8 @@ namespace InkHouse.Services
             };
 
             // 更新图书库存
-            book.Available--;
-            if (book.Available == 0)
+            book.AvailableCount--;
+            if (book.AvailableCount == 0)
             {
                 book.IsAvailable = false;
             }
@@ -217,8 +217,8 @@ namespace InkHouse.Services
             borrowRecord.IsReturned = true;
 
             // 更新图书库存
-            borrowRecord.Book.Available++;
-            if (borrowRecord.Book.Available > 0)
+            borrowRecord.Book.AvailableCount++;
+            if (borrowRecord.Book.AvailableCount > 0)
             {
                 borrowRecord.Book.IsAvailable = true;
             }

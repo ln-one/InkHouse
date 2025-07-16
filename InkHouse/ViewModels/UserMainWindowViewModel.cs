@@ -18,6 +18,7 @@ using Avalonia.Media;
 using System.Reactive.Linq;
 using ReactiveUI;
 using Avalonia.Threading;
+using System.Collections.Generic;
 
 namespace InkHouse.ViewModels
 {
@@ -62,6 +63,16 @@ namespace InkHouse.ViewModels
         [ObservableProperty]
         private int _totalBorrowRecords = 0;
 
+        [ObservableProperty]
+        private List<string> _bookTypes = new();
+        [ObservableProperty]
+        private string _selectedBookType = "全部";
+        partial void OnSelectedBookTypeChanged(string? value)
+        {
+            CurrentPage = 1;
+            _ = LoadBooksAsync();
+        }
+
         public ICommand LogoutCommand { get; }
         public ICommand SearchCommand { get; }
         public ICommand ReturnBookCommand { get; }
@@ -100,6 +111,7 @@ namespace InkHouse.ViewModels
             // 自动加载主页统计数据
             _ = LoadBooksAsync();
             _ = LoadBorrowRecordsAsync();
+            _ = LoadBookTypesAsync();
         }
 
         [RelayCommand]
@@ -142,7 +154,7 @@ namespace InkHouse.ViewModels
             try
             {
                 IsLoading = true;
-                var books = await _bookService.GetAllBooksAsync(CurrentPage, PageSize);
+                var books = await _bookService.GetBooksByTypeAsync(SelectedBookType, CurrentPage, PageSize);
                 
                 // Get total count for the first time only (optimization)
                 if (CurrentPage == 1 && TotalBooks == 0)
@@ -245,7 +257,7 @@ namespace InkHouse.ViewModels
                 var book = Books.FirstOrDefault(b => b.Id == record.BookId);
                 if (book != null)
                 {
-                    book.Available++;
+                    book.AvailableCount++;
                     book.IsAvailable = true;
                 }
                 
@@ -266,8 +278,8 @@ namespace InkHouse.ViewModels
                 var borrowRecord = await _borrowRecordService.BorrowBookAsync(book.Id, CurrentUser.Id);
                 
                 // Update book locally instead of reloading everything
-                book.Available--;
-                if (book.Available <= 0)
+                book.AvailableCount--;
+                if (book.AvailableCount <= 0)
                 {
                     book.IsAvailable = false;
                 }
@@ -284,6 +296,20 @@ namespace InkHouse.ViewModels
             {
                 ShowErrorMessage($"借阅失败: {ex.Message}");
             }
+        }
+
+        private async Task LoadBookTypesAsync()
+        {
+            var types = await _bookService.GetAllBookTypesAsync();
+            types.Insert(0, "全部");
+            BookTypes = types;
+        }
+
+        private async Task ChangeBookTypeAsync(string? type)
+        {
+            SelectedBookType = type ?? "全部";
+            CurrentPage = 1;
+            await LoadBooksAsync();
         }
 
         private void Logout()
