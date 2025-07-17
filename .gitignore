@@ -17,3 +17,5 @@ obj/
 *.sln.iml
 # 敏感配置文件
 InkHouse/Services/AppConfig.cs
+# Kiro
+.kiro/

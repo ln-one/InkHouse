@@ -45,7 +45,7 @@ namespace InkHouse.ViewModels
             ReserveCommand = new AsyncRelayCommand<Seat>(ReserveAsync);
             CheckInCommand = new AsyncRelayCommand(CheckInAsync);
             CheckOutCommand = new AsyncRelayCommand(CheckOutAsync);
-            // _ = RefreshAsync(); // “∆≥˝◊‘∂ØÀ¢–¬£¨∏ƒŒ™ ”Õºº”‘ÿ ±µ˜”√
+            // _ = RefreshAsync(); // ÁßªÈô§Ëá™Âä®Âà∑Êñ∞ÔºåÊîπ‰∏∫ËßÜÂõæÂä†ËΩΩÊó∂Ë∞ÉÁî®
         }
 
         private async Task RefreshAsync()
@@ -65,8 +65,8 @@ namespace InkHouse.ViewModels
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SeatReservationViewModel.RefreshAsync “Ï≥£: " + ex);
-                ShowError("◊˘Œª ˝æ›º”‘ÿ ß∞‹: " + ex.Message);
+                Console.WriteLine("SeatReservationViewModel.RefreshAsync ÂºÇÂ∏∏: " + ex);
+                ShowError("Â∫ß‰ΩçÊï∞ÊçÆÂä†ËΩΩÂ§±Ë¥•: " + ex.Message);
             }
         }
 
@@ -77,12 +77,12 @@ namespace InkHouse.ViewModels
             {
                 await _seatService.ReserveSeatAsync(seat.Id, _currentUser.Id);
                 await RefreshAsync();
-                ShowSuccess("‘§‘º≥…π¶£°");
+                ShowSuccess("È¢ÑÁ∫¶ÊàêÂäüÔºÅ");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SeatReservationViewModel.ReserveAsync “Ï≥£: " + ex);
-                ShowError($"‘§‘º ß∞‹: {ex.Message}");
+                Console.WriteLine("SeatReservationViewModel.ReserveAsync ÂºÇÂ∏∏: " + ex);
+                ShowError($"È¢ÑÁ∫¶Â§±Ë¥•: {ex.Message}");
             }
         }
 
@@ -93,12 +93,12 @@ namespace InkHouse.ViewModels
             {
                 await _seatService.CheckInAsync(MyReservation.Id);
                 await RefreshAsync();
-                ShowSuccess("“—µΩπ›£¨◊˘Œª π”√÷–£°");
+                ShowSuccess("Â∑≤Âà∞È¶ÜÔºåÂ∫ß‰Ωç‰ΩøÁî®‰∏≠ÔºÅ");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SeatReservationViewModel.CheckInAsync “Ï≥£: " + ex);
-                ShowError($"µΩπ› ß∞‹: {ex.Message}");
+                Console.WriteLine("SeatReservationViewModel.CheckInAsync ÂºÇÂ∏∏: " + ex);
+                ShowError($"Âà∞È¶ÜÂ§±Ë¥•: {ex.Message}");
             }
         }
 
@@ -109,12 +109,12 @@ namespace InkHouse.ViewModels
             {
                 await _seatService.CheckOutAsync(MyReservation.Id);
                 await RefreshAsync();
-                ShowSuccess("“—¿Îπ›£¨◊˘Œª“— Õ∑≈£°");
+                ShowSuccess("Â∑≤Á¶ªÈ¶ÜÔºåÂ∫ß‰ΩçÂ∑≤ÈáäÊîæÔºÅ");
             }
             catch (Exception ex)
             {
-                Console.WriteLine("SeatReservationViewModel.CheckOutAsync “Ï≥£: " + ex);
-                ShowError($"¿Îπ› ß∞‹: {ex.Message}");
+                Console.WriteLine("SeatReservationViewModel.CheckOutAsync ÂºÇÂ∏∏: " + ex);
+                ShowError($"Á¶ªÈ¶ÜÂ§±Ë¥•: {ex.Message}");
             }
         }
     }
