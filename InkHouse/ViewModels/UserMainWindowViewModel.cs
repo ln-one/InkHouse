@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.ObjectModel;
 using System.Threading.Tasks;
 using CommunityToolkit.Mvvm.Input;
@@ -63,14 +63,22 @@ namespace InkHouse.ViewModels
         [ObservableProperty]
         private int _totalBorrowRecords = 0;
 
+        [ObservableProperty]
+        private List<string> _bookTypes = new();
+        [ObservableProperty]
+        private string _selectedBookType = "全部";
+        partial void OnSelectedBookTypeChanged(string value)
+        {
+            CurrentPage = 1;
+            _ = LoadBooksAsync();
+        }
+
         public ICommand LogoutCommand { get; }
         public ICommand SearchCommand { get; }
         public ICommand ReturnBookCommand { get; }
         public ICommand BorrowBookCommand { get; }
         public IAsyncRelayCommand ShowBrowseBooksCommand { get; }
         public IAsyncRelayCommand ShowMyBorrowsCommand { get; }
-        public IAsyncRelayCommand LoadMoreBooksCommand { get; }
-        public IAsyncRelayCommand LoadMoreBorrowRecordsCommand { get; }
 
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
@@ -192,8 +200,6 @@ namespace InkHouse.ViewModels
             BorrowBookCommand = new AsyncRelayCommand<Book>(BorrowBookAsync);
             ShowBrowseBooksCommand = new AsyncRelayCommand(ShowBrowseBooks);
             ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
-            LoadMoreBooksCommand = new AsyncRelayCommand(LoadMoreBooks);
-            LoadMoreBorrowRecordsCommand = new AsyncRelayCommand(LoadMoreBorrowRecords);
             LoadProfileDataCommand = new AsyncRelayCommand(LoadProfileDataAsync);
             RefreshStatisticsCommand = new AsyncRelayCommand(RefreshStatistics);
             // 已自动删除递归创建自身的代码，防止栈溢出
@@ -202,8 +208,12 @@ namespace InkHouse.ViewModels
             // 自动加载主页统计数据
             _ = LoadBooksAsync();
             _ = LoadBorrowRecordsAsync();
+
             // 预加载个人中心数据
             _ = LoadProfileDataAsync();
+
+            _ = LoadBookTypesAsync();
+
         }
 
         [RelayCommand]
@@ -253,7 +263,7 @@ namespace InkHouse.ViewModels
             try
             {
                 IsLoading = true;
-                var books = await _bookService.GetAllBooksAsync(CurrentPage, PageSize);
+                var books = await _bookService.GetBooksByTypeAsync(SelectedBookType, CurrentPage, PageSize);
                 
                 // Get total count for the first time only (optimization)
                 if (CurrentPage == 1 && TotalBooks == 0)
@@ -356,7 +366,7 @@ namespace InkHouse.ViewModels
                 var book = Books.FirstOrDefault(b => b.Id == record.BookId);
                 if (book != null)
                 {
-                    book.Available++;
+                    book.AvailableCount++;
                     book.IsAvailable = true;
                 }
                 
@@ -380,14 +390,14 @@ namespace InkHouse.ViewModels
                 var borrowRecord = await _borrowRecordService.BorrowBookAsync(book.Id, CurrentUser.Id);
                 
                 // Update book locally instead of reloading everything
-                book.Available--;
-                if (book.Available <= 0)
+                book.AvailableCount--;
+                if (book.AvailableCount <= 0)
                 {
                     book.IsAvailable = false;
                 }
                 
                 // Add the borrow record to the collection if we're on the MyBorrows view
-                if (CurrentView == "MyBorrows")
+                if (CurrentView as string == "MyBorrows")
                 {
                     BorrowRecords.Insert(0, borrowRecord);
                 }
@@ -401,6 +411,20 @@ namespace InkHouse.ViewModels
             {
                 ShowErrorMessage($"借阅失败: {ex.Message}");
             }
+        }
+
+        private async Task LoadBookTypesAsync()
+        {
+            var types = await _bookService.GetAllBookTypesAsync();
+            types.Insert(0, "全部");
+            BookTypes = types;
+        }
+
+        private async Task ChangeBookTypeAsync(string? type)
+        {
+            SelectedBookType = type ?? "全部";
+            CurrentPage = 1;
+            await LoadBooksAsync();
         }
 
         private void Logout()
@@ -439,17 +463,7 @@ namespace InkHouse.ViewModels
             ShowMessage = false;
         }
 
-        private async Task LoadMoreBooks()
-        {
-            CurrentPage++;
-            await LoadBooksAsync();
-        }
-
-        private async Task LoadMoreBorrowRecords()
-        {
-            CurrentPage++;
-            await LoadBorrowRecordsAsync();
-        }
+        
 
         private async Task RefreshStatistics()
         {

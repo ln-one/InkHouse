@@ -1,0 +1,136 @@
+<Styles xmlns="https://github.com/avaloniaui"
+        xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+    <Design.PreviewWith>
+        <Border Padding="20">
+            <StackPanel Spacing="20">
+                <Border Classes="card">
+                    <TextBlock>Card Content</TextBlock>
+                </Border>
+                <TextBlock Classes="h1">Heading 1</TextBlock>
+                <TextBlock Classes="h2">Heading 2</TextBlock>
+                <TextBlock Classes="h3">Heading 3</TextBlock>
+                <TextBlock Classes="caption">Caption text</TextBlock>
+                <Button Classes="dashboard-refresh">🔄 刷新数据</Button>
+            </StackPanel>
+        </Border>
+    </Design.PreviewWith>
+
+    <!-- 卡片样式 -->
+    <Style Selector="Border.card">
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BoxShadow" Value="0 2 10 0 #15000000"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
+    
+    <!-- 卡片悬停效果 -->
+    <Style Selector="Border.card:pointerover">
+        <Setter Property="BoxShadow" Value="0 5 15 0 #25000000"/>
+    </Style>
+
+    <!-- 标题样式 -->
+    <Style Selector="TextBlock.h1">
+        <Setter Property="FontSize" Value="32"/>
+        <Setter Property="FontWeight" Value="Bold"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
+
+    <Style Selector="TextBlock.h2">
+        <Setter Property="FontSize" Value="24"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,0,0,8"/>
+    </Style>
+
+    <Style Selector="TextBlock.h3">
+        <Setter Property="FontSize" Value="18"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+        <Setter Property="Margin" Value="0,0,0,4"/>
+    </Style>
+
+    <Style Selector="TextBlock.caption">
+        <Setter Property="FontSize" Value="12"/>
+        <Setter Property="Foreground" Value="#757575"/>
+    </Style>
+
+    <!-- 图表容器样式 -->
+    <Style Selector="Border.chart-container">
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BoxShadow" Value="0 2 10 0 #15000000"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="0,0,0,16"/>
+    </Style>
+
+    <!-- 统计卡片样式 -->
+    <Style Selector="Border.stat-card">
+        <Setter Property="Background" Value="#FFFFFF"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="BoxShadow" Value="0 2 10 0 #15000000"/>
+        <Setter Property="Padding" Value="16"/>
+        <Setter Property="Margin" Value="0,0,16,16"/>
+        <Setter Property="MinHeight" Value="120"/>
+    </Style>
+    
+    <!-- 统计卡片悬停效果 -->
+    <Style Selector="Border.stat-card:pointerover">
+        <Setter Property="BoxShadow" Value="0 5 15 0 #25000000"/>
+    </Style>
+    
+    <!-- 仪表盘刷新按钮 -->
+    <Style Selector="Button.dashboard-refresh">
+        <Setter Property="Background" Value="#2196F3"/>
+        <Setter Property="Foreground" Value="White"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Padding" Value="12,8"/>
+    </Style>
+    
+    <!-- 刷新按钮悬停效果 -->
+    <Style Selector="Button.dashboard-refresh:pointerover">
+        <Setter Property="Background" Value="#1976D2"/>
+    </Style>
+    
+    <!-- 刷新按钮按下效果 -->
+    <Style Selector="Button.dashboard-refresh:pressed">
+        <Setter Property="Background" Value="#0D47A1"/>
+    </Style>
+    
+    <!-- 数据标签样式 -->
+    <Style Selector="TextBlock.data-label">
+        <Setter Property="FontSize" Value="14"/>
+        <Setter Property="Foreground" Value="#616161"/>
+    </Style>
+    
+    <!-- 数据值样式 -->
+    <Style Selector="TextBlock.data-value">
+        <Setter Property="FontSize" Value="16"/>
+        <Setter Property="FontWeight" Value="SemiBold"/>
+    </Style>
+    
+    <!-- 正值样式 -->
+    <Style Selector="TextBlock.positive-value">
+        <Setter Property="Foreground" Value="#4CAF50"/>
+    </Style>
+    
+    <!-- 负值样式 -->
+    <Style Selector="TextBlock.negative-value">
+        <Setter Property="Foreground" Value="#F44336"/>
+    </Style>
+    
+    <!-- 中性值样式 -->
+    <Style Selector="TextBlock.neutral-value">
+        <Setter Property="Foreground" Value="#FF9800"/>
+    </Style>
+    
+    <!-- 列表项样式 -->
+    <Style Selector="Border.list-item">
+        <Setter Property="Padding" Value="12,8"/>
+        <Setter Property="CornerRadius" Value="4"/>
+        <Setter Property="Margin" Value="0,4"/>
+        <Setter Property="Background" Value="#F5F5F5"/>
+    </Style>
+    
+    <!-- 列表项悬停效果 -->
+    <Style Selector="Border.list-item:pointerover">
+        <Setter Property="Background" Value="#E0E0E0"/>
+    </Style>
+</Styles>

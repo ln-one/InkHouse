@@ -52,17 +52,21 @@ namespace InkHouse.Services
                 throw new InvalidOperationException("座位不存在");
             if (seat.Status != "Free")
                 throw new InvalidOperationException("该座位不可预约");
-            // 检查用户是否已有有效的预约
-            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "待预约" || r.Status == "使用中"));
+
+            // 检查用户是否已有未完成的预约
+            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "已预约" || r.Status == "使用中"));
             if (hasActive)
-                throw new InvalidOperationException("您已有有效的座位预约");
+                throw new InvalidOperationException("您已有未完成的座位预约");
+
             // 创建预约记录
             var reservation = new SeatReservation
             {
                 UserId = userId,
                 SeatId = seatId,
                 ReserveTime = DateTime.Now,
-                Status = "待预约"
+
+                Status = "已预约"
+
             };
             context.SeatReservations.Add(reservation);
             // 更新座位状态
@@ -81,7 +85,9 @@ namespace InkHouse.Services
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
                 throw new InvalidOperationException("预约记录不存在");
-            if (reservation.Status != "待预约")
+
+            if (reservation.Status != "已预约")
+
                 throw new InvalidOperationException("当前预约不可到馆");
             reservation.Status = "使用中";
             reservation.CheckInTime = DateTime.Now;
@@ -118,14 +124,18 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// 获取用户当前有效预约（待预约/使用中）
+
+        /// 获取用户当前有效预约（已预约/使用中）
+
         /// </summary>
         public async Task<SeatReservation?> GetUserActiveReservationAsync(int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.SeatReservations
                 .Include(r => r.Seat)
-                .Where(r => r.UserId == userId && (r.Status == "待预约" || r.Status == "使用中"))
+
+                .Where(r => r.UserId == userId && (r.Status == "已预约" || r.Status == "使用中"))
+
                 .OrderByDescending(r => r.ReserveTime)
                 .FirstOrDefaultAsync();
         }
@@ -139,7 +149,9 @@ namespace InkHouse.Services
             return await context.SeatReservations
                 .Include(r => r.Seat)
                 .Include(r => r.User)
-                .Where(r => r.Status == "待预约" || r.Status == "使用中")
+
+                .Where(r => r.Status == "已预约" || r.Status == "使用中")
+
                 .ToListAsync();
         }
 

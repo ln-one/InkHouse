@@ -4,34 +4,34 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InkHouse.Models
 {
-    // ×ùÎ»Ô¤Ô¼¼ÇÂ¼ÊµÌåÀà£¬¶ÔÓ¦Êı¾İ¿âÖĞµÄ SeatReservations ±í
+    // åº§ä½é¢„çº¦è®°å½•å®ä½“ç±»ï¼Œå¯¹åº”æ•°æ®åº“ä¸­çš„ SeatReservations è¡¨
     [Table("SeatReservations")]
     public class SeatReservation
     {
-        // Ö÷¼ü£¬×ÔÔöID
+        // ä¸»é”®ï¼Œè‡ªå¢ID
         [Key]
         public int Id { get; set; }
-        // ÓÃ»§ID£¬Íâ¼ü£¬±ØÌî
+        // ç”¨æˆ·IDï¼Œå¤–é”®ï¼Œå¿…å¡«
         [Required]
         public int UserId { get; set; }
-        // ×ùÎ»ID£¬Íâ¼ü£¬±ØÌî
+        // åº§ä½IDï¼Œå¤–é”®ï¼Œå¿…å¡«
         [Required]
         public int SeatId { get; set; }
-        // Ô¤Ô¼Ê±¼ä£¬±ØÌî
+        // é¢„çº¦æ—¶é—´ï¼Œå¿…å¡«
         [Required]
         public DateTime ReserveTime { get; set; }
-        // µ½¹İÊ±¼ä£¬¿ÉÎª¿Õ
+        // åˆ°é¦†æ—¶é—´ï¼Œå¯ä¸ºç©º
         public DateTime? CheckInTime { get; set; }
-        // Àë¹İÊ±¼ä£¬¿ÉÎª¿Õ
+        // ç¦»é¦†æ—¶é—´ï¼Œå¯ä¸ºç©º
         public DateTime? CheckOutTime { get; set; }
-        // ×´Ì¬£¬±ØÌî£¬×î´ó³¤¶È20£¨Èç¡°ÒÑÔ¤Ô¼¡±¡¢¡°Ê¹ÓÃÖĞ¡±¡¢¡°ÒÑÀë¹İ¡±£©
+        // çŠ¶æ€ï¼Œå¿…å¡«ï¼Œæœ€å¤§é•¿åº¦20ï¼ˆå¦‚â€œå·²é¢„çº¦â€ã€â€œä½¿ç”¨ä¸­â€ã€â€œå·²ç¦»é¦†â€ï¼‰
         [Required]
         [MaxLength(20)]
         public required string Status { get; set; }
-        // µ¼º½ÊôĞÔ£º×ùÎ»
+        // å¯¼èˆªå±æ€§ï¼šåº§ä½
         [ForeignKey("SeatId")]
         public Seat? Seat { get; set; }
-        // µ¼º½ÊôĞÔ£ºÓÃ»§
+        // å¯¼èˆªå±æ€§ï¼šç”¨æˆ·
         [ForeignKey("UserId")]
         public User? User { get; set; }
     }

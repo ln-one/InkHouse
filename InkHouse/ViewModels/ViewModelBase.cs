@@ -1,6 +1,7 @@
 ﻿using CommunityToolkit.Mvvm.ComponentModel;
 using System;
 using System.Threading.Tasks;
+using ReactiveUI;
 
 namespace InkHouse.ViewModels
 {
@@ -8,7 +9,7 @@ namespace InkHouse.ViewModels
     /// ViewModel基类
     /// 提供通用的属性和方法，简化ViewModel开发
     /// </summary>
-    public class ViewModelBase : ObservableObject, IDisposable
+    public class ViewModelBase : ObservableObject
     {
         private bool _isLoading;
         private string _errorMessage = string.Empty;

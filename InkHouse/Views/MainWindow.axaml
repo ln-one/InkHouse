@@ -38,8 +38,6 @@
                         <RadioButton GroupName="Menu" Content="📚图书管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BookManagement}" Command="{Binding ShowBookManagementCommand}" HorizontalAlignment="Stretch"/>
                         <RadioButton GroupName="Menu" Content="👤用户管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=UserManagement}" Command="{Binding ShowUserManagementCommand}" HorizontalAlignment="Stretch"/>
                         <RadioButton GroupName="Menu" Content="📝借阅管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=BorrowManagement}" Command="{Binding ShowBorrowManagementCommand}" HorizontalAlignment="Stretch"/>
-                        <RadioButton GroupName="Menu" Content="📊统计分析" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Statistics}" Command="{Binding ShowStatisticsCommand}" HorizontalAlignment="Stretch"/>
-                        <RadioButton GroupName="Menu" Content="⚙️系统设置" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=Settings}" Command="{Binding ShowSettingsCommand}" HorizontalAlignment="Stretch"/>
                         <RadioButton GroupName="Menu" Content="🪑座位管理" IsChecked="{Binding SelectedMenu, Converter={StaticResource MenuCheckedConverter}, ConverterParameter=SeatManagement}" Command="{Binding ShowSeatManagementCommand}" HorizontalAlignment="Stretch"/>
                     </StackPanel>
                 </StackPanel>

@@ -1,0 +1,90 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    x:Class="InkHouse.Views.RegisterView"
+    xmlns:vm="clr-namespace:InkHouse.ViewModels"
+    x:DataType="vm:RegisterViewModel">
+    
+    <Grid Background="#F2F2F7">
+        <Border Classes="card" HorizontalAlignment="Center" VerticalAlignment="Center" Width="450">
+            <ScrollViewer>
+                <StackPanel Spacing="16">
+                    <!-- 标题 -->
+                    <TextBlock Text="InkHouse" Classes="title" HorizontalAlignment="Center"/>
+                    <TextBlock Text="创建新账户" Classes="subtitle" HorizontalAlignment="Center"/>
+                    
+                    <!-- 用户名 -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="用户名 *" Classes="label"/>
+                        <TextBox Watermark="请输入用户名（3-20个字符）" 
+                                 Text="{Binding UserName, Mode=TwoWay}"/>
+                        <TextBlock Text="{Binding UserNameError}" 
+                                   Classes="error" 
+                                   IsVisible="{Binding UserNameError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    </StackPanel>
+                    
+                    <!-- 密码 -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="密码 *" Classes="label"/>
+                        <TextBox Watermark="请输入密码（至少6位，包含字母和数字）" 
+                                 Text="{Binding Password, Mode=TwoWay}" 
+                                 PasswordChar="●" 
+                                 Classes="password"/>
+                        <TextBlock Text="{Binding PasswordError}" 
+                                   Classes="error" 
+                                   IsVisible="{Binding PasswordError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    </StackPanel>
+                    
+                    <!-- 确认密码 -->
+                    <StackPanel Spacing="4">
+                        <TextBlock Text="确认密码 *" Classes="label"/>
+                        <TextBox Watermark="请再次输入密码" 
+                                 Text="{Binding ConfirmPassword, Mode=TwoWay}" 
+                                 PasswordChar="●" 
+                                 Classes="password"/>
+                        <TextBlock Text="{Binding ConfirmPasswordError}" 
+                                   Classes="error" 
+                                   IsVisible="{Binding ConfirmPasswordError, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    </StackPanel>
+                    
+                    <!-- 消息显示区域 -->
+                    <TextBlock Text="{Binding ErrorMessage}" 
+                               Classes="error" 
+                               IsVisible="{Binding ErrorMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    <TextBlock Text="{Binding SuccessMessage}" 
+                               Classes="success" 
+                               IsVisible="{Binding SuccessMessage, Converter={x:Static StringConverters.IsNotNullOrEmpty}}"/>
+                    
+                    <!-- 进度条 -->
+                    <ProgressBar IsIndeterminate="{Binding IsLoading}" 
+                                 IsVisible="{Binding IsLoading}"/>
+                    
+                    <!-- 注册按钮 -->
+                    <Button Content="注册" 
+                            Command="{Binding RegisterCommand}" 
+                            HorizontalAlignment="Stretch"
+                            Classes="primary"/>
+                    
+                    <!-- 分割线 -->
+                    <Rectangle Classes="divider"/>
+                    
+                    <!-- 返回登录 -->
+                    <StackPanel Orientation="Horizontal" 
+                                HorizontalAlignment="Center" 
+                                Spacing="8">
+                        
+                        <Button Content="返回登录" 
+                                Command="{Binding BackToLoginCommand}"
+                                Classes="link"/>
+                    </StackPanel>
+                    
+                    <!-- 提示信息 -->
+                    <TextBlock Text="注册即表示您同意我们的服务条款和隐私政策" 
+                               Classes="caption" 
+                               HorizontalAlignment="Center"
+                               TextWrapping="Wrap"/>
+                </StackPanel>
+            </ScrollViewer>
+        </Border>
+    </Grid>
+</UserControl>

@@ -1,5 +1,6 @@
 using InkHouse.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.EntityFrameworkCore.Design;
 using Microsoft.Extensions.Configuration;
 using System;
 using System.Threading.Tasks;
@@ -7,7 +8,7 @@ using System.Threading.Tasks;
 namespace InkHouse.Services
 {
     // 数据库上下文工厂类，用于创建数据库上下文实例
-    public class DbContextFactory
+    public class DbContextFactory : IDesignTimeDbContextFactory<InkHouseContext>
     {
         // 数据库连接字符串
         private readonly string _connectionString;
@@ -41,6 +42,15 @@ namespace InkHouse.Services
         {
             return new InkHouseContext(_options);
         }
+
+        // 实现IDesignTimeDbContextFactory接口的方法，用于EF Core迁移工具
+        public InkHouseContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<InkHouseContext>();
+            optionsBuilder.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
+            return new InkHouseContext(optionsBuilder.Options);
+        }
+
 
         /// <summary>
         /// 测试数据库连接
@@ -79,6 +89,7 @@ namespace InkHouse.Services
                 Console.WriteLine($"异常堆栈: {ex.StackTrace}");
                 return false;
             }
+
         }
     }
 } 

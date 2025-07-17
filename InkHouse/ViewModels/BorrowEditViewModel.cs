@@ -74,7 +74,7 @@ namespace InkHouse.ViewModels
             {
                 IsLoading = true;
                 var books = await _bookService.GetAllBooksAsync();
-                var availableBooks = books.Where(b => b.Available > 0).ToList();
+                var availableBooks = books.Where(b => b.AvailableCount > 0).ToList();
 
                 AvailableBooks.Clear();
                 foreach (var book in availableBooks)
@@ -163,7 +163,7 @@ namespace InkHouse.ViewModels
             {
                 IsLoading = true;
                 var books = await _bookService.SearchBooksAsync(SearchText);
-                var availableBooks = books.Where(b => b.Available > 0).ToList();
+                var availableBooks = books.Where(b => b.AvailableCount > 0).ToList();
 
                 AvailableBooks.Clear();
                 foreach (var book in availableBooks)

@@ -1,0 +1,227 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             xmlns:vm="using:InkHouse.ViewModels"
+             xmlns:lvc="using:LiveChartsCore.SkiaSharpView.Avalonia"
+             mc:Ignorable="d" d:DesignWidth="800" d:DesignHeight="600"
+             x:Class="InkHouse.Views.DashboardView"
+             x:DataType="vm:DashboardViewModel">
+
+    <Design.DataContext>
+        <vm:DashboardViewModel/>
+    </Design.DataContext>
+
+    <ScrollViewer>
+        <StackPanel Margin="20">
+            <!-- 刷新按钮 -->
+            <Button Classes="dashboard-refresh" Content="🔄 刷新数据" Command="{Binding LoadDashboardDataAsync}" 
+                    HorizontalAlignment="Right" Margin="0,0,0,16"/>
+            
+            <!-- 统计卡片 -->
+            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto" Margin="0,0,0,20">
+                <!-- 图书统计 -->
+                <Border Classes="stat-card" Grid.Column="0" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="图书统计" Foreground="#1976D2"/>
+                        <TextBlock Classes="h1" Text="{Binding TotalBooks}" Foreground="#1976D2"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="可借阅:" Classes="data-label"/>
+                            <TextBlock Text="{Binding AvailableBooks}" Classes="data-value positive-value"/>
+                            <TextBlock Text="已借出:" Classes="data-label" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding BorrowedBooks}" Classes="data-value negative-value"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 用户统计 -->
+                <Border Classes="stat-card" Grid.Column="1" Margin="10,0,10,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="用户统计" Foreground="#4CAF50"/>
+                        <TextBlock Classes="h1" Text="{Binding RegisteredUsers}" Foreground="#4CAF50"/>
+                        <TextBlock Classes="data-label" Text="注册用户总数"/>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 借阅统计 -->
+                <Border Classes="stat-card" Grid.Column="2" Margin="10,0,10,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="借阅统计" Foreground="#FF9800"/>
+                        <TextBlock Classes="h1" Text="{Binding TotalBorrows}" Foreground="#FF9800"/>
+                        <StackPanel Orientation="Horizontal" Spacing="8">
+                            <TextBlock Text="未归还:" Classes="data-label"/>
+                            <TextBlock Text="{Binding ActiveBorrows}" Classes="data-value neutral-value"/>
+                            <TextBlock Text="已归还:" Classes="data-label" Margin="8,0,0,0"/>
+                            <TextBlock Text="{Binding ReturnedBorrows}" Classes="data-value positive-value"/>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 座位统计 -->
+                <Border Classes="stat-card" Grid.Column="3" Margin="10,0,0,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="座位统计" Foreground="#9C27B0"/>
+                        <TextBlock Classes="h1" Text="{Binding TotalSeats}" Foreground="#9C27B0"/>
+                        <StackPanel Spacing="4">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="空闲:" Classes="data-label"/>
+                                <TextBlock Text="{Binding FreeSeats}" Classes="data-value positive-value"/>
+                                <TextBlock Text="已预约:" Classes="data-label" Margin="8,0,0,0"/>
+                                <TextBlock Text="{Binding ReservedSeats}" Classes="data-value neutral-value"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <TextBlock Text="使用中:" Classes="data-label"/>
+                                <TextBlock Text="{Binding OccupiedSeats}" Classes="data-value neutral-value"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+            <!-- 图表区域 -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto,Auto" Margin="0,0,0,20">
+                <!-- 图书状态饼图 -->
+                <Border Classes="chart-container" Grid.Column="0" Grid.Row="0" Margin="0,0,10,10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Classes="h3" Text="图书状态分布" Margin="0,0,0,10"/>
+                        
+                        <lvc:PieChart Grid.Row="1" Series="{Binding BookStatusSeries}" 
+                                     Height="250"
+                                     LegendPosition="Hidden"/>
+                        
+                        <!-- 自定义中文图例 -->
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Ellipse Width="12" Height="12" Fill="#4CAF50"/>
+                                <TextBlock Text="可借阅" Classes="data-label"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Ellipse Width="12" Height="12" Fill="#DC143C"/>
+                                <TextBlock Text="已借出" Classes="data-label"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                
+                <!-- 座位状态饼图 -->
+                <Border Classes="chart-container" Grid.Column="1" Grid.Row="0" Margin="10,0,0,10">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                            <RowDefinition Height="Auto"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Classes="h3" Text="座位状态分布" Margin="0,0,0,10"/>
+                        
+                        <lvc:PieChart Grid.Row="1" Series="{Binding SeatStatusSeries}" 
+                                     Height="250"
+                                     LegendPosition="Hidden"/>
+                        
+                        <!-- 自定义中文图例 -->
+                        <StackPanel Grid.Row="2" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="15" Margin="0,10,0,0">
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Width="12" Height="12" Fill="#4CAF50"/>
+                                <TextBlock Text="空闲" Classes="data-label"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Width="12" Height="12" Fill="#1E90FF"/>
+                                <TextBlock Text="已预约" Classes="data-label"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="6">
+                                <Ellipse Width="12" Height="12" Fill="#FFA500"/>
+                                <TextBlock Text="使用中" Classes="data-label"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Grid>
+                </Border>
+                
+                <!-- 借阅趋势图 - 跨两列显示 -->
+                <Border Classes="chart-container" Grid.Column="0" Grid.Row="1" Grid.ColumnSpan="2" Margin="0,10,0,0">
+                    <Grid>
+                        <Grid.RowDefinitions>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="Auto"/>
+                            <RowDefinition Height="*"/>
+                        </Grid.RowDefinitions>
+                        
+                        <TextBlock Grid.Row="0" Classes="h3" Text="借阅趋势（近12个月）" Margin="0,0,0,10"/>
+                        
+                        <!-- 自定义中文图例 -->
+                        <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Center" Spacing="20" Margin="0,0,0,10">
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Rectangle Width="16" Height="3" Fill="#1E90FF"/>
+                                <TextBlock Text="借出" Classes="data-label"/>
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" Spacing="8">
+                                <Rectangle Width="16" Height="3" Fill="#FFA500"/>
+                                <TextBlock Text="归还" Classes="data-label"/>
+                            </StackPanel>
+                        </StackPanel>
+                        
+                        <lvc:CartesianChart Grid.Row="2" Series="{Binding BorrowTrendSeries}" 
+                                           Height="250"
+                                           LegendPosition="Hidden"/>
+                    </Grid>
+                </Border>
+            </Grid>
+            
+            <!-- 热门图书和最近借阅 -->
+            <Grid ColumnDefinitions="*,*" RowDefinitions="Auto" Margin="0,0,0,20">
+                <!-- 热门图书 -->
+                <Border Classes="card" Grid.Column="0" Margin="0,0,10,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="热门图书" Margin="0,0,0,10"/>
+                        <ItemsControl ItemsSource="{Binding PopularBooks}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <TextBlock Grid.Column="0" Text="{Binding Book.Title}" TextWrapping="Wrap"/>
+                                            <TextBlock Grid.Column="1" Text="{Binding BorrowCount, StringFormat='{}{0}次借阅'}" 
+                                                      Classes="neutral-value" FontWeight="Bold" Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+                
+                <!-- 最近借阅 -->
+                <Border Classes="card" Grid.Column="1" Margin="10,0,0,0">
+                    <StackPanel>
+                        <TextBlock Classes="h3" Text="最近借阅" Margin="0,0,0,10"/>
+                        <ItemsControl ItemsSource="{Binding RecentBorrowRecords}">
+                            <ItemsControl.ItemTemplate>
+                                <DataTemplate>
+                                    <Border Classes="list-item">
+                                        <Grid ColumnDefinitions="*,Auto">
+                                            <StackPanel Grid.Column="0">
+                                                <TextBlock Text="{Binding Book.Title}" TextWrapping="Wrap" FontWeight="Bold"/>
+                                                <TextBlock Text="{Binding User.UserName, StringFormat='借阅人: {0}'}" 
+                                                          Classes="data-label" FontSize="12"/>
+                                            </StackPanel>
+                                            <TextBlock Grid.Column="1" Text="{Binding BorrowDate, StringFormat='{}{0:yyyy-MM-dd}'}" 
+                                                      Classes="data-label" Margin="10,0,0,0"/>
+                                        </Grid>
+                                    </Border>
+                                </DataTemplate>
+                            </ItemsControl.ItemTemplate>
+                        </ItemsControl>
+                    </StackPanel>
+                </Border>
+            </Grid>
+            
+            <!-- 加载指示器 -->
+            <ProgressBar IsIndeterminate="True" IsVisible="{Binding IsLoading}" 
+                         HorizontalAlignment="Center" Width="200" Margin="0,20,0,0"/>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl>

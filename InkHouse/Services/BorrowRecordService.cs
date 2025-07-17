@@ -125,11 +125,11 @@ namespace InkHouse.Services
             return await context.BorrowRecords
                 .Include(br => br.Book)
                 .Include(br => br.User)
-                .Where(br => br.Book.Title.Contains(keyword) || 
+                .Where(br => br.Book != null && br.User != null && (br.Book.Title.Contains(keyword) || 
                            br.Book.Author.Contains(keyword) ||
                            br.Book.ISBN.Contains(keyword) ||
                            br.User.UserName.Contains(keyword) ||
-                           br.Status.Contains(keyword))
+                           br.Status.Contains(keyword)))
                 .OrderByDescending(br => br.BorrowDate)
                 .ToListAsync();
         }
@@ -174,7 +174,7 @@ namespace InkHouse.Services
             }
 
             // 检查图书是否可借
-            if (book.Available <= 0)
+            if (book.AvailableCount <= 0)
             {
                 throw new InvalidOperationException("图书库存不足，无法借阅");
             }
@@ -202,8 +202,8 @@ namespace InkHouse.Services
             };
 
             // 更新图书库存
-            book.Available--;
-            if (book.Available == 0)
+            book.AvailableCount--;
+            if (book.AvailableCount == 0)
             {
                 book.IsAvailable = false;
             }
@@ -243,10 +243,13 @@ namespace InkHouse.Services
             borrowRecord.IsReturned = true;
 
             // 更新图书库存
-            borrowRecord.Book.Available++;
-            if (borrowRecord.Book.Available > 0)
+            if(borrowRecord.Book != null)
             {
-                borrowRecord.Book.IsAvailable = true;
+                borrowRecord.Book.AvailableCount++;
+                if (borrowRecord.Book.AvailableCount > 0)
+                {
+                    borrowRecord.Book.IsAvailable = true;
+                }
             }
 
             await context.SaveChangesAsync();
@@ -294,4 +297,4 @@ namespace InkHouse.Services
             return true;
         }
     }
-} 
+}

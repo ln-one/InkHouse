@@ -54,7 +54,7 @@
                 <!-- 可借数量 -->
                 <StackPanel>
                     <TextBlock Classes="label" Text="可借数量"/>
-                    <NumericUpDown Value="{Binding Available}" Minimum="0" Maximum="1000"/>
+                    <NumericUpDown Value="{Binding AvailableCount}" Minimum="0" Maximum="1000"/>
                 </StackPanel>
                 <!-- 是否可借 -->
                 <StackPanel>

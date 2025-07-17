@@ -51,9 +51,6 @@ public partial class MainWindowViewModel : ViewModelBase
     /// <summary>搜索关键字</summary>
     public string BookSearchText { get; set; } = string.Empty;
     
-    /// <summary>是否正在加载</summary>
-    public new bool IsLoading { get; set; }
-    
     /// <summary>加载图书列表</summary>
     [RelayCommand]
     public async Task LoadBooksAsync()
@@ -61,7 +58,7 @@ public partial class MainWindowViewModel : ViewModelBase
         try
         {
             IsLoading = true;
-            var books = await _bookService.GetAllBooksAsync();
+            var books = await _bookService.GetBooksByTypeAsync(SelectedBookType);
             
             await Dispatcher.UIThread.InvokeAsync(() =>
             {
@@ -131,7 +128,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBooksAsync();
         }
@@ -157,7 +154,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop && desktop.MainWindow != null)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBooksAsync();
         }
@@ -216,7 +213,7 @@ public partial class MainWindowViewModel : ViewModelBase
                         }
                     }
                 };
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
         });
     }
@@ -255,7 +252,7 @@ public partial class MainWindowViewModel : ViewModelBase
                         }
                     }
                 };
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
                 return await tcs.Task;
             }
             return false;
@@ -348,7 +345,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadUsersAsync();
         }
@@ -374,7 +371,7 @@ public partial class MainWindowViewModel : ViewModelBase
             };
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
                 Console.WriteLine("编辑用户对话框已关闭");
             }
             await LoadUsersAsync();
@@ -500,7 +497,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBorrowRecordsAsync();
         }
@@ -526,7 +523,7 @@ public partial class MainWindowViewModel : ViewModelBase
 
             if (Application.Current?.ApplicationLifetime is IClassicDesktopStyleApplicationLifetime desktop)
             {
-                await dialog.ShowDialog(desktop.MainWindow);
+                if (desktop.MainWindow is not null) await dialog.ShowDialog(desktop.MainWindow);
             }
             await LoadBorrowRecordsAsync();
         }
@@ -554,33 +551,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
-    // ================== 统计报表 ==================
-    /// <summary>加载统计报表</summary>
-    [RelayCommand]
-    public async Task LoadStatisticsAsync()
-    {
-        try
-        {
-            var (totalBooks, availableBooks, borrowedBooks) = await _bookService.GetBookStatisticsAsync();
-            TotalBooks = totalBooks;
-            AvailableBooks = availableBooks;
-            BorrowedBooks = borrowedBooks;
-            
-            // 加载用户统计
-            var users = await _userService.GetAllUsersAsync();
-            RegisteredUsers = users.Count;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"加载统计信息失败: {ex.Message}");
-        }
-    }
-
-    // ================== 系统设置 ==================
-    /// <summary>加载系统设置</summary>
-    public Task LoadSettingsAsync() => Task.CompletedTask;
-    /// <summary>保存系统设置</summary>
-    public Task SaveSettingsAsync() => Task.CompletedTask;
+    
 
     // ================== 搜索 ==================
     /// <summary>搜索关键字</summary>
@@ -600,10 +571,31 @@ public partial class MainWindowViewModel : ViewModelBase
     
     /// <summary>显示仪表板</summary>
     [RelayCommand]
-    public void ShowDashboard()
+    public async Task ShowDashboard()
     {
-        SelectedMenu = "Dashboard";
-        CurrentView = "Dashboard";
+        Console.WriteLine("切换到仪表板视图");
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var bookService = ServiceManager.GetService<BookService>();
+                var userService = ServiceManager.GetService<UserService>();
+                var borrowRecordService = ServiceManager.GetService<BorrowRecordService>();
+                var seatService = ServiceManager.GetService<SeatService>();
+                
+                var dashboardViewModel = new DashboardViewModel(bookService, userService, borrowRecordService, seatService);
+                var dashboardView = new DashboardView { DataContext = dashboardViewModel };
+                
+                Console.WriteLine($"DashboardView 创建成功: {dashboardView.GetType().Name}");
+                CurrentView = dashboardView;
+                SelectedMenu = "Dashboard";
+                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"创建 DashboardView 失败: {ex.Message}");
+        }
     }
     
     /// <summary>显示图书管理</summary>
@@ -678,21 +670,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
     
-    /// <summary>显示统计报表</summary>
-    [RelayCommand]
-    public void ShowStatistics()
-    {
-        SelectedMenu = "Statistics";
-        CurrentView = "Statistics";
-    }
     
-    /// <summary>显示系统设置</summary>
-    [RelayCommand]
-    public void ShowSettings()
-    {
-        SelectedMenu = "Settings";
-        CurrentView = "Settings";
-    }
 
     /// <summary>显示座位管理</summary>
     [RelayCommand]
@@ -725,8 +703,16 @@ public partial class MainWindowViewModel : ViewModelBase
     public string BookManagementButtonClass => SelectedMenu == "BookManagement" ? "nav-item active" : "nav-item";
     public string UserManagementButtonClass => SelectedMenu == "UserManagement" ? "nav-item active" : "nav-item";
     public string BorrowManagementButtonClass => SelectedMenu == "BorrowManagement" ? "nav-item active" : "nav-item";
-    public string StatisticsButtonClass => SelectedMenu == "Statistics" ? "nav-item active" : "nav-item";
-    public string SettingsButtonClass => SelectedMenu == "Settings" ? "nav-item active" : "nav-item";
+    
+
+    [ObservableProperty]
+    private List<string> _bookTypes = new();
+    [ObservableProperty]
+    private string _selectedBookType = "全部";
+    partial void OnSelectedBookTypeChanged(string value)
+    {
+        _ = LoadBooksAsync();
+    }
 
     public MainWindowViewModel(BookService bookService, UserService userService, BorrowRecordService borrowRecordService)
     {
@@ -741,9 +727,10 @@ public partial class MainWindowViewModel : ViewModelBase
         {
             try
             {
-                await LoadStatisticsAsync();
+                await LoadBookTypesAsync();
                 await LoadBooksAsync();
                 await LoadBorrowRecordsAsync(); // 新增：加载借阅记录
+                await ShowDashboard(); // 自动显示仪表盘
                 Console.WriteLine($"MainWindowViewModel 初始化完成，Books count: {Books.Count}");
             }
             catch (Exception ex)
@@ -753,6 +740,13 @@ public partial class MainWindowViewModel : ViewModelBase
         });
         
         Console.WriteLine($"MainWindowViewModel 构造完成");
+    }
+
+    private async Task LoadBookTypesAsync()
+    {
+        var types = await _bookService.GetAllBookTypesAsync();
+        types.Insert(0, "全部");
+        BookTypes = types;
     }
 
     /// <summary>

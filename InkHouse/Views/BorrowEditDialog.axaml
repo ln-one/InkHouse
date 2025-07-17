@@ -85,7 +85,7 @@
                                                 <TextBlock Grid.Column="0" Text="{Binding Id}" Classes="cell-text"/>
                                                 <TextBlock Grid.Column="1" Text="{Binding Title}" Classes="cell-text"/>
                                                 <TextBlock Grid.Column="2" Text="{Binding Author}" Classes="cell-text"/>
-                                                <TextBlock Grid.Column="3" Text="{Binding Available}" Classes="cell-text"/>
+                                                <TextBlock Grid.Column="3" Text="{Binding AvailableCount}" Classes="cell-text"/>
                                             </Grid>
                                         </Border>
                                     </DataTemplate>

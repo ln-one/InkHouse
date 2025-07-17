@@ -32,7 +32,7 @@ namespace InkHouse.ViewModels
         private int _totalCount = 1;
 
         [ObservableProperty]
-        private int _available = 1;
+        private int _availableCount = 1;
 
         [ObservableProperty]
         private bool _isAvailable = true;
@@ -54,7 +54,7 @@ namespace InkHouse.ViewModels
                 Publisher = book.Publisher;
                 Year = book.Year;
                 TotalCount = book.TotalCount;
-                Available = book.Available;
+                AvailableCount = book.AvailableCount;
                 IsAvailable = book.IsAvailable;
             }
         }
@@ -98,7 +98,7 @@ namespace InkHouse.ViewModels
                     return;
                 }
 
-                if (Available < 0 || Available > TotalCount)
+                if (AvailableCount < 0 || AvailableCount > TotalCount)
                 {
                     // TODO: 显示错误消息
                     return;
@@ -112,7 +112,7 @@ namespace InkHouse.ViewModels
                     Publisher = Publisher,
                     Year = Year,
                     TotalCount = TotalCount,
-                    Available = Available,
+                    AvailableCount = AvailableCount,
                     IsAvailable = IsAvailable
                 };
 
