@@ -77,7 +77,7 @@
                     <StackPanel Spacing="8">
                         <TextBlock Classes="label" Text="新书速递" FontWeight="Bold"/>
                         <TextBlock Classes="caption" Text="探索《沙丘》的广袤世界，现已开放借阅！" TextWrapping="Wrap"/>
-                        <Button Classes="success" Content="立即查看" HorizontalAlignment="Stretch"/>
+                        <Button Classes="success" Content="立即查看" HorizontalAlignment="Stretch" Command="{Binding ShowBrowseBooksCommand}"/>
                     </StackPanel>
                 </Border>
 
@@ -124,33 +124,80 @@
                     <Style Selector="ContentControl[Content=Home]">
                         <Setter Property="ContentTemplate">
                             <DataTemplate>
-                                <StackPanel Spacing="32" HorizontalAlignment="Center" VerticalAlignment="Center">
-                                    <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                        <TextBlock FontSize="28" FontWeight="Bold" HorizontalAlignment="Center">
-                                            <Run Text="👋 欢迎回来，"/>
-                                            <Run Text="{Binding DataContext.CurrentUser.UserName, ElementName=UserWindow, FallbackValue=Guest}"/>
-                                            <Run Text="！"/>
-                                        </TextBlock>
-                                        <TextBlock Text="祝你阅读愉快！" FontSize="16" Foreground="#888" HorizontalAlignment="Center"/>
-                                    </StackPanel>
-                                    <StackPanel Orientation="Horizontal" Spacing="48" HorizontalAlignment="Center">
-                                        <Border Classes="card" Padding="32" Width="220">
-                                            <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                                <TextBlock Text="📚" FontSize="28" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="{Binding DataContext.Books.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="可借图书" FontSize="14" Foreground="#888" HorizontalAlignment="Center"/>
-                                            </StackPanel>
+                                <Grid Margin="32">
+                                    <Grid.RowDefinitions>
+                                        <RowDefinition Height="Auto"/>
+                                        <RowDefinition Height="*"/>
+                                        <RowDefinition Height="Auto"/>
+                                    </Grid.RowDefinitions>
+
+                                    <!-- 欢迎横幅 -->
+                                    <Border Grid.Row="0" Classes="card" Padding="32" Background="#F8F9FA" Margin="0,0,0,20">
+                                        <StackPanel Spacing="8">
+                                            <TextBlock FontSize="26" FontWeight="Bold">
+                                                <Run Text="👋 欢迎回来，"/>
+                                                <Run Text="{Binding DataContext.CurrentUser.UserName, ElementName=UserWindow, FallbackValue=Guest}"/>
+                                                <Run Text="！"/>
+                                            </TextBlock>
+                                            <TextBlock Text="祝你在 InkHouse 度过愉快的阅读时光！" FontSize="16" Foreground="#6c757d"/>
+                                        </StackPanel>
+                                    </Border>
+
+                                    <!-- 核心数据与新书推荐 -->
+                                    <Grid Grid.Row="1" ColumnDefinitions="Auto,*" Margin="0,0,0,10">
+                                        <!-- 统计卡片 -->
+                                        <StackPanel Grid.Column="0" Spacing="10" Margin="0,0,20,0">
+                                            <Border Classes="card" Padding="20" Width="220">
+                                                <StackPanel Spacing="8">
+                                                    <TextBlock Text="📚" FontSize="28" />
+                                                    <TextBlock Text="{Binding DataContext.Books.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" />
+                                                    <TextBlock Text="可借图书" FontSize="14" Foreground="#888" />
+                                                </StackPanel>
+                                            </Border>
+                                            <Border Classes="card" Padding="20" Width="220">
+                                                <StackPanel Spacing="8">
+                                                    <TextBlock Text="🧾" FontSize="28" />
+                                                    <TextBlock Text="{Binding DataContext.BorrowRecords.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" />
+                                                    <TextBlock Text="我的借阅" FontSize="14" Foreground="#888" />
+                                                </StackPanel>
+                                            </Border>
+                                        </StackPanel>
+
+                                        <!-- 新书推荐 -->
+                                        <Border Grid.Column="1" Classes="card" Padding="24">
+                                            <Grid RowDefinitions="Auto, *">
+                                                <TextBlock Grid.Row="0" Text="新书推荐" FontSize="20" FontWeight="SemiBold" Margin="0,0,0,16"/>
+                                                <ItemsControl Grid.Row="1" ItemsSource="{Binding #UserWindow.DataContext.NewArrivals}">
+                                                    <ItemsControl.ItemsPanel>
+                                                        <ItemsPanelTemplate>
+                                                            <UniformGrid Columns="3"/>
+                                                        </ItemsPanelTemplate>
+                                                    </ItemsControl.ItemsPanel>
+                                                    <ItemsControl.ItemTemplate>
+                                                        <DataTemplate>
+                                                            <Border Classes="card-inner" Margin="10">
+                                                                <StackPanel Spacing="8">
+                                                                    <Border CornerRadius="8" Height="180" ClipToBounds="True" Background="{Binding Title, Converter={StaticResource BookCoverColorConverter}}">
+                                                                        <TextBlock Text="{Binding Title}" FontSize="14" FontWeight="Bold" Foreground="White" HorizontalAlignment="Center" VerticalAlignment="Center" TextWrapping="Wrap" TextAlignment="Center" Margin="8"/>
+                                                                    </Border>
+                                                                </StackPanel>
+                                                            </Border>
+                                                        </DataTemplate>
+                                                    </ItemsControl.ItemTemplate>
+                                                </ItemsControl>
+                                            </Grid>
                                         </Border>
-                                        <Border Classes="card" Padding="32" Width="220">
-                                            <StackPanel Spacing="8" HorizontalAlignment="Center">
-                                                <TextBlock Text="🧾" FontSize="28" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="{Binding DataContext.BorrowRecords.Count, ElementName=UserWindow}" FontSize="24" FontWeight="Bold" HorizontalAlignment="Center"/>
-                                                <TextBlock Text="我的借阅" FontSize="14" Foreground="#888" HorizontalAlignment="Center"/>
-                                            </StackPanel>
-                                        </Border>
-                                    </StackPanel>
-                                    <Button Content="去借书" Classes="success" Width="120" HorizontalAlignment="Center" Margin="0,16,0,0" Command="{Binding DataContext.ShowBrowseBooksCommand, ElementName=UserWindow}"/>
-                                </StackPanel>
+                                    </Grid>
+
+                                    <!-- 快捷操作 -->
+                                    <Border Grid.Row="2" Padding="16" BorderThickness="1" BorderBrush="#E5E5EA" CornerRadius="12" Background="White">
+                                        <UniformGrid Columns="3" Rows="1">
+                                            <Button Content="🚀 浏览新书" Classes="success" Command="{Binding DataContext.ShowBrowseBooksCommand, ElementName=UserWindow}" Margin="5" VerticalContentAlignment="Center"/>
+                                            <Button Content="📅 查看我的预约" Classes="outline" Command="{Binding DataContext.ShowSeatReservationCommand, ElementName=UserWindow}" Margin="5" VerticalContentAlignment="Center"/>
+                                            <Button Content="👤 前往个人中心" Classes="outline" Command="{Binding DataContext.ShowMyProfileCommand, ElementName=UserWindow}" Margin="5" VerticalContentAlignment="Center"/>
+                                        </UniformGrid>
+                                    </Border>
+                                </Grid>
                             </DataTemplate>
                         </Setter>
                     </Style>

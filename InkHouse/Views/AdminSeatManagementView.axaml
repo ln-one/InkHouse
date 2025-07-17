@@ -28,10 +28,12 @@
                     <DataTemplate>
                         <Border CornerRadius="12" Margin="16" Padding="12" Width="150" Height="130"
                                 Background="{Binding Status, Converter={StaticResource SeatStatusToColorConverter}}">
-                            <StackPanel VerticalAlignment="Stretch" HorizontalAlignment="Stretch" Height="106" Spacing="16">
-                                <TextBlock Text="{Binding SeatNumber}" FontWeight="Bold" FontSize="28" HorizontalAlignment="Center" Margin="0,10,0,0"/>
-                                <Button Content="删除" Command="{Binding DataContext.DeleteSeatCommand, ElementName=Root}" CommandParameter="{Binding}"
-                                        Width="90" Height="36" Margin="0,10,0,0" HorizontalAlignment="Center" FontSize="18" FontWeight="Bold"/>
+                            <StackPanel VerticalAlignment="Center" HorizontalAlignment="Center" Spacing="10">
+                                <TextBlock Text="{Binding SeatNumber}" FontWeight="Bold" FontSize="28" HorizontalAlignment="Center"/>
+                                <Button Command="{Binding DataContext.DeleteSeatCommand, ElementName=Root}" CommandParameter="{Binding}"
+                                        Width="90" Height="36" HorizontalAlignment="Center" VerticalContentAlignment="Center">
+                                    <TextBlock Text="删除" FontSize="18" FontWeight="Bold" VerticalAlignment="Center"/>
+                                </Button>
                             </StackPanel>
                         </Border>
                     </DataTemplate>
