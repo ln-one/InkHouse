@@ -597,10 +597,31 @@ public partial class MainWindowViewModel : ViewModelBase
     
     /// <summary>显示仪表板</summary>
     [RelayCommand]
-    public void ShowDashboard()
+    public async Task ShowDashboard()
     {
-        SelectedMenu = "Dashboard";
-        CurrentView = "Dashboard";
+        Console.WriteLine("切换到仪表板视图");
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var bookService = ServiceManager.GetService<BookService>();
+                var userService = ServiceManager.GetService<UserService>();
+                var borrowRecordService = ServiceManager.GetService<BorrowRecordService>();
+                var seatService = ServiceManager.GetService<SeatService>();
+                
+                var dashboardViewModel = new DashboardViewModel(bookService, userService, borrowRecordService, seatService);
+                var dashboardView = new DashboardView { DataContext = dashboardViewModel };
+                
+                Console.WriteLine($"DashboardView 创建成功: {dashboardView.GetType().Name}");
+                CurrentView = dashboardView;
+                SelectedMenu = "Dashboard";
+                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"创建 DashboardView 失败: {ex.Message}");
+        }
     }
     
     /// <summary>显示图书管理</summary>
@@ -677,10 +698,31 @@ public partial class MainWindowViewModel : ViewModelBase
     
     /// <summary>显示统计报表</summary>
     [RelayCommand]
-    public void ShowStatistics()
+    public async Task ShowStatistics()
     {
-        SelectedMenu = "Statistics";
-        CurrentView = "Statistics";
+        Console.WriteLine("切换到统计报表视图");
+        try
+        {
+            await Dispatcher.UIThread.InvokeAsync(() =>
+            {
+                var bookService = ServiceManager.GetService<BookService>();
+                var userService = ServiceManager.GetService<UserService>();
+                var borrowRecordService = ServiceManager.GetService<BorrowRecordService>();
+                var seatService = ServiceManager.GetService<SeatService>();
+                
+                var dashboardViewModel = new DashboardViewModel(bookService, userService, borrowRecordService, seatService);
+                var dashboardView = new DashboardView { DataContext = dashboardViewModel };
+                
+                Console.WriteLine($"DashboardView 创建成功用于统计报表: {dashboardView.GetType().Name}");
+                CurrentView = dashboardView;
+                SelectedMenu = "Statistics";
+                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
+            });
+        }
+        catch (Exception ex)
+        {
+            Console.WriteLine($"创建统计报表视图失败: {ex.Message}");
+        }
     }
     
     /// <summary>显示系统设置</summary>
@@ -737,6 +779,7 @@ public partial class MainWindowViewModel : ViewModelBase
                 await LoadStatisticsAsync();
                 await LoadBooksAsync();
                 await LoadBorrowRecordsAsync(); // 新增：加载借阅记录
+                await ShowDashboard(); // 自动显示仪表盘
                 Console.WriteLine($"MainWindowViewModel 初始化完成，Books count: {Books.Count}");
             }
             catch (Exception ex)

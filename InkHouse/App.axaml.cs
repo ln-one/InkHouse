@@ -10,6 +10,10 @@ using InkHouse.Services;
 using System;
 using System.Threading.Tasks;
 using Avalonia.Threading;
+using LiveChartsCore;
+using LiveChartsCore.SkiaSharpView;
+using LiveChartsCore.SkiaSharpView.Painting;
+using SkiaSharp;
 
 namespace InkHouse;
 

@@ -34,6 +34,7 @@ namespace InkHouse.Services
             services.AddTransient<RegisterViewModel>();
             services.AddTransient<MainWindowViewModel>();
             services.AddTransient<BookEditViewModel>();
+            services.AddTransient<DashboardViewModel>();
 
             _serviceProvider = services.BuildServiceProvider();
         }

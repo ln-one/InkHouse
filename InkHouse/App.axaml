@@ -12,6 +12,7 @@
     <Application.Styles>
         <FluentTheme />
         <StyleInclude Source="avares://InkHouse/Styles/GlobalStyles.axaml"/>
+        <StyleInclude Source="avares://InkHouse/Styles/DashboardStyles.axaml"/>
         <Style Selector="TextBlock">
             <Setter Property="FontFamily" Value="SF Pro Text, SF Pro Display, Helvetica Neue, Helvetica, -apple-system, BlinkMacSystemFont, Microsoft YaHei, SimSun, Arial"/>
         </Style>
