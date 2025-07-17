@@ -119,7 +119,7 @@ namespace InkHouse.Services
             existingBook.Publisher = book.Publisher;
             existingBook.Year = book.Year;
             existingBook.TotalCount = book.TotalCount;
-            existingBook.Available = book.Available;
+            existingBook.AvailableCount = book.AvailableCount;
             existingBook.IsAvailable = book.IsAvailable;
 
             await context.SaveChangesAsync();
@@ -164,7 +164,7 @@ namespace InkHouse.Services
             using var context = _dbContextFactory.CreateDbContext();
             
             var totalBooks = await context.Books.SumAsync(b => b.TotalCount);
-            var availableBooks = await context.Books.SumAsync(b => b.Available);
+            var availableBooks = await context.Books.SumAsync(b => b.AvailableCount);
             var borrowedBooks = totalBooks - availableBooks;
 
             return (totalBooks, availableBooks, borrowedBooks);
@@ -186,7 +186,7 @@ namespace InkHouse.Services
                 throw new InvalidOperationException("图书不存在");
             }
 
-            if (book.Available <= 0)
+            if (book.AvailableCount <= 0)
             {
                 throw new InvalidOperationException("图书库存不足");
             }
@@ -203,8 +203,8 @@ namespace InkHouse.Services
             };
 
             // 更新图书库存
-            book.Available--;
-            if (book.Available == 0)
+            book.AvailableCount--;
+            if (book.AvailableCount == 0)
             {
                 book.IsAvailable = false;
             }
@@ -243,14 +243,48 @@ namespace InkHouse.Services
             borrowRecord.Status = "归还";
 
             // 更新图书库存
-            borrowRecord.Book.Available++;
-            if (borrowRecord.Book.Available > 0)
+            if (borrowRecord.Book != null)
             {
-                borrowRecord.Book.IsAvailable = true;
+                borrowRecord.Book.AvailableCount++;
+                if (borrowRecord.Book.AvailableCount > 0)
+                {
+                    borrowRecord.Book.IsAvailable = true;
+                }
             }
 
             await context.SaveChangesAsync();
             return true;
         }
+
+        /// <summary>
+        /// 按类型分页查询图书
+        /// </summary>
+        public async Task<List<Book>> GetBooksByTypeAsync(string? type, int page = 1, int pageSize = 50)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            var query = context.Books.AsNoTracking().AsQueryable();
+            if (!string.IsNullOrEmpty(type) && type != "全部")
+            {
+                query = query.Where(b => b.Type == type);
+            }
+            return await query.OrderBy(b => b.Title)
+                .Skip((page - 1) * pageSize)
+                .Take(pageSize)
+                .ToListAsync();
+        }
+
+        /// <summary>
+        /// 获取所有已存在的图书类型
+        /// </summary>
+        public async Task<List<string>> GetAllBookTypesAsync()
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            return await context.Books
+                .Where(b => b.Type != null && b.Type != "")
+                .Select(b => b.Type!)
+                .Distinct()
+                .OrderBy(t => t)
+                .ToListAsync();
+        }
     }
-} 
+}

@@ -25,6 +25,10 @@ namespace InkHouse.Models
         protected override void OnModelCreating(ModelBuilder modelBuilder)
         {
             base.OnModelCreating(modelBuilder);
+            modelBuilder.Entity<Book>(entity =>
+            {
+                entity.Property(b => b.Type).HasMaxLength(50).IsRequired(false);
+            });
         }
     }
 } 

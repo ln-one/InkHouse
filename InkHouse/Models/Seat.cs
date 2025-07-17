@@ -3,24 +3,24 @@ using System.ComponentModel.DataAnnotations.Schema;
 
 namespace InkHouse.Models
 {
-    // ×ùÎ»ÊµÌåÀà£¬¶ÔÓ¦Êı¾İ¿âÖĞµÄ Seats ±í
+    // åº§ä½å®ä½“ç±»ï¼Œå¯¹åº”æ•°æ®åº“ä¸­çš„ Seats è¡¨
     [Table("Seats")]
     public class Seat
     {
-        // Ö÷¼ü£¬×ÔÔöID
+        // ä¸»é”®ï¼Œè‡ªå¢ID
         [Key]
         public int Id { get; set; }
-        // ×ùÎ»±àºÅ£¬±ØÌî£¬×î´ó³¤¶È10
+        // åº§ä½ç¼–å·ï¼Œå¿…å¡«ï¼Œæœ€å¤§é•¿åº¦10
         [Required]
         [MaxLength(10)]
         public required string SeatNumber { get; set; }
-        // ×ùÎ»×´Ì¬£º¿ÕÏĞ¡¢±»Ô¤Ô¼¡¢Ê¹ÓÃÖĞ
+        // åº§ä½çŠ¶æ€ï¼šç©ºé—²ã€è¢«é¢„çº¦ã€ä½¿ç”¨ä¸­
         [Required]
         [MaxLength(10)]
         public required string Status { get; set; } // Free/Reserved/Occupied
-        // µ±Ç°Ô¤Ô¼ÓÃ»§ID£¬¿ÉÎª¿Õ
+        // å½“å‰é¢„çº¦ç”¨æˆ·IDï¼Œå¯ä¸ºç©º
         public int? CurrentUserId { get; set; }
-        // µ¼º½ÊôĞÔ£ºµ±Ç°Ô¤Ô¼ÓÃ»§
+        // å¯¼èˆªå±æ€§ï¼šå½“å‰é¢„çº¦ç”¨æˆ·
         [ForeignKey("CurrentUserId")]
         public User? CurrentUser { get; set; }
     }
