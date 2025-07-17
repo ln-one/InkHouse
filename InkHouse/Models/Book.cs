@@ -29,7 +29,7 @@ namespace InkHouse.Models
         public int TotalCount { get; set; }
         // 可借数量
         [Column("AvailableCount")]
-        public int Available { get; set; }
+        public int AvailableCount { get; set; }
 
         // 是否可借（用于简化逻辑）
         public bool IsAvailable { get; set; } = true;

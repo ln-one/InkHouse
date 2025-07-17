@@ -79,8 +79,6 @@ namespace InkHouse.ViewModels
         public ICommand BorrowBookCommand { get; }
         public IAsyncRelayCommand ShowBrowseBooksCommand { get; }
         public IAsyncRelayCommand ShowMyBorrowsCommand { get; }
-        public IAsyncRelayCommand LoadMoreBooksCommand { get; }
-        public IAsyncRelayCommand LoadMoreBorrowRecordsCommand { get; }
 
         // TODO: 依赖注入这些服务
         private readonly BookService _bookService;
@@ -202,8 +200,6 @@ namespace InkHouse.ViewModels
             BorrowBookCommand = new AsyncRelayCommand<Book>(BorrowBookAsync);
             ShowBrowseBooksCommand = new AsyncRelayCommand(ShowBrowseBooks);
             ShowMyBorrowsCommand = new AsyncRelayCommand(ShowMyBorrows);
-            LoadMoreBooksCommand = new AsyncRelayCommand(LoadMoreBooks);
-            LoadMoreBorrowRecordsCommand = new AsyncRelayCommand(LoadMoreBorrowRecords);
             LoadProfileDataCommand = new AsyncRelayCommand(LoadProfileDataAsync);
             RefreshStatisticsCommand = new AsyncRelayCommand(RefreshStatistics);
             // 已自动删除递归创建自身的代码，防止栈溢出
@@ -401,7 +397,7 @@ namespace InkHouse.ViewModels
                 }
                 
                 // Add the borrow record to the collection if we're on the MyBorrows view
-                if (CurrentView == "MyBorrows")
+                if (CurrentView as string == "MyBorrows")
                 {
                     BorrowRecords.Insert(0, borrowRecord);
                 }
@@ -467,17 +463,7 @@ namespace InkHouse.ViewModels
             ShowMessage = false;
         }
 
-        private async Task LoadMoreBooks()
-        {
-            CurrentPage++;
-            await LoadBooksAsync();
-        }
-
-        private async Task LoadMoreBorrowRecords()
-        {
-            CurrentPage++;
-            await LoadBorrowRecordsAsync();
-        }
+        
 
         private async Task RefreshStatistics()
         {
