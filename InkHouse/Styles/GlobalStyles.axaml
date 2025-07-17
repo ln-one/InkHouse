@@ -939,4 +939,6 @@
         <Setter Property="TextWrapping" Value="Wrap"/>
     </Style>
     
+    <!-- 推荐轮播小圆点高亮转换器已移除，局部注册于BookRecommendationView.axaml -->
+    
 </Styles> 

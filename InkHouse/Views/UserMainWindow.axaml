@@ -72,14 +72,10 @@
                     </StackPanel>
                 </StackPanel>
 
-                <!-- 中间填充区域（推广卡片） -->
-                <Border Classes="card" VerticalAlignment="Bottom" Margin="0,24,0,0">
-                    <StackPanel Spacing="8">
-                        <TextBlock Classes="label" Text="新书速递" FontWeight="Bold"/>
-                        <TextBlock Classes="caption" Text="探索《沙丘》的广袤世界，现已开放借阅！" TextWrapping="Wrap"/>
-                        <Button Classes="success" Content="立即查看" HorizontalAlignment="Stretch" Command="{Binding ShowBrowseBooksCommand}"/>
-                    </StackPanel>
-                </Border>
+
+                <!-- 中间填充区域（推荐轮播区） -->
+                <local:BookRecommendationView Margin="0,24,0,0"/>
+
 
             </DockPanel>
         </Border>
@@ -333,9 +329,7 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
-                                    
-                                    
-                                    
+
                                     <!-- 加载指示器 -->
                                     <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
