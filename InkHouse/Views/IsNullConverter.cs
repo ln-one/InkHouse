@@ -10,7 +10,8 @@ namespace InkHouse.Views
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
-            return value == null;
+            // 修复：返回值不为null，而不是为null
+            return value != null;
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

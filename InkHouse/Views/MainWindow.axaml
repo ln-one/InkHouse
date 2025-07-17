@@ -78,14 +78,8 @@
                 <Grid>
                     <Grid.ColumnDefinitions>
                         <ColumnDefinition Width="*"/>
-                        <ColumnDefinition Width="Auto"/>
                     </Grid.ColumnDefinitions>
                     <TextBlock Grid.Column="0" Classes="subtitle" Text="{Binding SelectedMenu}" HorizontalAlignment="Left" VerticalAlignment="Center"/>
-                    <StackPanel Grid.Column="1" Orientation="Horizontal" Spacing="12">
-                        <TextBox Classes="search" Watermark="搜索..." Width="300"/>
-                        <Button Classes="tool" Content="🔔"/>
-                        <Button Classes="tool" Content="⚙️"/>
-                    </StackPanel>
                 </Grid>
             </Border>
             <!-- 主要内容 -->

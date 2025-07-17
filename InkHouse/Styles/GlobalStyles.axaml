@@ -195,6 +195,12 @@
         <Setter Property="Padding" Value="20"/>
         <Setter Property="Margin" Value="12"/>
     </Style>
+
+    <Style Selector="Border.card-inner">
+        <Setter Property="Background" Value="#F8F9FA"/>
+        <Setter Property="CornerRadius" Value="8"/>
+        <Setter Property="Padding" Value="16"/>
+    </Style>
     
     <!-- 分割线样式 -->
     <Style Selector="Rectangle.divider">

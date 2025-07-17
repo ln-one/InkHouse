@@ -286,5 +286,20 @@ namespace InkHouse.Services
                 .OrderBy(t => t)
                 .ToListAsync();
         }
+
+        /// <summary>
+        /// 获取最新的图书
+        /// </summary>
+        /// <param name="count">要获取的图书数量</param>
+        /// <returns>最新的图书列表</returns>
+        public async Task<List<Book>> GetNewestBooksAsync(int count)
+        {
+            using var context = _dbContextFactory.CreateDbContext();
+            return await context.Books
+                .AsNoTracking()
+                .OrderByDescending(b => b.Id) // Assuming higher ID means newer
+                .Take(count)
+                .ToListAsync();
+        }
     }
 }

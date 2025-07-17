@@ -50,6 +50,7 @@ namespace InkHouse.ViewModels
 
         public ObservableCollection<Book> Books { get; } = new();
         public ObservableCollection<BorrowRecord> BorrowRecords { get; } = new();
+        public ObservableCollection<Book> NewArrivals { get; } = new();
 
         [ObservableProperty]
         private int _currentPage = 1;
@@ -214,6 +215,25 @@ namespace InkHouse.ViewModels
 
             _ = LoadBookTypesAsync();
 
+            _ = LoadNewArrivalsAsync();
+
+        }
+
+        private async Task LoadNewArrivalsAsync()
+        {
+            try
+            {
+                var newBooks = await _bookService.GetNewestBooksAsync(3); // 获取最新的3本书
+                NewArrivals.Clear();
+                foreach (var book in newBooks)
+                {
+                    NewArrivals.Add(book);
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"加载新书推荐失败: {ex.Message}");
+            }
         }
 
         [RelayCommand]
