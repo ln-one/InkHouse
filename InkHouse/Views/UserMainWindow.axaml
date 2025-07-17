@@ -280,6 +280,7 @@
                                             </ItemsControl.ItemTemplate>
                                         </ItemsControl>
                                     </ScrollViewer>
+
                                     <!-- 加载指示器 -->
                                     <Border Background="#80000000" IsVisible="{Binding #UserWindow.DataContext.IsLoading}" Grid.RowSpan="2">
                                         <StackPanel HorizontalAlignment="Center" VerticalAlignment="Center">
