@@ -1,13 +1,13 @@
 <ResourceDictionary xmlns="https://github.com/avaloniaui"
                     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
     
-    <!-- ¿çÆ½Ì¨ÖÐÎÄ×ÖÌå¶¨Òå -->
+    <!-- è·¨å¹³å°ä¸­æ–‡å­—ä½“å®šä¹‰ -->
     <FontFamily x:Key="ChineseFont">Noto Sans CJK SC, Noto Sans CJK TC, Noto Sans CJK JP, Noto Sans CJK KR, Source Han Sans CN, Source Han Sans TC, Source Han Sans JP, Source Han Sans KR, PingFang SC, PingFang TC, Hiragino Sans GB, Microsoft YaHei, SimSun, Arial Unicode MS, Arial</FontFamily>
     
-    <!-- ¿çÆ½Ì¨ÖÐÎÄ×ÖÌå£¨µÈ¿í£© -->
+    <!-- è·¨å¹³å°ä¸­æ–‡å­—ä½“ï¼ˆç­‰å®½ï¼‰ -->
     <FontFamily x:Key="ChineseMonoFont">Noto Sans Mono CJK SC, Noto Sans Mono CJK TC, Noto Sans Mono CJK JP, Noto Sans Mono CJK KR, Source Code Pro, SF Mono, Consolas, Monaco</FontFamily>
     
-    <!-- ×ÖÌå´óÐ¡¶¨Òå -->
+    <!-- å­—ä½“å¤§å°å®šä¹‰ -->
     <x:Double x:Key="FontSizeSmall">12</x:Double>
     <x:Double x:Key="FontSizeNormal">14</x:Double>
     <x:Double x:Key="FontSizeLarge">16</x:Double>
@@ -15,7 +15,7 @@
     <x:Double x:Key="FontSizeHeading">20</x:Double>
     <x:Double x:Key="FontSizeSubheading">18</x:Double>
     
-    <!-- ×ÖÌå´ÖÏ¸¶¨Òå -->
+    <!-- å­—ä½“ç²—ç»†å®šä¹‰ -->
     <FontWeight x:Key="FontWeightNormal">Normal</FontWeight>
     <FontWeight x:Key="FontWeightMedium">Medium</FontWeight>
     <FontWeight x:Key="FontWeightSemiBold">SemiBold</FontWeight>

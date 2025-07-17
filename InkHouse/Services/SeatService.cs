@@ -52,17 +52,21 @@ namespace InkHouse.Services
                 throw new InvalidOperationException("座位不存在");
             if (seat.Status != "Free")
                 throw new InvalidOperationException("该座位不可预约");
+
             // 检查用户是否已有未完成的预约
             bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "已预约" || r.Status == "使用中"));
             if (hasActive)
                 throw new InvalidOperationException("您已有未完成的座位预约");
+
             // 创建预约记录
             var reservation = new SeatReservation
             {
                 UserId = userId,
                 SeatId = seatId,
                 ReserveTime = DateTime.Now,
+
                 Status = "已预约"
+
             };
             context.SeatReservations.Add(reservation);
             // 更新座位状态
@@ -81,7 +85,9 @@ namespace InkHouse.Services
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
                 throw new InvalidOperationException("预约记录不存在");
+
             if (reservation.Status != "已预约")
+
                 throw new InvalidOperationException("当前预约不可到馆");
             reservation.Status = "使用中";
             reservation.CheckInTime = DateTime.Now;
@@ -118,14 +124,18 @@ namespace InkHouse.Services
         }
 
         /// <summary>
+
         /// 获取用户当前有效预约（已预约/使用中）
+
         /// </summary>
         public async Task<SeatReservation?> GetUserActiveReservationAsync(int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.SeatReservations
                 .Include(r => r.Seat)
+
                 .Where(r => r.UserId == userId && (r.Status == "已预约" || r.Status == "使用中"))
+
                 .OrderByDescending(r => r.ReserveTime)
                 .FirstOrDefaultAsync();
         }
@@ -139,26 +149,28 @@ namespace InkHouse.Services
             return await context.SeatReservations
                 .Include(r => r.Seat)
                 .Include(r => r.User)
+
                 .Where(r => r.Status == "已预约" || r.Status == "使用中")
+
                 .ToListAsync();
         }
 
         /// <summary>
-        /// ��ȡ�û�������λԤԼ��¼
+        /// 获取用户所有座位预约记录
         /// </summary>
         public async Task<List<SeatReservation>> GetUserReservationsAsync(int userId)
         {
             try
             {
-                Console.WriteLine($"��ʼ��ѯ�û�ID {userId} ����λԤԼ��¼...");
+                Console.WriteLine($"开始查询用户ID {userId} 的座位预约记录...");
                 using var context = _dbContextFactory.CreateDbContext();
                 
-                // �ȼ�����ݿ����Ƿ�������
+                // 先检查数据库中是否有数据
                 var totalCount = await context.SeatReservations.CountAsync();
-                Console.WriteLine($"���ݿ����ܹ��� {totalCount} ����λԤԼ��¼");
+                Console.WriteLine($"数据库中总共有 {totalCount} 条座位预约记录");
                 
                 var userCount = await context.SeatReservations.CountAsync(sr => sr.UserId == userId);
-                Console.WriteLine($"�û� {userId} �����ݿ����� {userCount} ����λԤԼ��¼");
+                Console.WriteLine($"用户 {userId} 在数据库中有 {userCount} 条座位预约记录");
                 
                 var records = await context.SeatReservations
                     .Include(r => r.Seat)
@@ -166,30 +178,30 @@ namespace InkHouse.Services
                     .OrderByDescending(r => r.ReserveTime)
                     .ToListAsync();
                 
-                Console.WriteLine($"��ѯ�� {records.Count} ����λԤԼ��¼");
+                Console.WriteLine($"查询到 {records.Count} 条座位预约记录");
                 foreach (var record in records)
                 {
-                    Console.WriteLine($"��λԤԼ��¼: ID={record.Id}, �û�ID={record.UserId}, ��λID={record.SeatId}, ״̬={record.Status}");
+                    Console.WriteLine($"座位预约记录: ID={record.Id}, 用户ID={record.UserId}, 座位ID={record.SeatId}, 状态={record.Status}");
                 }
                 
                 return records;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"��ѯ�û���λԤԼ��¼ʱ�����쳣: {ex.Message}");
-                Console.WriteLine($"�쳣��ջ: {ex.StackTrace}");
+                Console.WriteLine($"查询用户座位预约记录时发生异常: {ex.Message}");
+                Console.WriteLine($"异常详情: {ex.StackTrace}");
                 return new List<SeatReservation>();
             }
         }
 
         /// <summary>
-        /// ������λ
+        /// 添加座位
         /// </summary>
         public async Task<Seat> AddSeatAsync(string seatNumber)
         {
             using var context = _dbContextFactory.CreateDbContext();
             if (await context.Seats.AnyAsync(s => s.SeatNumber == seatNumber))
-                throw new InvalidOperationException("��λ����Ѵ���");
+                throw new InvalidOperationException("座位编号已存在");
             var seat = new Seat { SeatNumber = seatNumber, Status = "Free" };
             context.Seats.Add(seat);
             await context.SaveChangesAsync();
@@ -197,7 +209,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ɾ����λ
+        /// 删除座位
         /// </summary>
         public async Task<bool> DeleteSeatAsync(int seatId)
         {
@@ -210,13 +222,13 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// �޸���λ״̬
+        /// 修改座位状态
         /// </summary>
         public async Task<Seat> UpdateSeatStatusAsync(int seatId, string newStatus)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var seat = await context.Seats.FindAsync(seatId);
-            if (seat == null) throw new InvalidOperationException("��λ������");
+            if (seat == null) throw new InvalidOperationException("座位不存在");
             seat.Status = newStatus;
             if (newStatus == "Free") seat.CurrentUserId = null;
             await context.SaveChangesAsync();

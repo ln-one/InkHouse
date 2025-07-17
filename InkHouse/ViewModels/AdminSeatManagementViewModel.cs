@@ -63,7 +63,7 @@ namespace InkHouse.ViewModels
         {
             if (string.IsNullOrWhiteSpace(NewSeatNumber))
             {
-                ShowError("ÇëÊäÈë×ùÎ»±àºÅ");
+                ShowError("Ã‡Ã«ÃŠÃ¤ÃˆÃ«Ã—Ã¹ÃŽÂ»Â±Ã ÂºÃ…");
                 return;
             }
             try
@@ -71,11 +71,11 @@ namespace InkHouse.ViewModels
                 await _seatService.AddSeatAsync(NewSeatNumber.Trim());
                 NewSeatNumber = string.Empty;
                 await RefreshAsync();
-                ShowSuccess("Ìí¼Ó³É¹¦");
+                ShowSuccess("ÃŒÃ­Â¼Ã“Â³Ã‰Â¹Â¦");
             }
             catch (Exception ex)
             {
-                ShowError("Ìí¼ÓÊ§°Ü: " + ex.Message);
+                ShowError("ÃŒÃ­Â¼Ã“ÃŠÂ§Â°Ãœ: " + ex.Message);
             }
         }
 
