@@ -7,33 +7,43 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 ## ✨ Features
 
 ### 🔐 Authentication & Authorization
-- **Role-based Access Control**: Only Admin users can access the system
-- **Secure Login**: Username/password authentication with role validation
+- **Role-based Access Control**: Admin and User roles with different permissions
+- **Secure Login**: Username/password authentication with BCrypt password hashing
+- **User Registration**: New user registration with validation and security features
 - **Session Management**: Automatic logout functionality with window switching
 
 ### 📊 Dashboard & Statistics
 - **System Overview**: Total books, available books, borrowed books, registered users
 - **Real-time Statistics**: Dynamic dashboard with key metrics
-- **Visual Indicators**: Status indicators for book availability
+- **Visual Indicators**: Status indicators for book availability and seat usage
 
 ### 📚 Book Management
 - **Book CRUD Operations**: Add, edit, delete, and view books
 - **Book Status Tracking**: Available, borrowed, overdue, maintenance status
 - **Search & Filter**: Advanced search and filtering capabilities
+- **Book Type Classification**: Categorize books by type for better organization
 
 ### 👥 User Management
 - **User CRUD Operations**: Add, edit, delete, and view users
 - **Role Management**: Admin and User role support
 - **User Authentication**: Secure login with role-based access
+- **User Profile**: Personal statistics and activity tracking
 
 ### 📖 Borrow Management
 - **Borrow Records**: Track all book borrowing activities
 - **Borrow/Return Operations**: Complete borrow and return workflow
 - **Overdue Tracking**: Monitor overdue books and notifications
+- **User Borrowing History**: View personal borrowing history and statistics
 
-### 📈 Reports & Analytics
+### 🪑 Seat Reservation System
+- **Seat Management**: View and manage library seats
+- **Seat Reservation**: Users can reserve available seats
+- **Check-in/Check-out**: Track seat usage with check-in and check-out functionality
+- **Reservation History**: View personal seat reservation history and statistics
+
+### � Reporhts & Analytics
 - **Statistical Reports**: Comprehensive library statistics
-- **Data Export**: Export reports in various formats
+- **User Activity**: Track user borrowing and seat reservation patterns
 - **Analytics Dashboard**: Visual data representation
 
 ### ⚙️ System Settings
@@ -43,8 +53,8 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 
 ### 🔍 Search & Navigation
 - **Global Search**: Search across books, users, and records
-- **Advanced Filters**: Multi-criteria filtering
-- **Navigation Menu**: Intuitive sidebar navigation
+- **Advanced Filters**: Multi-criteria filtering including book type filtering
+- **Navigation Menu**: Intuitive sidebar navigation for both admin and user interfaces
 
 ---
 
@@ -87,8 +97,9 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 ### 🚀 Current Implementation Status
 
 #### ✅ Completed Features
-- **Authentication System**: Role-based login with admin-only access
-- **Window Management**: Login window ↔ Main window switching
+- **Authentication System**: Role-based login with admin and user access
+- **User Registration**: New user registration with validation and security
+- **Window Management**: Login window ↔ Main window switching for different roles
 - **Logout Functionality**: Secure logout with proper window management
 - **UI Framework**: Complete modern UI with dashboard, navigation, and responsive design
 - **Database Integration**: MySQL database with Entity Framework Core
@@ -96,16 +107,18 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Error Handling**: Unified error handling across all layers
 - **Event System**: Login success/failure events with proper window switching
 - **Book Browsing & Borrowing**: Users can browse available books with pagination and borrow/return without reloading the entire list
+- **Book Type Classification**: Books can be categorized by type and filtered accordingly
 - **Search & Pagination**: Optimized search using EF Core `AsNoTracking`, `Skip/Take`, and a "Load More" UI for smooth paging
 - **Performance Optimizations**: Connection pooling, lazy loading, and optimized queries for noticeably faster response times, even with large datasets
+- **Seat Reservation System**: Complete seat management and reservation functionality
+- **User Profile**: Personal statistics for borrowing history and seat reservations
 
-#### 🔄 Ready for Implementation
-- **Book Management**: UI interface ready, service methods need implementation
-- **User Management**: UI interface ready, service methods need implementation  
-- **Borrow Management**: UI interface ready, service methods need implementation
-- **Dashboard Statistics**: UI ready, data binding needs implementation
-- **Search Functionality**: UI ready, search logic needs implementation
-- **System Settings**: UI ready, configuration logic needs implementation
+#### 🔄 Ready for Enhancement
+- **Book Management**: Basic functionality implemented, can be enhanced with batch operations
+- **User Management**: Basic functionality implemented, can be enhanced with more user details
+- **Dashboard Statistics**: Basic statistics implemented, can be enhanced with more visualizations
+- **Search Functionality**: Basic search implemented, can be enhanced with advanced filters
+- **System Settings**: Basic settings implemented, can be enhanced with more configuration options
 
 ---
 
@@ -132,9 +145,10 @@ AppConfig.DatabaseConnectionString = "your connection string";
 #### 2. Service Manager (`ServiceManager.cs`)
 ```csharp
 // Get various services (no manual creation needed)
-var userService = ServiceManager.Instance.UserService;
-var bookService = ServiceManager.Instance.BookService;
-var borrowService = ServiceManager.Instance.BorrowRecordService;
+var userService = ServiceManager.GetService<UserService>();
+var bookService = ServiceManager.GetService<BookService>();
+var borrowService = ServiceManager.GetService<BorrowRecordService>();
+var seatService = ServiceManager.GetService<SeatService>();
 ```
 
 #### 3. Base ViewModel (`ViewModelBase.cs`)
@@ -198,7 +212,7 @@ public class MyFeatureViewModel : ViewModelBase
         await ExecuteAsync(async () =>
         {
             // Get service
-            var service = ServiceManager.Instance.UserService;
+            var service = ServiceManager.GetService<UserService>();
             
             // Execute business logic
             var result = service.SomeMethod();
@@ -236,73 +250,70 @@ public partial class MyFeatureWindow : Window
 
 #### User Service (UserService)
 ```csharp
-var userService = ServiceManager.Instance.UserService;
+var userService = ServiceManager.GetService<UserService>();
 
 // User login (already implemented)
 var user = userService.Login("username", "password");
 
-// TODO: Team members can add other user-related methods here
-// For example: GetAllUsers(), AddUser(), UpdateUser(), DeleteUser(), etc.
-```
+// User registration (already implemented)
+var registerResult = await userService.RegisterAsync(newUser);
 
-### 🏗️ Main Window Features Interface
+// Get all users
+var users = await userService.GetAllUsersAsync();
 
-The main window (`MainWindowViewModel`) provides a complete interface for all library management features:
-
-#### Dashboard Statistics
-```csharp
-public int TotalBooks { get; set; }
-public int AvailableBooks { get; set; }
-public int BorrowedBooks { get; set; }
-public int RegisteredUsers { get; set; }
-```
-
-#### Book Management Interface
-```csharp
-public ObservableCollection<Book> Books { get; set; }
-public Task LoadBooksAsync();
-public Task AddBookAsync(Book book);
-public Task EditBookAsync(Book book);
-public Task DeleteBookAsync(Book book);
-```
-
-#### User Management Interface
-```csharp
-public ObservableCollection<User> Users { get; set; }
-public Task LoadUsersAsync();
-public Task AddUserAsync(User user);
-public Task EditUserAsync(User user);
-public Task DeleteUserAsync(User user);
-```
-
-#### Borrow Management Interface
-```csharp
-public ObservableCollection<BorrowRecord> BorrowRecords { get; set; }
-public Task LoadBorrowRecordsAsync();
-public Task BorrowBookAsync(BorrowRecord record);
-public Task ReturnBookAsync(BorrowRecord record);
-```
-
-#### Authentication & Session Management
-```csharp
-public ICommand LogoutCommand { get; }
-public void Logout(); // Handles window switching and logout
+// Search users
+var searchResults = await userService.SearchUsersAsync("searchTerm");
 ```
 
 #### Book Service (BookService)
 ```csharp
-var bookService = ServiceManager.Instance.BookService;
+var bookService = ServiceManager.GetService<BookService>();
 
-// TODO: Team members can add book-related methods here
-// For example: GetAllBooks(), AddBook(), UpdateBook(), DeleteBook(), etc.
+// Get all books
+var books = await bookService.GetAllBooksAsync();
+
+// Get books by type
+var fictionBooks = await bookService.GetBooksByTypeAsync("Fiction");
+
+// Search books
+var searchResults = await bookService.SearchBooksAsync("keyword");
+
+// Get book statistics
+var (totalBooks, availableBooks, borrowedBooks) = await bookService.GetBookStatisticsAsync();
 ```
 
 #### Borrow Record Service (BorrowRecordService)
 ```csharp
-var borrowService = ServiceManager.Instance.BorrowRecordService;
+var borrowService = ServiceManager.GetService<BorrowRecordService>();
 
-// TODO: Team members can add borrow record-related methods here
-// For example: GetAllBorrowRecords(), BorrowBook(), ReturnBook(), etc.
+// Get all borrow records
+var records = await borrowService.GetAllBorrowRecordsAsync();
+
+// Get user's borrow records
+var userRecords = await borrowService.GetBorrowRecordsByUserIdAsync(userId);
+
+// Borrow a book
+var borrowRecord = await borrowService.BorrowBookAsync(bookId, userId);
+
+// Return a book
+var success = await borrowService.ReturnBookAsync(borrowRecordId);
+```
+
+#### Seat Service (SeatService)
+```csharp
+var seatService = ServiceManager.GetService<SeatService>();
+
+// Get all seats
+var seats = await seatService.GetAllSeatsAsync();
+
+// Reserve a seat
+var reservation = await seatService.ReserveSeatAsync(seatId, userId);
+
+// Check in
+var updatedReservation = await seatService.CheckInAsync(reservationId);
+
+// Check out
+var completedReservation = await seatService.CheckOutAsync(reservationId);
 ```
 
 ### 🎨 UI Development Tips
@@ -390,6 +401,8 @@ Models/
 ├── Book.cs              # Book entity
 ├── User.cs              # User entity
 ├── BorrowRecord.cs      # Borrow record entity
+├── Seat.cs              # Seat entity
+├── SeatReservation.cs   # Seat reservation entity
 ├── UserRoles.cs         # User role constants
 └── InkHouseContext.cs   # Entity Framework context
 
@@ -399,20 +412,24 @@ Services/
 ├── DbContextFactory.cs  # Database context factory
 ├── UserService.cs       # User service
 ├── BookService.cs       # Book service
-└── BorrowRecordService.cs # Borrow record service
+├── BorrowRecordService.cs # Borrow record service
+└── SeatService.cs       # Seat service
 
 ViewModels/
 ├── ViewModelBase.cs     # Base ViewModel
 ├── LoginViewModel.cs    # Login ViewModel
-└── MainWindowViewModel.cs # Main window ViewModel
+├── RegisterViewModel.cs # Register ViewModel
+├── MainWindowViewModel.cs # Admin main window ViewModel
+├── UserMainWindowViewModel.cs # User main window ViewModel
+└── SeatReservationViewModel.cs # Seat reservation ViewModel
 
 Views/
 ├── LoginView.axaml      # Login user control
 ├── LoginView.axaml.cs   # Login user control code-behind
-├── LoginWindow.axaml    # Login window
-├── LoginWindow.axaml.cs # Login window code-behind
-├── MainWindow.axaml     # Main window
-└── MainWindow.axaml.cs  # Main window code-behind
+├── RegisterView.axaml   # Register user control
+├── RegisterView.axaml.cs # Register user control code-behind
+├── MainWindow.axaml     # Admin main window
+└── UserMainWindow.axaml # User main window
 ```
 
 #### 3. Code Comments
@@ -444,7 +461,7 @@ A4: Implement complex business logic in the service layer, ViewModel only handle
 
 ### 🎉 Summary
 
-The new architecture makes development simpler and more unified:
+The architecture makes development simpler and more unified:
 
 1. **Centralized Configuration Management**: All configurations in one place
 2. **Unified Service Access**: Get all services through ServiceManager
@@ -465,6 +482,9 @@ This architecture has already set up the basic framework for you, including:
 - ✅ Window management (Login ↔ Main)
 - ✅ Logout functionality
 - ✅ Complete UI framework with modern design
+- ✅ Book type classification and filtering
+- ✅ Seat reservation system
+- ✅ User profile statistics
 
 You only need to:
 1. Add specific business logic methods in service classes
@@ -472,8 +492,6 @@ You only need to:
 3. Display results in Views
 
 All database connections, error handling, configuration management, and authentication have been handled for you!
-
-
 
 ### 5. 🔄 Git Workflow
 
@@ -514,7 +532,7 @@ git push origin feature/your-feature-name
 # Merge to main after approval
 ```
 
-### 6. 🐛 Common Issues & Solutions
+### 6. � kCommon Issues & Solutions
 
 #### Entity Framework Issues
 - **"Table doesn't exist"**: Run database migrations
@@ -568,7 +586,7 @@ git push origin feature/your-feature-name
 - Open any `.axaml` file (such as `LoginView.axaml`), and use the split view to see both code and visual preview.
 - Drag and drop controls, or edit XAML directly for custom layouts.
 
-### 7. 🐞 Debugging
+### 7. � Debtugging
 - Set breakpoints in your C# code.
 - Use the `Debug` button or press `Shift+F9` to start debugging.
 - Inspect variables, step through code, and view call stacks as needed.
@@ -576,25 +594,27 @@ git push origin feature/your-feature-name
 ---
 
 ## 🧩 Features
-- 👤 Role-based authentication (Admin only access)
-- 🔐 Secure login with role validation
+- 👤 Role-based authentication (Admin and User access)
+- 🔐 Secure login with role validation and BCrypt password hashing
+- � User registrration with validation and security features
 - 🚪 Logout functionality with window switching
 - 📊 Dashboard with system statistics
-- 📚 Book management interface (ready for implementation)
-- 👥 User management interface (ready for implementation)
-- 📖 Borrow management interface (ready for implementation)
-- 🔍 Search functionality (ready for implementation)
-- ⚙️ System settings (ready for implementation)
+- 📚 Book management with type classification and filtering
+- 👥 User management with role assignment
+- 📖 Borrow management with history tracking
+- 🪑 Seat reservation system with check-in/check-out
+- 👤 User profile with personal statistics
+- 🔍 Search functionality across books and records
+- ⚙️ System settings for configuration
 
-## 🛠️ Tech Stack
+## �️ Teech Stack
 - **Avalonia UI** (cross-platform desktop framework)
 - **Entity Framework Core** (ORM with MySQL provider)
 - **MySQL** (database)
 - **.NET 8.0** (runtime)
 - **MVVM Pattern** (architecture)
 - **Dependency Injection** (service management)
-
-
+- **BCrypt** (password hashing)
 
 ## 👥 Contributors
 - Member A

@@ -5,33 +5,43 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 ## ✨ 功能特性
 
 ### 🔐 身份认证与授权
-- **基于角色的访问控制**：只有管理员用户才能访问系统
-- **安全登录**：用户名/密码认证，支持角色验证
+- **基于角色的访问控制**：管理员和普通用户角色，拥有不同权限
+- **安全登录**：用户名/密码认证，使用 BCrypt 密码哈希加密
+- **用户注册**：新用户注册功能，带有验证和安全特性
 - **会话管理**：自动登出功能，支持窗口切换
 
 ### 📊 仪表板与统计
 - **系统概览**：总藏书量、可借图书、借出图书、注册用户
 - **实时统计**：动态仪表板，显示关键指标
-- **可视化指示器**：图书状态指示器
+- **可视化指示器**：图书状态和座位使用情况指示器
 
 ### 📚 图书管理
 - **图书CRUD操作**：添加、编辑、删除、查看图书
 - **图书状态跟踪**：可借、已借出、逾期、维护中状态
 - **搜索与过滤**：高级搜索和过滤功能
+- **图书类型分类**：按类型对图书进行分类，便于组织管理
 
 ### 👥 用户管理
 - **用户CRUD操作**：添加、编辑、删除、查看用户
 - **角色管理**：支持管理员和普通用户角色
 - **用户认证**：基于角色的安全登录
+- **用户资料**：个人统计和活动跟踪
 
 ### 📖 借阅管理
 - **借阅记录**：跟踪所有图书借阅活动
 - **借书/还书操作**：完整的借阅和归还工作流程
 - **逾期跟踪**：监控逾期图书和通知
+- **用户借阅历史**：查看个人借阅历史和统计数据
 
-### 📈 报表与分析
+### 🪑 座位预约系统
+- **座位管理**：查看和管理图书馆座位
+- **座位预约**：用户可以预约可用座位
+- **签到/签退**：通过签到和签退功能跟踪座位使用情况
+- **预约历史**：查看个人座位预约历史和统计数据
+
+### � 搜报表与分析
 - **统计报表**：全面的图书馆统计数据
-- **数据导出**：支持多种格式的报表导出
+- **用户活动**：跟踪用户借阅和座位预约模式
 - **分析仪表板**：可视化数据展示
 
 ### ⚙️ 系统设置
@@ -41,8 +51,8 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 
 ### 🔍 搜索与导航
 - **全局搜索**：跨图书、用户、记录的搜索
-- **高级过滤**：多条件过滤
-- **导航菜单**：直观的侧边栏导航
+- **高级过滤**：多条件过滤，包括图书类型过滤
+- **导航菜单**：直观的侧边栏导航，适用于管理员和用户界面
 
 ---
 
@@ -85,8 +95,9 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 ### 🚀 当前实现状态
 
 #### ✅ 已完成功能
-- **身份认证系统**：基于角色的登录，仅管理员可访问
-- **窗口管理**：登录窗口 ↔ 主窗口切换
+- **身份认证系统**：基于角色的登录，支持管理员和普通用户访问
+- **用户注册**：新用户注册功能，带有验证和安全特性
+- **窗口管理**：不同角色的登录窗口 ↔ 主窗口切换
 - **登出功能**：安全的登出，正确的窗口管理
 - **UI框架**：完整的现代化UI，包含仪表板、导航和响应式设计
 - **数据库集成**：MySQL数据库与Entity Framework Core
@@ -94,16 +105,18 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 - **错误处理**：所有层的统一错误处理
 - **事件系统**：登录成功/失败事件，正确的窗口切换
 - **图书浏览与借阅**：支持分页浏览图书，借阅/归还后列表即时更新，无需整体刷新
-- **搜索与分页**：使用 EF Core `AsNoTracking`、`Skip/Take` 优化查询，并提供 “加载更多” UI
+- **图书类型分类**：图书可按类型分类并进行过滤
+- **搜索与分页**：使用 EF Core `AsNoTracking`、`Skip/Take` 优化查询，并提供 "加载更多" UI
 - **性能优化**：连接池、延迟加载及优化查询，大幅提升速度，即使在大数据量下也能流畅运行
+- **座位预约系统**：完整的座位管理和预约功能
+- **用户个人资料**：借阅历史和座位预约的个人统计
 
-#### 🔄 待实现功能
-- **图书管理**：UI界面已就绪，服务方法需要实现
-- **用户管理**：UI界面已就绪，服务方法需要实现
-- **借阅管理**：UI界面已就绪，服务方法需要实现
-- **仪表板统计**：UI已就绪，数据绑定需要实现
-- **搜索功能**：UI已就绪，搜索逻辑需要实现
-- **系统设置**：UI已就绪，配置逻辑需要实现
+#### 🔄 可进一步增强的功能
+- **图书管理**：基本功能已实现，可增强批量操作功能
+- **用户管理**：基本功能已实现，可增强更多用户详情
+- **仪表板统计**：基本统计已实现，可增强更多可视化效果
+- **搜索功能**：基本搜索已实现，可增强高级过滤功能
+- **系统设置**：基本设置已实现，可增强更多配置选项
 
 ---
 
@@ -130,9 +143,10 @@ AppConfig.DatabaseConnectionString = "你的连接字符串";
 #### 2. 服务管理器 (`ServiceManager.cs`)
 ```csharp
 // 获取各种服务（无需手动创建）
-var userService = ServiceManager.Instance.UserService;
-var bookService = ServiceManager.Instance.BookService;
-var borrowService = ServiceManager.Instance.BorrowRecordService;
+var userService = ServiceManager.GetService<UserService>();
+var bookService = ServiceManager.GetService<BookService>();
+var borrowService = ServiceManager.GetService<BorrowRecordService>();
+var seatService = ServiceManager.GetService<SeatService>();
 ```
 
 #### 3. 基础ViewModel (`ViewModelBase.cs`)
@@ -196,7 +210,7 @@ public class MyFeatureViewModel : ViewModelBase
         await ExecuteAsync(async () =>
         {
             // 获取服务
-            var service = ServiceManager.Instance.UserService;
+            var service = ServiceManager.GetService<UserService>();
             
             // 执行业务逻辑
             var result = service.SomeMethod();
@@ -234,73 +248,70 @@ public partial class MyFeatureWindow : Window
 
 #### 用户服务 (UserService)
 ```csharp
-var userService = ServiceManager.Instance.UserService;
+var userService = ServiceManager.GetService<UserService>();
 
 // 用户登录（已实现）
 var user = userService.Login("用户名", "密码");
 
-// TODO: 团队成员可以在这里添加其他用户相关的方法
-// 例如：GetAllUsers(), AddUser(), UpdateUser(), DeleteUser() 等
-```
+// 用户注册（已实现）
+var registerResult = await userService.RegisterAsync(newUser);
 
-### 🏗️ 主窗口功能接口
+// 获取所有用户
+var users = await userService.GetAllUsersAsync();
 
-主窗口（`MainWindowViewModel`）提供了完整的图书馆管理功能接口：
-
-#### 仪表板统计
-```csharp
-public int TotalBooks { get; set; }
-public int AvailableBooks { get; set; }
-public int BorrowedBooks { get; set; }
-public int RegisteredUsers { get; set; }
-```
-
-#### 图书管理接口
-```csharp
-public ObservableCollection<Book> Books { get; set; }
-public Task LoadBooksAsync();
-public Task AddBookAsync(Book book);
-public Task EditBookAsync(Book book);
-public Task DeleteBookAsync(Book book);
-```
-
-#### 用户管理接口
-```csharp
-public ObservableCollection<User> Users { get; set; }
-public Task LoadUsersAsync();
-public Task AddUserAsync(User user);
-public Task EditUserAsync(User user);
-public Task DeleteUserAsync(User user);
-```
-
-#### 借阅管理接口
-```csharp
-public ObservableCollection<BorrowRecord> BorrowRecords { get; set; }
-public Task LoadBorrowRecordsAsync();
-public Task BorrowBookAsync(BorrowRecord record);
-public Task ReturnBookAsync(BorrowRecord record);
-```
-
-#### 身份认证与会话管理
-```csharp
-public ICommand LogoutCommand { get; }
-public void Logout(); // 处理窗口切换和登出
+// 搜索用户
+var searchResults = await userService.SearchUsersAsync("搜索词");
 ```
 
 #### 图书服务 (BookService)
 ```csharp
-var bookService = ServiceManager.Instance.BookService;
+var bookService = ServiceManager.GetService<BookService>();
 
-// TODO: 团队成员可以在这里添加图书相关的方法
-// 例如：GetAllBooks(), AddBook(), UpdateBook(), DeleteBook() 等
+// 获取所有图书
+var books = await bookService.GetAllBooksAsync();
+
+// 按类型获取图书
+var fictionBooks = await bookService.GetBooksByTypeAsync("小说");
+
+// 搜索图书
+var searchResults = await bookService.SearchBooksAsync("关键词");
+
+// 获取图书统计信息
+var (totalBooks, availableBooks, borrowedBooks) = await bookService.GetBookStatisticsAsync();
 ```
 
 #### 借阅记录服务 (BorrowRecordService)
 ```csharp
-var borrowService = ServiceManager.Instance.BorrowRecordService;
+var borrowService = ServiceManager.GetService<BorrowRecordService>();
 
-// TODO: 团队成员可以在这里添加借阅记录相关的方法
-// 例如：GetAllBorrowRecords(), BorrowBook(), ReturnBook() 等
+// 获取所有借阅记录
+var records = await borrowService.GetAllBorrowRecordsAsync();
+
+// 获取用户的借阅记录
+var userRecords = await borrowService.GetBorrowRecordsByUserIdAsync(userId);
+
+// 借书
+var borrowRecord = await borrowService.BorrowBookAsync(bookId, userId);
+
+// 还书
+var success = await borrowService.ReturnBookAsync(borrowRecordId);
+```
+
+#### 座位服务 (SeatService)
+```csharp
+var seatService = ServiceManager.GetService<SeatService>();
+
+// 获取所有座位
+var seats = await seatService.GetAllSeatsAsync();
+
+// 预约座位
+var reservation = await seatService.ReserveSeatAsync(seatId, userId);
+
+// 签到
+var updatedReservation = await seatService.CheckInAsync(reservationId);
+
+// 签退
+var completedReservation = await seatService.CheckOutAsync(reservationId);
 ```
 
 ### 🎨 UI开发技巧
@@ -388,6 +399,8 @@ Models/
 ├── Book.cs              # 图书实体
 ├── User.cs              # 用户实体
 ├── BorrowRecord.cs      # 借阅记录实体
+├── Seat.cs              # 座位实体
+├── SeatReservation.cs   # 座位预约实体
 ├── UserRoles.cs         # 用户角色常量
 └── InkHouseContext.cs   # Entity Framework上下文
 
@@ -397,20 +410,24 @@ Services/
 ├── DbContextFactory.cs  # 数据库上下文工厂
 ├── UserService.cs       # 用户服务
 ├── BookService.cs       # 图书服务
-└── BorrowRecordService.cs # 借阅记录服务
+├── BorrowRecordService.cs # 借阅记录服务
+└── SeatService.cs       # 座位服务
 
 ViewModels/
 ├── ViewModelBase.cs     # 基础ViewModel
 ├── LoginViewModel.cs    # 登录ViewModel
-└── MainWindowViewModel.cs # 主窗口ViewModel
+├── RegisterViewModel.cs # 注册ViewModel
+├── MainWindowViewModel.cs # 管理员主窗口ViewModel
+├── UserMainWindowViewModel.cs # 用户主窗口ViewModel
+└── SeatReservationViewModel.cs # 座位预约ViewModel
 
 Views/
 ├── LoginView.axaml      # 登录用户控件
 ├── LoginView.axaml.cs   # 登录用户控件代码后端
-├── LoginWindow.axaml    # 登录窗口
-├── LoginWindow.axaml.cs # 登录窗口代码后端
-├── MainWindow.axaml     # 主窗口
-└── MainWindow.axaml.cs  # 主窗口代码后端
+├── RegisterView.axaml   # 注册用户控件
+├── RegisterView.axaml.cs # 注册用户控件代码后端
+├── MainWindow.axaml     # 管理员主窗口
+└── UserMainWindow.axaml # 用户主窗口
 ```
 
 #### 3. 代码注释
@@ -463,6 +480,9 @@ A4: 在服务层实现复杂的业务逻辑，ViewModel只负责UI交互和数�
 - ✅ 窗口管理（登录 ↔ 主界面）
 - ✅ 登出功能
 - ✅ 完整的UI框架，现代化设计
+- ✅ 图书类型分类和过滤
+- ✅ 座位预约系统
+- ✅ 用户个人资料统计
 
 您只需要：
 1. 在服务类中添加具体的业务逻辑方法
@@ -470,8 +490,6 @@ A4: 在服务层实现复杂的业务逻辑，ViewModel只负责UI交互和数�
 3. 在View中展示结果
 
 所有的数据库连接、错误处理、配置管理和身份认证都已经为您处理好了！
-
-
 
 ### 5. 🔄 Git 工作流程
 
@@ -538,7 +556,7 @@ git push origin feature/你的功能名称
 
 ### 2. 📦 还原依赖
 - Rider 会自动检测解决方案并提示还原 NuGet 包。
-- 如未自动还原，可在解决方案资源管理器中右键解决方案，选择“还原 NuGet 包”。
+- 如未自动还原，可在解决方案资源管理器中右键解决方案，选择"还原 NuGet 包"。
 
 ### 3. ⚙️ 配置数据库连接
 - 在解决方案资源管理器中，定位到 `InkHouse/Services/AppConfig.cs`。
@@ -556,7 +574,7 @@ git push origin feature/你的功能名称
   CREATE DATABASE InternShip;
   ```
 
-### 5. 🛠️ 构建并运行项目
+### 5. �的️ 构建并运行项目
 - 在 Rider 中，将 `InkHouse` 设为启动项目。
 - 点击绿色 `运行` 按钮或按 `Shift+F10` 构建并运行。
 - 应用窗口会自动弹出。
@@ -566,7 +584,7 @@ git push origin feature/你的功能名称
 - 打开任意 `.axaml` 文件（如 `LoginView.axaml`），使用分屏模式同时查看代码和界面预览。
 - 可拖拽控件或直接编辑 XAML 代码实现自定义布局。
 
-### 7. 🐞 调试
+### 7. �栈 调试
 - 在 C# 代码中设置断点。
 - 点击 `调试` 按钮或按 `Shift+F9` 启动调试。
 - 可查看变量、单步执行、查看调用堆栈等。
@@ -574,15 +592,18 @@ git push origin feature/你的功能名称
 ---
 
 ## 🧩 功能模块
-- 👤 基于角色的身份认证（仅管理员可访问）
-- 🔐 安全的登录验证和角色检查
+- � 基于角色的身份认证（管理员和普通用户访问）
+- 🔐 安全的登录验证和角色检查，使用 BCrypt 密码哈希
+- 📝 用户注册功能，带有验证和安全特性
 - 🚪 登出功能，支持窗口切换
 - 📊 仪表板，显示系统统计信息
-- 📚 图书管理界面（待实现）
-- 👥 用户管理界面（待实现）
-- 📖 借阅管理界面（待实现）
-- 🔍 搜索功能（待实现）
-- ⚙️ 系统设置（待实现）
+- 📚 图书管理，支持类型分类和过滤
+- 👥 用户管理，支持角色分配
+- 📖 借阅管理，支持历史跟踪
+- 🪑 座位预约系统，支持签到/签退
+- 👤 用户个人资料，显示个人统计数据
+- 🔍 跨图书和记录的搜索功能
+- ⚙️ 系统配置设置
 
 ## 🛠️ 技术栈
 - **Avalonia UI**（跨平台桌面框架）
@@ -591,11 +612,12 @@ git push origin feature/你的功能名称
 - **.NET 8.0**（运行时）
 - **MVVM模式**（架构）
 - **依赖注入**（服务管理）
+- **BCrypt**（密码哈希）
 
 ## 👥 贡献者
-- ln1
-- 组员B
-- 组员C
+- 成员A
+- 成员B
+- 成员C
 
 ## ❓ 常见问题与小贴士
 - 如果提示缺少SDK，请确认已安装 .NET 8.0+ 并重启 Rider
@@ -604,4 +626,4 @@ git push origin feature/你的功能名称
 - 更多 Rider 使用技巧见 [Rider 官方文档](https://www.jetbrains.com/help/rider/)
 
 ## 📄 许可
-本项目仅供学习和实习使用，欢迎自由使用和修改。 
+本项目仅供学习和实习使用，欢迎自由使用和修改。
