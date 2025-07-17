@@ -25,6 +25,7 @@
         <local:SeatCanReserveConverter x:Key="SeatCanReserveConverter"/>
         <local:SeatCanCheckInConverter x:Key="SeatCanCheckInConverter"/>
         <local:SeatCanCheckOutConverter x:Key="SeatCanCheckOutConverter"/>
+        <local:BorrowStatusToColorConverter x:Key="BorrowStatusToColorConverter"/>
     </Window.Resources>
 
     <Design.DataContext>
@@ -311,7 +312,7 @@
                                                             <!-- 借阅信息 -->
                                                             <Border Background="#F8F9FA" Padding="8" CornerRadius="4">
                                                                 <StackPanel Spacing="4">
-                                                                <TextBlock Text="{Binding ., Converter={StaticResource BorrowStatusConverter}}" FontWeight="SemiBold" FontSize="12"/>
+                                                                <TextBlock Text="{Binding ., Converter={StaticResource BorrowStatusConverter}}" FontWeight="SemiBold" FontSize="12" Foreground="{Binding ., Converter={StaticResource BorrowStatusToColorConverter}}"/>
                                                                 <TextBlock Text="{Binding BorrowDate, StringFormat='借阅日期: {0:yyyy-MM-dd}'}" Classes="caption"/>
                                                                 <TextBlock Text="{Binding BorrowDate, Converter={StaticResource DueDateConverter}, StringFormat='应还日期: {0}'}" Classes="caption"/>
                                                                 </StackPanel>

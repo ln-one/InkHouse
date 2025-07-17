@@ -12,18 +12,18 @@ namespace InkHouse.Views
         {
             if (value is DateTime dateTime)
             {
-                // 如果日期是默认值（DateTime.MinValue），显示"暂无"
+                // 脠莽鹿没脠脮脝脷脢脟脛卢脠脧脰碌拢篓DateTime.MinValue拢漏拢卢脧脭脢戮"脭脻脦脼"
                 if (dateTime == DateTime.MinValue)
                 {
-                    return "暂无";
+                    return "脭脻脦脼";
                 }
                 
-                // 否则按指定格式显示日期
+                // 路帽脭貌掳麓脰赂露篓赂帽脢陆脧脭脢戮脠脮脝脷
                 string format = parameter as string ?? "yyyy-MM-dd";
                 return dateTime.ToString(format);
             }
             
-            return "暂无";
+            return "脭脻脦脼";
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)

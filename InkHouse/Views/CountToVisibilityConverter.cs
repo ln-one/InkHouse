@@ -10,10 +10,10 @@ namespace InkHouse.Views
         {
             if (value is int count)
             {
-                // ��countΪ0ʱ��ʾ"���޼�¼"����������
+                // µ±countÎª0Ê±ÏÔÊ¾"ÔÝÎÞ¼ÇÂ¼"£¬·ñÔòÒþ²Ø
                 return count == 0;
             }
-            return true; // Ĭ����ʾ"���޼�¼"
+            return true; // Ä¬ÈÏÏÔÊ¾"ÔÝÎÞ¼ÇÂ¼"
         }
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture) => throw new NotImplementedException();
     }

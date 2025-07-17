@@ -1,13 +1,15 @@
+
 using System;
 using System.Globalization;
 using Avalonia.Data.Converters;
+using Avalonia.Media;
 using InkHouse.Models;
 
 namespace InkHouse.Views
 {
-    public class BorrowStatusConverter : IValueConverter
+    public class BorrowStatusToColorConverter : IValueConverter
     {
-        public static readonly BorrowStatusConverter Instance = new();
+        public static readonly BorrowStatusToColorConverter Instance = new();
 
         public object? Convert(object? value, Type targetType, object? parameter, CultureInfo culture)
         {
@@ -15,21 +17,19 @@ namespace InkHouse.Views
             {
                 if (record.ReturnDate.HasValue)
                 {
-                    return $"已归还 ({record.ReturnDate.Value:yyyy-MM-dd})";
+                    return Brushes.Green; // Returned
                 }
-                else
+                
+                var dueDate = record.BorrowDate.AddDays(30);
+                if (DateTime.Now > dueDate)
                 {
-                    // 计算应还日期：借阅日期 + 30天
-                    var dueDate = record.BorrowDate.AddDays(30);
-                    if (DateTime.Now > dueDate)
-                    {
-                        return $"已逾期 (应还: {dueDate:yyyy-MM-dd})";
-                    }
-                    return $"借阅中 (应还: {dueDate:yyyy-MM-dd})";
+                    return Brushes.Red; // Overdue
                 }
+                
+                return Brushes.Orange; // Borrowing
             }
             
-            return "未知状态";
+            return Brushes.Black; // Default/Unknown
         }
 
         public object? ConvertBack(object? value, Type targetType, object? parameter, CultureInfo culture)
@@ -37,4 +37,4 @@ namespace InkHouse.Views
             throw new NotImplementedException();
         }
     }
-} 
+}
