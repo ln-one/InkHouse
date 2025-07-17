@@ -8,7 +8,7 @@ using InkHouse.Models;
 namespace InkHouse.Services
 {
     /// <summary>
-    /// ×ùÎ»·şÎñÀà£¬¸ºÔğ×ùÎ»Ô¤Ô¼Ïà¹ØÒµÎñÂß¼­
+    /// åº§ä½æœåŠ¡ç±»ï¼Œè´Ÿè´£åº§ä½é¢„çº¦ç›¸å…³ä¸šåŠ¡é€»è¾‘
     /// </summary>
     public class SeatService
     {
@@ -20,7 +20,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡ËùÓĞ×ùÎ»
+        /// è·å–æ‰€æœ‰åº§ä½
         /// </summary>
         public async Task<List<Seat>> GetAllSeatsAsync()
         {
@@ -29,7 +29,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡×ùÎ»Ô¤Ô¼Í³¼ÆĞÅÏ¢
+        /// è·å–åº§ä½é¢„çº¦ç»Ÿè®¡ä¿¡æ¯
         /// </summary>
         public async Task<(int totalSeats, int freeSeats, int reservedSeats, int occupiedSeats)> GetSeatStatisticsAsync()
         {
@@ -42,30 +42,30 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§Ô¤Ô¼×ùÎ»
+        /// ç”¨æˆ·é¢„çº¦åº§ä½
         /// </summary>
         public async Task<SeatReservation> ReserveSeatAsync(int seatId, int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var seat = await context.Seats.FindAsync(seatId);
             if (seat == null)
-                throw new InvalidOperationException("×ùÎ»²»´æÔÚ");
+                throw new InvalidOperationException("åº§ä½ä¸å­˜åœ¨");
             if (seat.Status != "Free")
-                throw new InvalidOperationException("¸Ã×ùÎ»²»¿ÉÔ¤Ô¼");
-            // ¼ì²éÓÃ»§ÊÇ·ñÒÑÓĞÎ´Íê³ÉµÄÔ¤Ô¼
-            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ"));
+                throw new InvalidOperationException("è¯¥åº§ä½ä¸å¯é¢„çº¦");
+            // æ£€æŸ¥ç”¨æˆ·æ˜¯å¦å·²æœ‰æœ‰æ•ˆçš„é¢„çº¦
+            bool hasActive = await context.SeatReservations.AnyAsync(r => r.UserId == userId && (r.Status == "å¾…é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­"));
             if (hasActive)
-                throw new InvalidOperationException("ÄúÒÑÓĞÎ´Íê³ÉµÄ×ùÎ»Ô¤Ô¼");
-            // ´´½¨Ô¤Ô¼¼ÇÂ¼
+                throw new InvalidOperationException("æ‚¨å·²æœ‰æœ‰æ•ˆçš„åº§ä½é¢„çº¦");
+            // åˆ›å»ºé¢„çº¦è®°å½•
             var reservation = new SeatReservation
             {
                 UserId = userId,
                 SeatId = seatId,
                 ReserveTime = DateTime.Now,
-                Status = "ÒÑÔ¤Ô¼"
+                Status = "å¾…é¢„çº¦"
             };
             context.SeatReservations.Add(reservation);
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             seat.Status = "Reserved";
             seat.CurrentUserId = userId;
             await context.SaveChangesAsync();
@@ -73,19 +73,19 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§µ½¹İ£¬×ùÎ»±äÎªÊ¹ÓÃÖĞ
+        /// ç”¨æˆ·åˆ°é¦†ï¼Œåº§ä½å˜ä¸ºä½¿ç”¨ä¸­
         /// </summary>
         public async Task<SeatReservation> CheckInAsync(int reservationId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
-                throw new InvalidOperationException("Ô¤Ô¼¼ÇÂ¼²»´æÔÚ");
-            if (reservation.Status != "ÒÑÔ¤Ô¼")
-                throw new InvalidOperationException("µ±Ç°Ô¤Ô¼²»¿Éµ½¹İ");
-            reservation.Status = "Ê¹ÓÃÖĞ";
+                throw new InvalidOperationException("é¢„çº¦è®°å½•ä¸å­˜åœ¨");
+            if (reservation.Status != "å¾…é¢„çº¦")
+                throw new InvalidOperationException("å½“å‰é¢„çº¦ä¸å¯åˆ°é¦†");
+            reservation.Status = "ä½¿ç”¨ä¸­";
             reservation.CheckInTime = DateTime.Now;
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             if (reservation.Seat != null)
             {
                 reservation.Seat.Status = "Occupied";
@@ -95,19 +95,19 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ÓÃ»§Àë¹İ£¬×ùÎ»±äÎª¿ÕÏĞ
+        /// ç”¨æˆ·ç¦»é¦†ï¼Œåº§ä½å˜ä¸ºç©ºé—²
         /// </summary>
         public async Task<SeatReservation> CheckOutAsync(int reservationId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var reservation = await context.SeatReservations.Include(r => r.Seat).FirstOrDefaultAsync(r => r.Id == reservationId);
             if (reservation == null)
-                throw new InvalidOperationException("Ô¤Ô¼¼ÇÂ¼²»´æÔÚ");
-            if (reservation.Status != "Ê¹ÓÃÖĞ")
-                throw new InvalidOperationException("µ±Ç°Ô¤Ô¼²»¿ÉÀë¹İ");
-            reservation.Status = "ÒÑÀë¹İ";
+                throw new InvalidOperationException("é¢„çº¦è®°å½•ä¸å­˜åœ¨");
+            if (reservation.Status != "ä½¿ç”¨ä¸­")
+                throw new InvalidOperationException("å½“å‰é¢„çº¦ä¸å¯ç¦»é¦†");
+            reservation.Status = "å·²ç¦»é¦†";
             reservation.CheckOutTime = DateTime.Now;
-            // ¸üĞÂ×ùÎ»×´Ì¬
+            // æ›´æ–°åº§ä½çŠ¶æ€
             if (reservation.Seat != null)
             {
                 reservation.Seat.Status = "Free";
@@ -118,20 +118,20 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// »ñÈ¡ÓÃ»§µ±Ç°ÓĞĞ§Ô¤Ô¼£¨ÒÑÔ¤Ô¼/Ê¹ÓÃÖĞ£©
+        /// è·å–ç”¨æˆ·å½“å‰æœ‰æ•ˆé¢„çº¦ï¼ˆå¾…é¢„çº¦/ä½¿ç”¨ä¸­ï¼‰
         /// </summary>
         public async Task<SeatReservation?> GetUserActiveReservationAsync(int userId)
         {
             using var context = _dbContextFactory.CreateDbContext();
             return await context.SeatReservations
                 .Include(r => r.Seat)
-                .Where(r => r.UserId == userId && (r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ"))
+                .Where(r => r.UserId == userId && (r.Status == "å¾…é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­"))
                 .OrderByDescending(r => r.ReserveTime)
                 .FirstOrDefaultAsync();
         }
 
         /// <summary>
-        /// »ñÈ¡ËùÓĞ×ùÎ»Ô¤Ô¼Çé¿ö
+        /// è·å–æ‰€æœ‰åº§ä½é¢„çº¦æƒ…å†µ
         /// </summary>
         public async Task<List<SeatReservation>> GetAllActiveReservationsAsync()
         {
@@ -139,26 +139,26 @@ namespace InkHouse.Services
             return await context.SeatReservations
                 .Include(r => r.Seat)
                 .Include(r => r.User)
-                .Where(r => r.Status == "ÒÑÔ¤Ô¼" || r.Status == "Ê¹ÓÃÖĞ")
+                .Where(r => r.Status == "å¾…é¢„çº¦" || r.Status == "ä½¿ç”¨ä¸­")
                 .ToListAsync();
         }
 
         /// <summary>
-        /// »ñÈ¡ÓÃ»§ËùÓĞ×ùÎ»Ô¤Ô¼¼ÇÂ¼
+        /// è·å–ç”¨æˆ·æ‰€æœ‰åº§ä½é¢„çº¦è®°å½•
         /// </summary>
         public async Task<List<SeatReservation>> GetUserReservationsAsync(int userId)
         {
             try
             {
-                Console.WriteLine($"¿ªÊ¼²éÑ¯ÓÃ»§ID {userId} µÄ×ùÎ»Ô¤Ô¼¼ÇÂ¼...");
+                Console.WriteLine($"å¼€å§‹æŸ¥è¯¢ç”¨æˆ·ID {userId} çš„åº§ä½é¢„çº¦è®°å½•...");
                 using var context = _dbContextFactory.CreateDbContext();
                 
-                // ÏÈ¼ì²éÊı¾İ¿âÖĞÊÇ·ñÓĞÊı¾İ
+                // å…ˆæ£€æŸ¥æ•°æ®åº“ä¸­æ˜¯å¦æœ‰æ•°æ®
                 var totalCount = await context.SeatReservations.CountAsync();
-                Console.WriteLine($"Êı¾İ¿âÖĞ×Ü¹²ÓĞ {totalCount} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                Console.WriteLine($"æ•°æ®åº“ä¸­æ€»å…±æœ‰ {totalCount} æ¡åº§ä½é¢„çº¦è®°å½•");
                 
                 var userCount = await context.SeatReservations.CountAsync(sr => sr.UserId == userId);
-                Console.WriteLine($"ÓÃ»§ {userId} ÔÚÊı¾İ¿âÖĞÓĞ {userCount} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                Console.WriteLine($"ç”¨æˆ· {userId} åœ¨æ•°æ®åº“ä¸­æœ‰ {userCount} æ¡åº§ä½é¢„çº¦è®°å½•");
                 
                 var records = await context.SeatReservations
                     .Include(r => r.Seat)
@@ -166,30 +166,30 @@ namespace InkHouse.Services
                     .OrderByDescending(r => r.ReserveTime)
                     .ToListAsync();
                 
-                Console.WriteLine($"²éÑ¯µ½ {records.Count} Ìõ×ùÎ»Ô¤Ô¼¼ÇÂ¼");
+                Console.WriteLine($"æŸ¥è¯¢åˆ° {records.Count} æ¡åº§ä½é¢„çº¦è®°å½•");
                 foreach (var record in records)
                 {
-                    Console.WriteLine($"×ùÎ»Ô¤Ô¼¼ÇÂ¼: ID={record.Id}, ÓÃ»§ID={record.UserId}, ×ùÎ»ID={record.SeatId}, ×´Ì¬={record.Status}");
+                    Console.WriteLine($"åº§ä½é¢„çº¦è®°å½•: ID={record.Id}, ç”¨æˆ·ID={record.UserId}, åº§ä½ID={record.SeatId}, çŠ¶æ€={record.Status}");
                 }
                 
                 return records;
             }
             catch (Exception ex)
             {
-                Console.WriteLine($"²éÑ¯ÓÃ»§×ùÎ»Ô¤Ô¼¼ÇÂ¼Ê±·¢ÉúÒì³£: {ex.Message}");
-                Console.WriteLine($"Òì³£¶ÑÕ»: {ex.StackTrace}");
+                Console.WriteLine($"æŸ¥è¯¢ç”¨æˆ·åº§ä½é¢„çº¦è®°å½•æ—¶å‘ç”Ÿå¼‚å¸¸: {ex.Message}");
+                Console.WriteLine($"å¼‚å¸¸è¯¦æƒ…: {ex.StackTrace}");
                 return new List<SeatReservation>();
             }
         }
 
         /// <summary>
-        /// Ìí¼Ó×ùÎ»
+        /// æ·»åŠ åº§ä½
         /// </summary>
         public async Task<Seat> AddSeatAsync(string seatNumber)
         {
             using var context = _dbContextFactory.CreateDbContext();
             if (await context.Seats.AnyAsync(s => s.SeatNumber == seatNumber))
-                throw new InvalidOperationException("×ùÎ»±àºÅÒÑ´æÔÚ");
+                throw new InvalidOperationException("åº§ä½ç¼–å·å·²å­˜åœ¨");
             var seat = new Seat { SeatNumber = seatNumber, Status = "Free" };
             context.Seats.Add(seat);
             await context.SaveChangesAsync();
@@ -197,7 +197,7 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// É¾³ı×ùÎ»
+        /// åˆ é™¤åº§ä½
         /// </summary>
         public async Task<bool> DeleteSeatAsync(int seatId)
         {
@@ -210,13 +210,13 @@ namespace InkHouse.Services
         }
 
         /// <summary>
-        /// ĞŞ¸Ä×ùÎ»×´Ì¬
+        /// ä¿®æ”¹åº§ä½çŠ¶æ€
         /// </summary>
         public async Task<Seat> UpdateSeatStatusAsync(int seatId, string newStatus)
         {
             using var context = _dbContextFactory.CreateDbContext();
             var seat = await context.Seats.FindAsync(seatId);
-            if (seat == null) throw new InvalidOperationException("×ùÎ»²»´æÔÚ");
+            if (seat == null) throw new InvalidOperationException("åº§ä½ä¸å­˜åœ¨");
             seat.Status = newStatus;
             if (newStatus == "Free") seat.CurrentUserId = null;
             await context.SaveChangesAsync();
