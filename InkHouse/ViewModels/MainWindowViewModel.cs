@@ -551,33 +551,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
 
-    // ================== 统计报表 ==================
-    /// <summary>加载统计报表</summary>
-    [RelayCommand]
-    public async Task LoadStatisticsAsync()
-    {
-        try
-        {
-            var (totalBooks, availableBooks, borrowedBooks) = await _bookService.GetBookStatisticsAsync();
-            TotalBooks = totalBooks;
-            AvailableBooks = availableBooks;
-            BorrowedBooks = borrowedBooks;
-            
-            // 加载用户统计
-            var users = await _userService.GetAllUsersAsync();
-            RegisteredUsers = users.Count;
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"加载统计信息失败: {ex.Message}");
-        }
-    }
-
-    // ================== 系统设置 ==================
-    /// <summary>加载系统设置</summary>
-    public Task LoadSettingsAsync() => Task.CompletedTask;
-    /// <summary>保存系统设置</summary>
-    public Task SaveSettingsAsync() => Task.CompletedTask;
+    
 
     // ================== 搜索 ==================
     /// <summary>搜索关键字</summary>
@@ -696,42 +670,7 @@ public partial class MainWindowViewModel : ViewModelBase
         }
     }
     
-    /// <summary>显示统计报表</summary>
-    [RelayCommand]
-    public async Task ShowStatistics()
-    {
-        Console.WriteLine("切换到统计报表视图");
-        try
-        {
-            await Dispatcher.UIThread.InvokeAsync(() =>
-            {
-                var bookService = ServiceManager.GetService<BookService>();
-                var userService = ServiceManager.GetService<UserService>();
-                var borrowRecordService = ServiceManager.GetService<BorrowRecordService>();
-                var seatService = ServiceManager.GetService<SeatService>();
-                
-                var dashboardViewModel = new DashboardViewModel(bookService, userService, borrowRecordService, seatService);
-                var dashboardView = new DashboardView { DataContext = dashboardViewModel };
-                
-                Console.WriteLine($"DashboardView 创建成功用于统计报表: {dashboardView.GetType().Name}");
-                CurrentView = dashboardView;
-                SelectedMenu = "Statistics";
-                Console.WriteLine($"CurrentView 已设置为: {CurrentView?.GetType().Name}");
-            });
-        }
-        catch (Exception ex)
-        {
-            Console.WriteLine($"创建统计报表视图失败: {ex.Message}");
-        }
-    }
     
-    /// <summary>显示系统设置</summary>
-    [RelayCommand]
-    public void ShowSettings()
-    {
-        SelectedMenu = "Settings";
-        CurrentView = "Settings";
-    }
 
     /// <summary>显示座位管理</summary>
     [RelayCommand]
@@ -764,8 +703,7 @@ public partial class MainWindowViewModel : ViewModelBase
     public string BookManagementButtonClass => SelectedMenu == "BookManagement" ? "nav-item active" : "nav-item";
     public string UserManagementButtonClass => SelectedMenu == "UserManagement" ? "nav-item active" : "nav-item";
     public string BorrowManagementButtonClass => SelectedMenu == "BorrowManagement" ? "nav-item active" : "nav-item";
-    public string StatisticsButtonClass => SelectedMenu == "Statistics" ? "nav-item active" : "nav-item";
-    public string SettingsButtonClass => SelectedMenu == "Settings" ? "nav-item active" : "nav-item";
+    
 
     [ObservableProperty]
     private List<string> _bookTypes = new();
@@ -790,7 +728,6 @@ public partial class MainWindowViewModel : ViewModelBase
             try
             {
                 await LoadBookTypesAsync();
-                await LoadStatisticsAsync();
                 await LoadBooksAsync();
                 await LoadBorrowRecordsAsync(); // 新增：加载借阅记录
                 await ShowDashboard(); // 自动显示仪表盘
