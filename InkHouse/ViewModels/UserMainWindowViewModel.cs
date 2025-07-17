@@ -401,7 +401,7 @@ namespace InkHouse.ViewModels
                 }
                 
                 // Add the borrow record to the collection if we're on the MyBorrows view
-                if (CurrentView == "MyBorrows")
+                if (CurrentView as string == "MyBorrows")
                 {
                     BorrowRecords.Insert(0, borrowRecord);
                 }

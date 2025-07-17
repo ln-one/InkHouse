@@ -43,6 +43,14 @@ namespace InkHouse.Services
             return new InkHouseContext(_options);
         }
 
+        // 实现IDesignTimeDbContextFactory接口的方法，用于EF Core迁移工具
+        public InkHouseContext CreateDbContext(string[] args)
+        {
+            var optionsBuilder = new DbContextOptionsBuilder<InkHouseContext>();
+            optionsBuilder.UseMySql(_connectionString, ServerVersion.AutoDetect(_connectionString));
+            return new InkHouseContext(optionsBuilder.Options);
+        }
+
 
         /// <summary>
         /// 测试数据库连接
