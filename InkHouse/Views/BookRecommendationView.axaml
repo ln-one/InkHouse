@@ -1,0 +1,50 @@
+<UserControl
+    xmlns="https://github.com/avaloniaui"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:local="clr-namespace:InkHouse.Views"
+    xmlns:vm="clr-namespace:InkHouse.ViewModels"
+    x:Class="InkHouse.Views.BookRecommendationView"
+    x:DataType="vm:BookRecommendationViewModel"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    mc:Ignorable="d">
+
+    <UserControl.Resources>
+        <local:BooleanToBrushConverter x:Key="BoolToBrushConverter"
+            TrueBrush="Black"
+            FalseBrush="#DDD"/>
+        <local:StringToUriConverter x:Key="StringToUriConverter"/>
+        <local:TitleToVisibilityConverter x:Key="TitleToVisibilityConverter"/>
+    </UserControl.Resources>
+
+    <Border CornerRadius="12" Background="#FFF" Padding="12" >
+        <StackPanel VerticalAlignment="Top">
+            <TextBlock Text="本期图书推荐" FontSize="20" FontWeight="Bold" HorizontalAlignment="Center" Margin="0,0,0,12"/>
+            <Border Height="120" CornerRadius="8" Background="#EEE" Margin="0,0,0,12">
+                <Grid>
+                    <Image Source="avares://InkHouse/Assets/Recommendations/hongloumeng.jpg" Stretch="UniformToFill"
+                        IsVisible="{Binding CurrentRecommendation.Title, Converter={StaticResource TitleToVisibilityConverter}, ConverterParameter=红楼梦}"/>
+                    <Image Source="avares://InkHouse/Assets/Recommendations/hamuleite.jpg" Stretch="UniformToFill"
+                        IsVisible="{Binding CurrentRecommendation.Title, Converter={StaticResource TitleToVisibilityConverter}, ConverterParameter=哈姆雷特}"/>
+                    <Image Source="avares://InkHouse/Assets/Recommendations/lunyu.jpg" Stretch="UniformToFill"
+                        IsVisible="{Binding CurrentRecommendation.Title, Converter={StaticResource TitleToVisibilityConverter}, ConverterParameter=论语}"/>
+                    <Image Source="avares://InkHouse/Assets/Recommendations/beicanshijie.jpg" Stretch="UniformToFill"
+                        IsVisible="{Binding CurrentRecommendation.Title, Converter={StaticResource TitleToVisibilityConverter}, ConverterParameter=悲惨世界}"/>
+                </Grid>
+            </Border>
+            <TextBlock Text="{Binding CurrentRecommendation.Title}" FontWeight="Bold" FontSize="18" Margin="0,0,0,2"/>
+            <TextBlock Text="{Binding CurrentRecommendation.Author}" FontSize="14" Foreground="#888" Margin="0,0,0,8"/>
+            <TextBlock Text="{Binding CurrentRecommendation.Description}" TextWrapping="Wrap" FontSize="13" Margin="0,0,0,8"/>
+            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center" Margin="0,8,0,0">
+                <ItemsControl ItemsSource="{Binding Recommendations}">
+                    <ItemsControl.ItemTemplate>
+                        <DataTemplate x:DataType="vm:Recommendation">
+                            <Ellipse Width="8" Height="8" Margin="4,0"
+                                Fill="{Binding IsCurrent, Converter={StaticResource BoolToBrushConverter}}" />
+                        </DataTemplate>
+                    </ItemsControl.ItemTemplate>
+                </ItemsControl>
+            </StackPanel>
+        </StackPanel>
+    </Border>
+</UserControl> 

@@ -12,6 +12,7 @@
         <Folder Include="Models\" />
         <AvaloniaResource Include="Assets\**" />
         <AvaloniaResource Include="Styles\**" />
+        <AvaloniaResource Include="Assets\Recommendations\*.jpg" />
     </ItemGroup>
 
     <ItemGroup>
