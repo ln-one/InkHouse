@@ -5,7 +5,9 @@
     <Style Selector="TextBox">
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="FontSize" Value="14"/>
+
         <Setter Property="FontFamily" Value="SF Pro Text, SF Pro Display, Helvetica Neue, -apple-system, BlinkMacSystemFont, Segoe UI"/>
+
         <Setter Property="Padding" Value="12,8"/>
         <Setter Property="Background" Value="#F5F5F7"/>
         <Setter Property="BorderBrush" Value="Transparent"/>
@@ -42,7 +44,9 @@
     <Style Selector="Button">
         <Setter Property="CornerRadius" Value="8"/>
         <Setter Property="FontSize" Value="14"/>
+
         <Setter Property="FontFamily" Value="SF Pro Text, SF Pro Display, Helvetica Neue, -apple-system, BlinkMacSystemFont, Segoe UI"/>
+
         <Setter Property="FontWeight" Value="500"/>
         <Setter Property="Padding" Value="16,8"/>
         <Setter Property="Background" Value="#007AFF"/>
@@ -105,7 +109,9 @@
     
     <!-- 文本样式 -->
     <Style Selector="TextBlock">
+
         <Setter Property="FontFamily" Value="SF Pro Text, SF Pro Display, Helvetica Neue, -apple-system, BlinkMacSystemFont, Segoe UI"/>
+
         <Setter Property="Foreground" Value="#1D1D1F"/>
         <Setter Property="FontSize" Value="14"/>
     </Style>
@@ -177,7 +183,9 @@
     
     <!-- 密码框特殊样式 -->
     <Style Selector="TextBox.password">
+
         <Setter Property="FontFamily" Value="SF Mono, Menlo, Monaco, Consolas"/>
+
     </Style>
     
     <!-- 卡片容器样式 -->
@@ -253,7 +261,9 @@
         <Setter Property="Foreground" Value="#333"/>
         <Setter Property="FontWeight" Value="500"/>
         <Setter Property="FontSize" Value="14"/>
+
         <Setter Property="FontFamily" Value="SF Pro Text, SF Pro Display, Helvetica Neue, -apple-system, BlinkMacSystemFont, Segoe UI"/>
+
         <Setter Property="HorizontalAlignment" Value="Stretch"/>
         <Setter Property="HorizontalContentAlignment" Value="Left"/>
         <Setter Property="Transitions">

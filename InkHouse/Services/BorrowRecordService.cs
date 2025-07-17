@@ -61,15 +61,41 @@ namespace InkHouse.Services
         /// <returns>用户的借阅记录列表</returns>
         public async Task<List<BorrowRecord>> GetBorrowRecordsByUserIdAsync(int userId, int page = 1, int pageSize = 20)
         {
-            using var context = _dbContextFactory.CreateDbContext();
-            return await context.BorrowRecords
-                .AsNoTracking() // Improves query performance
-                .Include(br => br.Book)
-                .Where(br => br.UserId == userId)
-                .OrderByDescending(br => br.BorrowDate)
-                .Skip((page - 1) * pageSize)
-                .Take(pageSize)
-                .ToListAsync();
+            try
+            {
+                Console.WriteLine($"开始查询用户ID {userId} 的借阅记录...");
+                using var context = _dbContextFactory.CreateDbContext();
+                
+                // 先检查数据库中是否有数据
+                var totalCount = await context.BorrowRecords.CountAsync();
+                Console.WriteLine($"数据库中总共有 {totalCount} 条借阅记录");
+                
+                var userCount = await context.BorrowRecords.CountAsync(br => br.UserId == userId);
+                Console.WriteLine($"用户 {userId} 在数据库中有 {userCount} 条借阅记录");
+                
+                var records = await context.BorrowRecords
+                    .AsNoTracking() // Improves query performance
+                    .Include(br => br.Book)
+                    .Where(br => br.UserId == userId)
+                    .OrderByDescending(br => br.BorrowDate)
+                    .Skip((page - 1) * pageSize)
+                    .Take(pageSize)
+                    .ToListAsync();
+                
+                Console.WriteLine($"查询到 {records.Count} 条借阅记录");
+                foreach (var record in records)
+                {
+                    Console.WriteLine($"借阅记录: ID={record.Id}, 用户ID={record.UserId}, 图书ID={record.BookId}, 状态={record.Status}");
+                }
+                
+                return records;
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"查询用户借阅记录时发生异常: {ex.Message}");
+                Console.WriteLine($"异常堆栈: {ex.StackTrace}");
+                return new List<BorrowRecord>();
+            }
         }
 
         /// <summary>

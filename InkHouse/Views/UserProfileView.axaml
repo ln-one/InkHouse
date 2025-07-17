@@ -1,0 +1,186 @@
+<UserControl xmlns="https://github.com/avaloniaui"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:vm="using:InkHouse.ViewModels"
+             xmlns:local="clr-namespace:InkHouse.Views"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             x:Class="InkHouse.Views.UserProfileView"
+             x:DataType="vm:UserMainWindowViewModel"
+             d:DesignWidth="900" d:DesignHeight="700">
+    <UserControl.Resources>
+        <local:CountToVisibilityConverter x:Key="CountToVisibilityConverter"/>
+        <local:IsNullConverter x:Key="IsNullConverter"/>
+        <local:DateDisplayConverter x:Key="DateDisplayConverter"/>
+        <local:ZeroToVisibleConverter x:Key="ZeroToVisibleConverter"/>
+    </UserControl.Resources>
+    <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Auto">
+        <StackPanel Margin="32" Spacing="32">
+            <!-- 用户信息区块 -->
+            <Border Background="#FFF" CornerRadius="12" Padding="24" BoxShadow="0 2 8 0 #0002">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="用户信息" FontWeight="Bold" FontSize="26"/>
+                    <StackPanel Orientation="Horizontal" Spacing="40">
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="用户名" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding CurrentUser.UserName}" FontSize="16"/>
+                        </StackPanel>
+                        <StackPanel Spacing="4">
+                            <TextBlock Text="角色" FontWeight="Bold"/>
+                            <TextBlock Text="{Binding CurrentUser.Role}" FontSize="16"/>
+                        </StackPanel>
+                    </StackPanel>
+                </StackPanel>
+            </Border>
+            
+            <!-- 统计信息区块 -->
+            <Border Background="#FFF" CornerRadius="12" Padding="24" BoxShadow="0 2 8 0 #0002">
+                <StackPanel Spacing="16">
+                    <StackPanel Orientation="Horizontal" Spacing="12">
+                        <TextBlock Text="使用统计" FontWeight="Bold" FontSize="26"/>
+                        <Button Content="🔄 刷新" Command="{Binding RefreshStatisticsCommand}" 
+                                Classes="secondary" HorizontalAlignment="Right" Margin="0,0,0,0"/>
+                    </StackPanel>
+                    
+                    <!-- 借阅统计 -->
+                    <Border Background="#F8F9FA" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="📚 借阅统计" FontWeight="Bold" FontSize="18" Foreground="#007ACC"/>
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" Margin="0,8,0,0">
+                                <StackPanel Grid.Column="0" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding TotalBorrowCount}" FontSize="24" FontWeight="Bold" Foreground="#007ACC" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="总借阅次数" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding CurrentBorrowCount}" FontSize="24" FontWeight="Bold" Foreground="#FF9500" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="当前借阅" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding ReturnedBorrowCount}" FontSize="24" FontWeight="Bold" Foreground="#34C759" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="已归还" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding FirstBorrowDate, Converter={StaticResource DateDisplayConverter}}" FontSize="16" FontWeight="Bold" Foreground="#666" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="首次借阅" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 借阅完成率 -->
+                            <StackPanel Grid.Row="1" Spacing="4" Margin="0,8,0,0" IsVisible="{Binding TotalBorrowCount, Converter={StaticResource ZeroToVisibleConverter}}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="归还率：" FontSize="12" Foreground="#666"/>
+                                    <TextBlock Text="{Binding ReturnedBorrowCount}" FontSize="12" FontWeight="Bold" Foreground="#34C759"/>
+                                    <TextBlock Text="/" FontSize="12" Foreground="#666"/>
+                                    <TextBlock Text="{Binding TotalBorrowCount}" FontSize="12" FontWeight="Bold" Foreground="#007ACC"/>
+                                </StackPanel>
+                                <ProgressBar Value="{Binding ReturnedBorrowCount}" Maximum="{Binding TotalBorrowCount}" Height="4" Foreground="#34C759" Background="#E5E5EA"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                    
+                    <!-- 预约统计 -->
+                    <Border Background="#F8F9FA" CornerRadius="8" Padding="16">
+                        <StackPanel Spacing="12">
+                            <TextBlock Text="🪑 座位预约统计" FontWeight="Bold" FontSize="18" Foreground="#007ACC"/>
+                            <Grid ColumnDefinitions="*,*,*,*" RowDefinitions="Auto,Auto" Margin="0,8,0,0">
+                                <StackPanel Grid.Column="0" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding TotalReservationCount}" FontSize="24" FontWeight="Bold" Foreground="#007ACC" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="总预约次数" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="1" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding CurrentReservationCount}" FontSize="24" FontWeight="Bold" Foreground="#FF9500" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="当前预约" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="2" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding CompletedReservationCount}" FontSize="24" FontWeight="Bold" Foreground="#34C759" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="已完成" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                                <StackPanel Grid.Column="3" Grid.Row="0" Spacing="4" HorizontalAlignment="Center">
+                                    <TextBlock Text="{Binding FirstReservationDate, Converter={StaticResource DateDisplayConverter}}" FontSize="16" FontWeight="Bold" Foreground="#666" HorizontalAlignment="Center"/>
+                                    <TextBlock Text="首次预约" FontSize="12" Foreground="#666" HorizontalAlignment="Center"/>
+                                </StackPanel>
+                            </Grid>
+                            <!-- 预约完成率 -->
+                            <StackPanel Grid.Row="1" Spacing="4" Margin="0,8,0,0" IsVisible="{Binding TotalReservationCount, Converter={StaticResource ZeroToVisibleConverter}}">
+                                <StackPanel Orientation="Horizontal" Spacing="8">
+                                    <TextBlock Text="完成率：" FontSize="12" Foreground="#666"/>
+                                    <TextBlock Text="{Binding CompletedReservationCount}" FontSize="12" FontWeight="Bold" Foreground="#34C759"/>
+                                    <TextBlock Text="/" FontSize="12" Foreground="#666"/>
+                                    <TextBlock Text="{Binding TotalReservationCount}" FontSize="12" FontWeight="Bold" Foreground="#007ACC"/>
+                                </StackPanel>
+                                <ProgressBar Value="{Binding CompletedReservationCount}" Maximum="{Binding TotalReservationCount}" Height="4" Foreground="#34C759" Background="#E5E5EA"/>
+                            </StackPanel>
+                        </StackPanel>
+                    </Border>
+                </StackPanel>
+            </Border>
+            <!-- 座位预约记录区块 -->
+            <Border Background="#FFF" CornerRadius="12" Padding="24" BoxShadow="0 2 8 0 #0002">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="我的座位预约记录" FontWeight="Bold" FontSize="26"/>
+                    
+                    <ListBox ItemsSource="{Binding SeatReservationRecords}" Height="200">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FA" CornerRadius="8" Padding="12" Margin="0,2">
+                                    <StackPanel Spacing="8">
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock Text="座位：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Seat?.SeatNumber}" FontWeight="Bold" Foreground="#007ACC"/>
+                                            <TextBlock Text="状态：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Status}" Foreground="#28A745"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock Text="预约时间：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding ReserveTime, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"/>
+                                            <TextBlock Text="到馆时间：" FontWeight="Bold" IsVisible="{Binding CheckInTime, Converter={StaticResource IsNullConverter}}"/>
+                                            <TextBlock Text="{Binding CheckInTime, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}" IsVisible="{Binding CheckInTime, Converter={StaticResource IsNullConverter}}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="16" IsVisible="{Binding CheckOutTime, Converter={StaticResource IsNullConverter}}">
+                                            <TextBlock Text="离馆时间：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding CheckOutTime, StringFormat='{}{0:yyyy-MM-dd HH:mm}'}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Text="暂无座位预约记录" Foreground="#888" FontStyle="Italic" FontSize="16" HorizontalAlignment="Center" Margin="8,12,8,0"
+                               IsVisible="{Binding SeatReservationRecords.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                </StackPanel>
+            </Border>
+            <!-- 借阅记录区块 -->
+            <Border Background="#FFF" CornerRadius="12" Padding="24" BoxShadow="0 2 8 0 #0002">
+                <StackPanel Spacing="12">
+                    <TextBlock Text="我的借阅记录" FontWeight="Bold" FontSize="26"/>
+                    
+                    <ListBox ItemsSource="{Binding UserBorrowRecords}" Height="200">
+                        <ListBox.ItemTemplate>
+                            <DataTemplate>
+                                <Border Background="#F8F9FA" CornerRadius="8" Padding="12" Margin="0,2">
+                                    <StackPanel Spacing="8">
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock Text="图书：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Book?.Title}" FontWeight="Bold" Foreground="#007ACC"/>
+                                            <TextBlock Text="作者：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Book?.Author}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="16">
+                                            <TextBlock Text="状态：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding Status}" Foreground="#28A745"/>
+                                            <TextBlock Text="借阅时间：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding BorrowDate, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                        </StackPanel>
+                                        <StackPanel Orientation="Horizontal" Spacing="16" IsVisible="{Binding ReturnDate, Converter={StaticResource IsNullConverter}}">
+                                            <TextBlock Text="归还时间：" FontWeight="Bold"/>
+                                            <TextBlock Text="{Binding ReturnDate, StringFormat='{}{0:yyyy-MM-dd}'}"/>
+                                        </StackPanel>
+                                    </StackPanel>
+                                </Border>
+                            </DataTemplate>
+                        </ListBox.ItemTemplate>
+                    </ListBox>
+                    <TextBlock Text="暂无借阅记录" Foreground="#888" FontStyle="Italic" FontSize="16" HorizontalAlignment="Center" Margin="8,12,8,0"
+                               IsVisible="{Binding UserBorrowRecords.Count, Converter={StaticResource CountToVisibilityConverter}}"/>
+                </StackPanel>
+            </Border>
+        </StackPanel>
+    </ScrollViewer>
+</UserControl> 
