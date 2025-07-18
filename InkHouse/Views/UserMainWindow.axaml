@@ -322,7 +322,7 @@
                                                             <Button Content="归还图书" 
                                                                     Command="{Binding #UserWindow.DataContext.ReturnBookCommand}" 
                                                                     CommandParameter="{Binding}"
-                                                                    IsEnabled="{Binding ReturnDate, Converter={x:Static local:IsNullConverter.Instance}}"
+                                                                    IsEnabled="{Binding !IsReturned}"
                                                                     Classes="success"/>
                                                         </StackPanel>
                                                     </Border>

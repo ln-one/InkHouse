@@ -39,9 +39,8 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Seat Management**: View and manage library seats
 - **Seat Reservation**: Users can reserve available seats
 - **Check-in/Check-out**: Track seat usage with check-in and check-out functionality
-- **Reservation History**: View personal seat reservation history and statistics
-
-### � Reporhts & Analytics
+- **Reservation History**: View personal seat reservation history and statistics### 📊 R
+eports & Analytics
 - **Statistical Reports**: Comprehensive library statistics
 - **User Activity**: Track user borrowing and seat reservation patterns
 - **Analytics Dashboard**: Visual data representation
@@ -92,9 +91,8 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Read the README and structure guide first to understand each layer's responsibility.**
 - **For new features, create corresponding files in Models/Services/ViewModels/Views.**
 - **Use breakpoints for debugging, and leverage Rider's XAML preview and DB tools.**
-- **Communicate frequently; ask questions when in doubt.**
-
-### 🚀 Current Implementation Status
+- **Communicate frequently; ask questions when in doubt.**### 🚀 Cu
+rrent Implementation Status
 
 #### ✅ Completed Features
 - **Authentication System**: Role-based login with admin and user access
@@ -111,7 +109,8 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - **Search & Pagination**: Optimized search using EF Core `AsNoTracking`, `Skip/Take`, and a "Load More" UI for smooth paging
 - **Performance Optimizations**: Connection pooling, lazy loading, and optimized queries for noticeably faster response times, even with large datasets
 - **Seat Reservation System**: Complete seat management and reservation functionality
-- **User Profile**: Personal statistics for borrowing history and seat reservations
+- **User Profile Statistics**: Personal statistics for borrowing history and seat reservations with completion rates and usage tracking
+- **Quick Fix Guide**: Automated password testing and troubleshooting for database connection issues
 
 #### 🔄 Ready for Enhancement
 - **Book Management**: Basic functionality implemented, can be enhanced with batch operations
@@ -129,9 +128,8 @@ InkHouse is a cross-platform library management system built with C#, Avalonia, 
 - ✅ **Service Manager**: Get services through `ServiceManager` without manual creation
 - ✅ **Automatic Error Handling**: `ViewModelBase` provides unified error handling
 - ✅ **Simplified Development**: No need to manually create database connections and services
-- ✅ **Framework Design**: Only provides architecture framework, specific business logic is implemented by team members
-
-### 🏗️ Architecture Overview
+- ✅ **Framework Design**: Only provides architecture framework, specific business logic is implemented by team members### 🏗️
+ Architecture Overview
 
 #### 1. Configuration Management (`AppConfig.cs`)
 ```csharp
@@ -186,9 +184,8 @@ public class MyFeatureViewModel : ViewModelBase
    - `your_username`: Database username  
    - `your_password`: Database password
 
-📖 **See detailed setup instructions**: `InkHouse/Services/README.md`
-
-#### Step 2: Create New ViewModel
+📖 **See detailed setup instructions**: `InkHouse/Services/README.md`##
+## Step 2: Create New ViewModel
 ```csharp
 public class MyFeatureViewModel : ViewModelBase
 {
@@ -263,9 +260,8 @@ var users = await userService.GetAllUsersAsync();
 
 // Search users
 var searchResults = await userService.SearchUsersAsync("searchTerm");
-```
-
-#### Book Service (BookService)
+```####
+ Book Service (BookService)
 ```csharp
 var bookService = ServiceManager.GetService<BookService>();
 
@@ -314,9 +310,8 @@ var updatedReservation = await seatService.CheckInAsync(reservationId);
 
 // Check out
 var completedReservation = await seatService.CheckOutAsync(reservationId);
-```
-
-### 🎨 UI Development Tips
+```#
+## 🎨 UI Development Tips
 
 #### 1. Data Binding
 ```xml
@@ -364,9 +359,8 @@ var completedReservation = await seatService.CheckOutAsync(reservationId);
 <Button Command="{Binding LoginCommand}" Content="Login" />
 <Button Command="{Binding LogoutCommand}" Content="Logout" />
 <Button Command="{Binding SearchCommand}" Content="Search" />
-```
-
-### 🔧 Debugging Tips
+```###
+ 🔧 Debugging Tips
 
 #### 1. View Error Information
 All service methods have exception handling, error messages will be output to console:
@@ -430,9 +424,8 @@ Views/
 ├── RegisterView.axaml.cs # Register user control code-behind
 ├── MainWindow.axaml     # Admin main window
 └── UserMainWindow.axaml # User main window
-```
-
-#### 3. Code Comments
+```#### 
+3. Code Comments
 All public methods and properties should have comments:
 ```csharp
 /// <summary>
@@ -448,7 +441,7 @@ public List<Book> GetAllBooks()
 ### 🚨 Common Issues
 
 #### Q1: Database connection failed?
-A1: Check the connection string in `AppConfig.cs` is correct, ensure the database server is accessible.
+A1: Check the connection string in `AppConfig.cs` is correct, ensure the database server is accessible. See the quick fix guide for automated password testing.
 
 #### Q2: Why is my ViewModel not responding?
 A2: Make sure the ViewModel inherits from `ViewModelBase` and properties use the `SetProperty` method.
@@ -470,9 +463,8 @@ The architecture makes development simpler and more unified:
 5. **Complete Comments**: All code has detailed comments
 6. **Framework Design**: Only provides architecture framework, specific business logic implemented by team members
 
-Now you can focus on implementing business logic instead of repeating database connection code!
-
-### 📝 Message to Team Members
+Now you can focus on implementing business logic instead of repeating database connection code!##
+# 📝 Message to Team Members
 
 This architecture has already set up the basic framework for you, including:
 - ✅ Database connection management
@@ -484,7 +476,8 @@ This architecture has already set up the basic framework for you, including:
 - ✅ Complete UI framework with modern design
 - ✅ Book type classification and filtering
 - ✅ Seat reservation system
-- ✅ User profile statistics
+- ✅ User profile statistics with completion rates
+- ✅ Quick fix guide for common issues
 
 You only need to:
 1. Add specific business logic methods in service classes
@@ -530,9 +523,8 @@ git push origin feature/your-feature-name
 # Request code review from team members
 # Address review comments if any
 # Merge to main after approval
-```
-
-### 6. � kCommon Issues & Solutions
+```#
+## 6. 🐛 Common Issues & Solutions
 
 #### Entity Framework Issues
 - **"Table doesn't exist"**: Run database migrations
@@ -574,9 +566,8 @@ git push origin feature/your-feature-name
 - Example SQL:
   ```sql
   CREATE DATABASE InternShip;
-  ```
-
-### 5. 🛠️ Build and Run the Project
+  ```### 5.
+ 🛠️ Build and Run the Project
 - In Rider, select `InkHouse` as the startup project.
 - Click the green `Run` button or press `Shift+F10` to build and run.
 - The application window will appear.
@@ -586,7 +577,7 @@ git push origin feature/your-feature-name
 - Open any `.axaml` file (such as `LoginView.axaml`), and use the split view to see both code and visual preview.
 - Drag and drop controls, or edit XAML directly for custom layouts.
 
-### 7. � Debtugging
+### 7. 🐞 Debugging
 - Set breakpoints in your C# code.
 - Use the `Debug` button or press `Shift+F9` to start debugging.
 - Inspect variables, step through code, and view call stacks as needed.
@@ -596,18 +587,19 @@ git push origin feature/your-feature-name
 ## 🧩 Features
 - 👤 Role-based authentication (Admin and User access)
 - 🔐 Secure login with role validation and BCrypt password hashing
-- � User registrration with validation and security features
+- 📝 User registration with validation and security features
 - 🚪 Logout functionality with window switching
 - 📊 Dashboard with system statistics
 - 📚 Book management with type classification and filtering
 - 👥 User management with role assignment
 - 📖 Borrow management with history tracking
 - 🪑 Seat reservation system with check-in/check-out
-- 👤 User profile with personal statistics
+- 👤 User profile with personal statistics and completion rates
 - 🔍 Search functionality across books and records
 - ⚙️ System settings for configuration
+- 🛠️ Quick fix guide for common connection issues
 
-## �️ Teech Stack
+## 🛠️ Tech Stack
 - **Avalonia UI** (cross-platform desktop framework)
 - **Entity Framework Core** (ORM with MySQL provider)
 - **MySQL** (database)
