@@ -37,9 +37,8 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 - **座位管理**：查看和管理图书馆座位
 - **座位预约**：用户可以预约可用座位
 - **签到/签退**：通过签到和签退功能跟踪座位使用情况
-- **预约历史**：查看个人座位预约历史和统计数据
-
-### � 搜报表与分析
+- **预约历史**：查看个人座位预约历史和统计数据### 
+📊 报表与分析
 - **统计报表**：全面的图书馆统计数据
 - **用户活动**：跟踪用户借阅和座位预约模式
 - **分析仪表板**：可视化数据展示
@@ -90,9 +89,8 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 - **先读 README 和代码结构说明，了解每层职责。**
 - **每次开发新功能，先在 Models/Services/ViewModels/Views 里各自新建对应文件。**
 - **遇到问题多用断点调试，善用 Rider 的 XAML 预览和数据库工具。**
-- **团队成员多沟通，遇到不懂的地方及时提问。**
-
-### 🚀 当前实现状态
+- **团队成员多沟通，遇到不懂的地方及时提问。**### 🚀 
+当前实现状态
 
 #### ✅ 已完成功能
 - **身份认证系统**：基于角色的登录，支持管理员和普通用户访问
@@ -109,7 +107,8 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 - **搜索与分页**：使用 EF Core `AsNoTracking`、`Skip/Take` 优化查询，并提供 "加载更多" UI
 - **性能优化**：连接池、延迟加载及优化查询，大幅提升速度，即使在大数据量下也能流畅运行
 - **座位预约系统**：完整的座位管理和预约功能
-- **用户个人资料**：借阅历史和座位预约的个人统计
+- **用户个人资料**：借阅历史和座位预约的个人统计，包含完成率和使用情况跟踪
+- **快速修复指南**：自动密码测试和数据库连接问题故障排除
 
 #### 🔄 可进一步增强的功能
 - **图书管理**：基本功能已实现，可增强批量操作功能
@@ -127,9 +126,8 @@ InkHouse 是一个基于 C#、Avalonia 和 MySQL 的跨平台图书馆管理系�
 - ✅ **服务管理器**：通过 `ServiceManager` 统一获取服务
 - ✅ **自动错误处理**：`ViewModelBase` 提供统一的错误处理
 - ✅ **简化开发**：无需手动创建数据库连接和服务
-- ✅ **框架化设计**：只提供架构框架，具体业务逻辑由团队成员实现
-
-### 🏗️ 架构概览
+- ✅ **框架化设计**：只提供架构框架，具体业务逻辑由团队成员实现#
+## 🏗️ 架构概览
 
 #### 1. 配置管理 (`AppConfig.cs`)
 ```csharp
@@ -184,9 +182,8 @@ public class MyFeatureViewModel : ViewModelBase
    - `你的用户名`：数据库用户名
    - `你的密码`：数据库密码
 
-📖 **查看详细设置说明**：`InkHouse/Services/README.md`
-
-#### 步骤2：创建新的ViewModel
+📖 **查看详细设置说明**：`InkHouse/Services/README.md`#### 步骤2：
+创建新的ViewModel
 ```csharp
 public class MyFeatureViewModel : ViewModelBase
 {
@@ -261,9 +258,8 @@ var users = await userService.GetAllUsersAsync();
 
 // 搜索用户
 var searchResults = await userService.SearchUsersAsync("搜索词");
-```
-
-#### 图书服务 (BookService)
+```#### 图书服
+务 (BookService)
 ```csharp
 var bookService = ServiceManager.GetService<BookService>();
 
@@ -312,9 +308,8 @@ var updatedReservation = await seatService.CheckInAsync(reservationId);
 
 // 签退
 var completedReservation = await seatService.CheckOutAsync(reservationId);
-```
-
-### 🎨 UI开发技巧
+```### 🎨
+ UI开发技巧
 
 #### 1. 数据绑定
 ```xml
@@ -362,9 +357,8 @@ var completedReservation = await seatService.CheckOutAsync(reservationId);
 <Button Command="{Binding LoginCommand}" Content="登录" />
 <Button Command="{Binding LogoutCommand}" Content="登出" />
 <Button Command="{Binding SearchCommand}" Content="搜索" />
-```
+```### 🔧 调试技巧
 
-### 🔧 调试技巧
 
 #### 1. 查看错误信息
 所有服务方法都有异常处理，错误信息会输出到控制台：
@@ -428,9 +422,8 @@ Views/
 ├── RegisterView.axaml.cs # 注册用户控件代码后端
 ├── MainWindow.axaml     # 管理员主窗口
 └── UserMainWindow.axaml # 用户主窗口
-```
-
-#### 3. 代码注释
+```####
+ 3. 代码注释
 所有公共方法和属性都应该有中文注释：
 ```csharp
 /// <summary>
@@ -446,7 +439,7 @@ public List<Book> GetAllBooks()
 ### 🚨 常见问题
 
 #### Q1: 数据库连接失败怎么办？
-A1: 检查 `AppConfig.cs` 中的连接字符串是否正确，确保数据库服务器可访问。
+A1: 检查 `AppConfig.cs` 中的连接字符串是否正确，确保数据库服务器可访问。参考快速修复指南进行自动密码测试。
 
 #### Q2: 为什么我的ViewModel没有响应？
 A2: 确保ViewModel继承自 `ViewModelBase`，并且属性使用了 `SetProperty` 方法。
@@ -468,9 +461,8 @@ A4: 在服务层实现复杂的业务逻辑，ViewModel只负责UI交互和数�
 5. **中文注释完整**：所有代码都有详细的中文说明
 6. **框架化设计**：只提供架构框架，具体业务逻辑由团队成员实现
 
-现在你可以专注于业务逻辑的实现，而不是重复的数据库连接代码！
-
-### 📝 给团队成员的话
+现在你可以专注于业务逻辑的实现，而不是重复的数据库连接代码！#
+## 📝 给团队成员的话
 
 这个架构已经为您搭建好了基础框架，包括：
 - ✅ 数据库连接管理
@@ -482,7 +474,8 @@ A4: 在服务层实现复杂的业务逻辑，ViewModel只负责UI交互和数�
 - ✅ 完整的UI框架，现代化设计
 - ✅ 图书类型分类和过滤
 - ✅ 座位预约系统
-- ✅ 用户个人资料统计
+- ✅ 用户个人资料统计与完成率
+- ✅ 常见问题快速修复指南
 
 您只需要：
 1. 在服务类中添加具体的业务逻辑方法
@@ -528,9 +521,8 @@ git push origin feature/你的功能名称
 # 请求团队成员进行代码审查
 # 如有审查意见，及时修改
 # 获得批准后合并到 main
-```
-
-### 6. 🐛 常见问题与解决方案
+```##
+# 6. 🐛 常见问题与解决方案
 
 #### Entity Framework 问题
 - **"表不存在"**：运行数据库迁移
@@ -572,9 +564,8 @@ git push origin feature/你的功能名称
 - 示例 SQL：
   ```sql
   CREATE DATABASE InternShip;
-  ```
-
-### 5. �的️ 构建并运行项目
+  ```### 5.
+ 🛠️ 构建并运行项目
 - 在 Rider 中，将 `InkHouse` 设为启动项目。
 - 点击绿色 `运行` 按钮或按 `Shift+F10` 构建并运行。
 - 应用窗口会自动弹出。
@@ -584,7 +575,7 @@ git push origin feature/你的功能名称
 - 打开任意 `.axaml` 文件（如 `LoginView.axaml`），使用分屏模式同时查看代码和界面预览。
 - 可拖拽控件或直接编辑 XAML 代码实现自定义布局。
 
-### 7. �栈 调试
+### 7. 🐞 调试
 - 在 C# 代码中设置断点。
 - 点击 `调试` 按钮或按 `Shift+F9` 启动调试。
 - 可查看变量、单步执行、查看调用堆栈等。
@@ -592,7 +583,7 @@ git push origin feature/你的功能名称
 ---
 
 ## 🧩 功能模块
-- � 基于角色的身份认证（管理员和普通用户访问）
+- 👤 基于角色的身份认证（管理员和普通用户访问）
 - 🔐 安全的登录验证和角色检查，使用 BCrypt 密码哈希
 - 📝 用户注册功能，带有验证和安全特性
 - 🚪 登出功能，支持窗口切换
@@ -601,9 +592,10 @@ git push origin feature/你的功能名称
 - 👥 用户管理，支持角色分配
 - 📖 借阅管理，支持历史跟踪
 - 🪑 座位预约系统，支持签到/签退
-- 👤 用户个人资料，显示个人统计数据
+- 👤 用户个人资料，显示个人统计数据和完成率
 - 🔍 跨图书和记录的搜索功能
 - ⚙️ 系统配置设置
+- 🛠️ 常见连接问题快速修复指南
 
 ## 🛠️ 技术栈
 - **Avalonia UI**（跨平台桌面框架）
